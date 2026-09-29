@@ -2,16 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root {
+  /* Legacy palette (kept only until each component's motion/visual
+     pass in Phases 2-6 migrates it away; removed once unused). */
+  --legacy-bg: 10 25 47; /* #0a192f */
+  --legacy-fg: 204 214 246; /* #ccd6f6 */
+  --legacy-accent: 100 255 218; /* #64ffda */
+  --legacy-accent-hover: 79 209 199; /* #4fd1c7 */
+  --legacy-muted: 136 146 176; /* #8892b0 */
+
+  /* "Signal & Noise" palette (locked). Coral is the primary accent for
+     interactive/large elements; teal is reserved for waveform and
+     data-detail treatments only. */
+  --bg: 10 12 16; /* #0A0C10 */
+  --fg: 232 234 240; /* #E8EAF0 */
+  --muted: 148 163 184; /* #94A3B8 */
+  --accent: 255 92 92; /* #FF5C5C coral */
+  --accent-2: 45 224 198; /* #2DE0C6 teal */
+}
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #0a192f;
-  color: #ccd6f6;
+  font-family: var(--font-satoshi), sans-serif;
+  background-color: rgb(var(--legacy-bg));
+  color: rgb(var(--legacy-fg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom scrollbar */
@@ -20,14 +48,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a192f;
+  background: rgb(var(--legacy-bg));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #64ffda;
+  background: rgb(var(--legacy-accent));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4fd1c7;
-} 
+  background: rgb(var(--legacy-accent-hover));
+}

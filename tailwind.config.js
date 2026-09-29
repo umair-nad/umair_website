@@ -8,14 +8,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#64ffda',
-        secondary: '#8892b0',
-        dark: '#0a192f',
-        light: '#ccd6f6',
-        slate: '#8892b0',
+        // Legacy aliases (unchanged values) — kept until each component's
+        // motion/visual pass in Phases 2-6 migrates away from them.
+        primary: 'rgb(var(--legacy-accent) / <alpha-value>)',
+        secondary: 'rgb(var(--legacy-muted) / <alpha-value>)',
+        dark: 'rgb(var(--legacy-bg) / <alpha-value>)',
+        light: 'rgb(var(--legacy-fg) / <alpha-value>)',
+        slate: 'rgb(var(--legacy-muted) / <alpha-value>)',
+        // "Signal & Noise" semantic tokens (locked palette).
+        bg: 'rgb(var(--bg) / <alpha-value>)',
+        fg: 'rgb(var(--fg) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        accent2: 'rgb(var(--accent-2) / <alpha-value>)',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['var(--font-satoshi)', 'ui-sans-serif', 'sans-serif'],
+        display: ['var(--font-bricolage)', 'ui-sans-serif', 'sans-serif'],
+        mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'monospace'],
       },
     },
   },
