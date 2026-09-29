@@ -108,8 +108,14 @@ const Experience = () => {
           })
 
           return () => {
+            // ScrollTrigger.kill() reverts its own pin-related inline
+            // styles automatically, but tween.kill() does NOT revert the
+            // transform it already applied - without clearProps, crossing
+            // back below 1024px mid-scroll would leave the track visibly
+            // shifted by its last translateX under the vertical layout.
             tween.scrollTrigger?.kill()
             tween.kill()
+            gsap.set(track, { clearProps: 'x' })
           }
         }
       )
