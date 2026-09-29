@@ -70,7 +70,7 @@ export default function RootLayout({
       className={`${bricolageGrotesque.variable} ${jetbrainsMono.variable} ${satoshi.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-dark text-light">
+      <body className="bg-bg text-fg">
         <Script id="preloader-decision" strategy="beforeInteractive">
           {PRELOADER_DECISION_SCRIPT}
         </Script>
