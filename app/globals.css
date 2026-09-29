@@ -42,6 +42,33 @@ body {
   }
 }
 
+/* Preloader visibility is decided before first paint by the
+   beforeInteractive script in app/layout.tsx, which sets this
+   attribute from sessionStorage + prefers-reduced-motion. No attribute
+   yet (or "show") means visible - the correct default for a genuine
+   first visit, since the script simply hasn't run yet. */
+html[data-preloader='skip'] #preloader-overlay {
+  display: none !important;
+}
+
+/* Pure-CSS last resort: if JS partially loads and throws before
+   Preloader's own effects/failsafe ever register (so neither the
+   try/catch nor its setTimeout runs), this removes the overlay 3s
+   after paint regardless - no JS required. During the 3s delay it has
+   no effect, so it never interferes with the normal GSAP-driven fade
+   or the JS failsafe, both of which complete well before 3s. */
+#preloader-overlay {
+  animation: preloader-failsafe 0s linear 3s forwards;
+}
+
+@keyframes preloader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
