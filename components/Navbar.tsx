@@ -9,6 +9,9 @@ import { applyMagneticHover } from '@/lib/magnetic'
 
 registerGsap()
 
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-sm'
+
 const navItems = [
   { name: 'About', href: '#about' },
   { name: 'Experience', href: '#experience' },
@@ -100,7 +103,7 @@ const Navbar = () => {
                   key={item.name}
                   data-magnetic
                   onClick={() => scrollToSection(item.href)}
-                  className="font-mono text-xs uppercase tracking-widest text-muted hover:text-accent transition-colors duration-200"
+                  className={`font-mono text-xs uppercase tracking-widest text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
                 >
                   {item.name}
                 </button>
@@ -114,7 +117,7 @@ const Navbar = () => {
               onClick={toggleMenu}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
-              className="text-muted hover:text-accent transition-colors duration-200"
+              className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
             >
               {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
             </button>
@@ -130,7 +133,7 @@ const Navbar = () => {
               key={item.name}
               data-mobile-link
               onClick={() => scrollToSection(item.href)}
-              className="font-mono text-muted hover:text-accent block px-3 py-2 text-sm uppercase tracking-widest transition-colors duration-200"
+              className={`font-mono text-muted hover:text-accent block px-3 py-2 text-sm uppercase tracking-widest transition-colors duration-200 ${focusRing}`}
             >
               {item.name}
             </button>
