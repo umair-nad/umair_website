@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Mail, Phone, MapPin, Linkedin, ExternalLink, Github } from 'lucide-react'
+import { Mail, Phone, MapPin, Linkedin, ExternalLink } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, registerGsap } from '@/lib/gsap'
 import { REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
