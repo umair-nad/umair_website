@@ -133,7 +133,7 @@ const Navbar = () => {
       className="fixed top-0 w-full bg-bg/90 backdrop-blur-sm z-50 border-b border-muted/20"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-[var(--nav-height)]">
           <div className="flex-shrink-0">
             <a
               href="#main-content"

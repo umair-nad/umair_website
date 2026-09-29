@@ -19,6 +19,15 @@
   --muted: 148 163 184; /* #94A3B8 */
   --accent: 255 92 92; /* #FF5C5C coral */
   --accent-2: 45 224 198; /* #2DE0C6 teal */
+
+  /* Single source for the fixed navbar's height, so Navbar's own size
+     and anything that needs to clear it (Hero's top padding, etc.)
+     can't drift apart by being edited independently. The nav scroll
+     offset in Navbar.tsx's scrollToSection deliberately measures the
+     live rendered height instead of reading this variable, since that
+     also automatically accounts for the 1px border and any future
+     responsive height change - this variable is for CSS consumers. */
+  --nav-height: 4rem; /* 64px, matches Navbar's h-[var(--nav-height)] */
 }
 
 html {
