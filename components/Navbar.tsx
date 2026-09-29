@@ -50,39 +50,82 @@ const Navbar = () => {
     { scope: navRef }
   )
 
-  const scrollToSection = contextSafe((href: string) => {
-    const smoother = ScrollSmoother.get()
-    if (smoother) {
-      smoother.scrollTo(href, true)
-    } else {
-      // Reduced motion, or ScrollSmoother wasn't created for any reason.
-      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
-    }
+  // Shared close path so the mobile menu actually collapses (its height
+  // is entirely GSAP-managed via inline styles set when it opens -
+  // flipping the `isOpen` React state alone doesn't touch that style,
+  // so callers other than toggleMenu need this to actually close it).
+  const closeMenu = contextSafe(() => {
     setIsOpen(false)
-  })
-
-  const toggleMenu = contextSafe(() => {
-    const next = !isOpen
-    setIsOpen(next)
     if (!menuRef.current) return
-
     if (prefersReducedMotion()) {
-      gsap.set(menuRef.current, { height: next ? 'auto' : 0 })
-      return
-    }
-
-    if (next) {
-      gsap.set(menuRef.current, { height: 'auto' })
-      gsap.from(menuRef.current, { height: 0, duration: 0.35, ease: 'power2.out' })
-      gsap.fromTo(
-        menuRef.current.querySelectorAll('[data-mobile-link]'),
-        { autoAlpha: 0, y: -8 },
-        { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
-      )
+      gsap.set(menuRef.current, { height: 0 })
     } else {
       gsap.to(menuRef.current, { height: 0, duration: 0.3, ease: 'power2.in' })
     }
   })
+
+  const scrollToSection = contextSafe((href: string) => {
+    // Resolve via plain DOM lookup, not a GSAP selector string: this
+    // function is wrapped in contextSafe (useGSAP({ scope: navRef })),
+    // which scopes GSAP's own selector-text resolution to inside <nav>.
+    // The target sections live in <main>, outside that scope, so handing
+    // ScrollSmoother a string here made its internal _toArray(href)
+    // return [], then crash on undefined.style - passing the already-
+    // resolved element sidesteps that scoping entirely.
+    const target = document.querySelector<HTMLElement>(href)
+    if (!target) return
+
+    const navHeight = navRef.current?.getBoundingClientRect().height ?? 0
+    const smoother = ScrollSmoother.get()
+    if (smoother) {
+      // Offset by the fixed navbar's height so the section heading
+      // doesn't land hidden underneath it. "top top+=N" is ScrollTrigger's
+      // start syntax (confirmed against gsap.com's docs): it shifts the
+      // viewport reference point down by N, so the scroll lands with the
+      // target's top N pixels below the viewport top instead of flush
+      // with it (which is exactly where the fixed nav covers).
+      smoother.scrollTo(target, true, `top top+=${navHeight}`)
+    } else {
+      // Reduced motion, or ScrollSmoother wasn't created for any reason.
+      // scrollIntoView has no offset parameter, and its explicit
+      // `behavior` option overrides the CSS scroll-behavior:auto
+      // reduced-motion rule, so both the offset and the reduced-motion
+      // check are done manually here instead.
+      const targetY = target.getBoundingClientRect().top + window.scrollY - navHeight
+      window.scrollTo({ top: targetY, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    }
+    closeMenu()
+  })
+
+  const scrollToTop = contextSafe(() => {
+    const smoother = ScrollSmoother.get()
+    if (smoother) {
+      smoother.scrollTo(0, true)
+    } else {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    }
+    closeMenu()
+  })
+
+  const openMenu = contextSafe(() => {
+    setIsOpen(true)
+    if (!menuRef.current) return
+
+    if (prefersReducedMotion()) {
+      gsap.set(menuRef.current, { height: 'auto' })
+      return
+    }
+
+    gsap.set(menuRef.current, { height: 'auto' })
+    gsap.from(menuRef.current, { height: 0, duration: 0.35, ease: 'power2.out' })
+    gsap.fromTo(
+      menuRef.current.querySelectorAll('[data-mobile-link]'),
+      { autoAlpha: 0, y: -8 },
+      { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
+    )
+  })
+
+  const toggleMenu = () => (isOpen ? closeMenu() : openMenu())
 
   return (
     <nav
@@ -92,7 +135,17 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-            <p className="font-display font-semibold text-xl text-fg">Umair Nadeem</p>
+            <a
+              href="#main-content"
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToTop()
+              }}
+              data-magnetic
+              className={`font-display font-semibold text-xl text-fg hover:text-accent transition-colors duration-200 ${focusRing}`}
+            >
+              Umair Nadeem
+            </a>
           </div>
 
           {/* Desktop Navigation */}
