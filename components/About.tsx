@@ -104,7 +104,7 @@ const About = () => {
 
             <div ref={paragraphsRef} className="space-y-4 text-muted">
               <p>
-                I'm a passionate Software Quality Assurance Engineer with over 3 years of experience
+                I&apos;m a passionate Software Quality Assurance Engineer with over 3 years of experience
                 in ensuring the delivery of high-quality software solutions. My expertise lies in
                 creating comprehensive test cases, performing cross-browser compatibility checks,
                 and validating APIs using tools like Postman.
@@ -112,7 +112,7 @@ const About = () => {
 
               <p>
                 I specialize in manual testing, test planning, and bug tracking across web and
-                mobile applications. I'm adept at collaborating with cross-functional teams in
+                mobile applications. I&apos;m adept at collaborating with cross-functional teams in
                 Agile environments to meet tight deadlines and deliver defect-free products.
               </p>
 
@@ -124,7 +124,7 @@ const About = () => {
               </p>
 
               <p>
-                Currently based in Islamabad, Pakistan, I'm always eager to take on new
+                Currently based in Islamabad, Pakistan, I&apos;m always eager to take on new
                 challenges and contribute to innovative projects that push the boundaries
                 of software quality assurance.
               </p>
