@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollSmoother, registerGsap } from '@/lib/gsap'
-import { prefersReducedMotion } from '@/lib/motion-preferences'
+import { prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
 
 registerGsap()
@@ -25,10 +25,24 @@ const Navbar = () => {
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return
-      const magneticEls = gsap.utils.toArray<HTMLElement>('[data-magnetic]', navRef.current)
-      const cleanups = magneticEls.map((el) => applyMagneticHover(el))
-      return () => cleanups.forEach((fn) => fn())
+      const mm = gsap.matchMedia()
+
+      mm.add(
+        { reduceMotion: REDUCED_MOTION_QUERY, coarsePointer: COARSE_POINTER_QUERY },
+        (context) => {
+          const { reduceMotion, coarsePointer } = context.conditions as {
+            reduceMotion: boolean
+            coarsePointer: boolean
+          }
+          if (reduceMotion || coarsePointer) return
+
+          const magneticEls = gsap.utils.toArray<HTMLElement>('[data-magnetic]', navRef.current)
+          const cleanups = magneticEls.map((el) => applyMagneticHover(el))
+          return () => cleanups.forEach((fn) => fn())
+        }
+      )
+
+      return () => mm.revert()
     },
     { scope: navRef }
   )
