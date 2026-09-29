@@ -25,12 +25,6 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: var(--font-satoshi), sans-serif;
-  background-color: rgb(var(--legacy-bg));
-  color: rgb(var(--legacy-fg));
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
