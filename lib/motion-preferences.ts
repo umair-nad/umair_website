@@ -1,4 +1,5 @@
 export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+export const COARSE_POINTER_QUERY = '(pointer: coarse)'
 
 export function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined') return false
