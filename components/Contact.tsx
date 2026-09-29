@@ -144,7 +144,7 @@ const Contact = () => {
               {contactInfo.map((info, index) => (
                 <div key={index} data-contact-row data-magnetic className="flex items-center gap-4">
                   <div className="text-accent">
-                    <info.icon size={20} />
+                    <info.icon size={20} aria-hidden="true" />
                   </div>
                   <div>
                     <p className="text-muted text-sm">{info.label}</p>
@@ -180,7 +180,7 @@ const Contact = () => {
                   data-magnetic
                   className={`flex items-center gap-3 text-muted hover:text-accent transition-colors duration-200 p-3 rounded-lg hover:bg-muted/10 ${focusRing}`}
                 >
-                  <link.icon size={20} />
+                  <link.icon size={20} aria-hidden="true" />
                   <span>{link.name}</span>
                 </a>
               ))}

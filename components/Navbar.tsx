@@ -116,7 +116,7 @@ const Navbar = () => {
               aria-expanded={isOpen}
               className="text-muted hover:text-accent transition-colors duration-200"
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
             </button>
           </div>
         </div>

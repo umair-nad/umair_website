@@ -148,15 +148,15 @@ const Experience = () => {
                   <h3 className="text-xl font-semibold text-fg mb-2">{exp.title}</h3>
                   <div className="flex flex-wrap items-center gap-4 text-muted">
                     <div className="flex items-center gap-1">
-                      <Building size={16} />
+                      <Building size={16} aria-hidden="true" />
                       <span>{exp.company}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <MapPin size={16} />
+                      <MapPin size={16} aria-hidden="true" />
                       <span>{exp.location}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Calendar size={16} />
+                      <Calendar size={16} aria-hidden="true" />
                       <span className="font-mono text-sm">{exp.period}</span>
                     </div>
                   </div>
