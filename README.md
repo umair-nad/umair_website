@@ -17,9 +17,10 @@ A modern, responsive portfolio website built with Next.js, TypeScript, and Tailw
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
+- **Animations**: GSAP, with ScrollTrigger, ScrollSmoother, and SplitText
+- **3D**: Three.js (lazy-loaded, isolated to the Hero section)
 - **Icons**: Lucide React
-- **Font**: Inter (Google Fonts)
+- **Fonts**: Bricolage Grotesque, Satoshi, and JetBrains Mono
 
 ## Getting Started
 
@@ -122,7 +123,6 @@ npm run lint
 
 ## Performance
 
-- Lighthouse Score: 95+ (Performance, Accessibility, Best Practices, SEO)
 - Core Web Vitals: Optimized
 - Bundle Size: Optimized with Next.js
 
