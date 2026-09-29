@@ -134,9 +134,9 @@ const Contact = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div ref={leftRef}>
-            <h3 className="text-xl font-semibold text-fg mb-6">Let's Connect</h3>
+            <h3 className="text-xl font-semibold text-fg mb-6">Let&apos;s Connect</h3>
             <p className="text-muted mb-8">
-              I'm always interested in new opportunities and exciting projects.
+              I&apos;m always interested in new opportunities and exciting projects.
               Whether you have a question or just want to say hi, feel free to reach out!
             </p>
 
