@@ -6,6 +6,9 @@ import { Mail, Linkedin, ExternalLink } from 'lucide-react'
 
 const ParticleCanvas = dynamic(() => import('./hero/ParticleCanvas'), { ssr: false })
 
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-sm'
+
 const Hero = () => {
   return (
     <section className="min-h-screen flex items-center pt-16">
@@ -46,10 +49,10 @@ const Hero = () => {
               <a
                 href="#contact"
                 data-magnetic
-                className="bg-accent text-bg px-8 py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors duration-200 flex items-center gap-2"
+                className={`bg-accent text-bg px-8 py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors duration-200 flex items-center gap-2 ${focusRing}`}
               >
                 Get In Touch
-                <Mail className="w-5 h-5" />
+                <Mail className="w-5 h-5" aria-hidden="true" />
               </a>
 
               <div className="flex gap-4">
@@ -57,19 +60,21 @@ const Hero = () => {
                   href="https://www.linkedin.com/in/umair-nadeem-qa/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="LinkedIn"
                   data-magnetic
-                  className="text-muted hover:text-accent transition-colors duration-200 p-2"
+                  className={`text-muted hover:text-accent transition-colors duration-200 p-2 ${focusRing}`}
                 >
-                  <Linkedin className="w-6 h-6" />
+                  <Linkedin className="w-6 h-6" aria-hidden="true" />
                 </a>
                 <a
                   href="https://www.upwork.com/freelancers/~01862b323ce960e4b6"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Upwork"
                   data-magnetic
-                  className="text-muted hover:text-accent transition-colors duration-200 p-2"
+                  className={`text-muted hover:text-accent transition-colors duration-200 p-2 ${focusRing}`}
                 >
-                  <ExternalLink className="w-6 h-6" />
+                  <ExternalLink className="w-6 h-6" aria-hidden="true" />
                 </a>
               </div>
             </div>

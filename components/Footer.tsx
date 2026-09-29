@@ -85,19 +85,21 @@ const Footer = () => {
               href="https://www.linkedin.com/in/umair-nadeem-qa/"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="LinkedIn"
               data-magnetic
               className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
             >
-              <Linkedin size={20} />
+              <Linkedin size={20} aria-hidden="true" />
             </a>
             <a
               href="https://www.upwork.com/freelancers/~01862b323ce960e4b6"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Upwork"
               data-magnetic
               className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
             >
-              <ExternalLink size={20} />
+              <ExternalLink size={20} aria-hidden="true" />
             </a>
           </div>
         </div>
