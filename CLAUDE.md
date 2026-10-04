@@ -26,13 +26,13 @@ There is no test framework configured; UI verification is done with the playwrig
 
 - `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css
 - `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (Preloader, Cursor, AmbientBackground, WaveformDivider, hero/ParticleCanvas, providers/SmoothScrollProvider)
-- `lib/` - support code only: gsap.ts, magnetic.ts, motion-preferences.ts, three/particle-field.ts
+- `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts, three/particle-field.ts) plus content.ts, the typed content source for all site copy
 - `public/` - static assets (headshot)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.
 - `UmairNadeem_SQA.pdf` at the repo root is the public resume and is already tracked in git history. Do not confuse it with the private LinkedIn PDF in `data/`.
 
-All user-visible copy is hardcoded in component JSX or local const arrays. There is no CMS or content file.
+All user-visible copy is still hardcoded in component JSX or local const arrays; `lib/content.ts` (added 2026-10-04) is the typed content source the redesigned sections will pull from. There is no CMS.
 
 ## Project rules
 
@@ -44,7 +44,9 @@ All user-visible copy is hardcoded in component JSX or local const arrays. There
 - Never commit anything inside `data/` or `refrence/`. Both are gitignored; `data/` contains personal information.
 
 ### Content
-- Content sources are `data/` (LinkedIn PDF) and the existing site content. Never invent projects, metrics, dates, tools, or achievements. If something is missing or the sources conflict, stop and ask the user.
+- Content sources are `data/` (LinkedIn PDF), the public resume `UmairNadeem_SQA.pdf`, the existing site content, and facts the user provides directly in chat about Umair's work. When sources conflict, follow LinkedIn (user decision 2026-10-04). Never invent projects, metrics, dates, tools, or achievements. If something is missing from all sources, stop and ask the user.
+- Smart In Media content: present only what the user stated in chat or what is publicly visible on smartinmedia.com. Write product names as "PathoZoom Digital Lab" and "PathoZoom Scan & LiveView", skip the ® symbol in body text, and never describe internal details or clients.
+- Do not publish Umair's phone number anywhere on the site (user decision 2026-10-04). Email is the only direct contact method.
 - The reference site in `refrence/` belongs to a developer (Dhiraj Bhawsar). Use it only for design inspiration: layout, typography, spacing, animation. Never copy its content or its section structure.
 - Do NOT include a blog page or blog section.
 - Do NOT include GitHub insights, contribution graphs, GitHub stats, or repo activity widgets.
@@ -62,10 +64,19 @@ All user-visible copy is hardcoded in component JSX or local const arrays. There
 - Work in small steps, one section at a time, and stop for the user's review after each section.
 - After major UI changes, test with the playwright-cli skill at mobile and desktop widths.
 
+## Progress
+
+As of 2026-10-04:
+
+- Phases 0 to 2 are complete. Phase 2 produced `lib/content.ts`, the approved typed content source for all site copy (fact-checked against the sources, `tsc --noEmit` clean). Components do not read from it yet.
+- Key decisions: when sources conflict, LinkedIn wins; the public resume and facts the user states in chat are official content sources; the professional title is "QA Engineer"; no phone number on the site; no blog; no GitHub insights or stats.
+- Open items waiting on Umair: which automation tools he uses at Smart In Media, whether he tested AI modules (the "AI & LLM Testing" skill rests on his LinkedIn headline alone), projects worth showcasing, certifications.
+- Next step: Phase 3. Analyze the `refrence/` screenshots and write DESIGN.md, then stop for the user's approval before building any section.
+
 ## Redesign TODO
 
 Items confirmed with the user on 2026-10-04, to handle during the redesign:
 
-- Headshot file is `public/muhammad.jpg`: rename it during the redesign and update the `src` in `components/Hero.tsx`.
+- New headshot is `public/umair-nadeem.jpg` (2048x2048 JPEG, copied on 2026-10-04 from the gitignored `data/Profilepic.jpg`; the original stays in `data/`). Use it with next/image and descriptive alt text when the new Hero/About is built. `public/muhammad.jpg` is still referenced by `components/Hero.tsx`: delete it only after no component references it.
 - Footer year is hardcoded as "© 2024" in `components/Footer.tsx`: fix it while rebuilding the footer.
 - The resume `UmairNadeem_SQA.pdf` stays public and tracked at the repo root. If a "Download resume" button is added, move the PDF into `public/` so Next.js can serve it, and tell the user before moving it.
