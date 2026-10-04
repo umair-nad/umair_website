@@ -2,3 +2,13 @@ node_modules
 .next/
 *.log
 .env*
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+
+# Personal data (LinkedIn PDF etc.) - never commit
+data/
+
+# Design reference site (third-party, inspiration only) - never commit
+# Folder on disk is spelled "refrence"; both spellings ignored to be safe
+refrence/
+reference/
