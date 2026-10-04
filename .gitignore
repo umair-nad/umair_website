@@ -12,3 +12,8 @@ data/
 # Folder on disk is spelled "refrence"; both spellings ignored to be safe
 refrence/
 reference/
+
+# Local Claude Code tooling (skills, agents, lockfile); CLAUDE.md stays tracked
+.agents/
+.claude/
+skills-lock.json
