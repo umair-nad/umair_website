@@ -17,3 +17,6 @@ reference/
 .agents/
 .claude/
 skills-lock.json
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
