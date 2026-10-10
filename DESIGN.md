@@ -233,6 +233,11 @@ Every animation must answer "what does this communicate" in one sentence:
 
 Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; typewriter renders full text. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
 
+Implementation notes (learned in build step 2):
+- **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). The old About, Contact, Footer, and Skills components still have the bug; it goes away as they are rebuilt.
+- **Entrance reveals without a flash.** The pre-paint script sets `data-motion="ok"` on `<html>` only when reduced motion is off. `globals.css` then hides `[data-reveal]` elements before first paint, with a CSS failsafe that shows them after 2.5s if JS never hydrates. The component calls `gsap.set(..., { autoAlpha: 1 })` immediately and animates with `fromTo` and explicit end values; a plain `from()` would capture the CSS-hidden state as its end value. Measured: the hero headline is visible about 50ms after load.
+- **Focus rings don't animate.** Interactive elements use `transition-[color,background-color,border-color]`, not `transition-colors`, which also transitions `outline-color` and makes the focus ring fade in from `currentColor`.
+
 No scroll cues, no pinned/hijacked sections in v1, no infinite loops outside the marquee and the 2s-period status dot pulse.
 
 ---
@@ -449,7 +454,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
    - EB Garamond, Alata, and Source Code Pro via `next/font`.
    - The no-flash `ThemeScript` (static, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`.
    - The floating navbar with the `Logo`, the pill, the status capsule, the toggle placement, and the mobile menu.
-2. Hero, including the "Download resume" button and the `git mv` of the PDF into `public/`, only once the PDF gate in 11.1 is cleared
+2. **Hero (done 2026-10-10, awaiting review):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroTrace.tsx`, with all copy from `lib/content.ts`. The "Download resume" button and the `git mv` of the PDF into `public/` are still gated (11.1); a marked slot in the CTA row is waiting for them.
 3. About bento
 4. Experience timeline
 5. Skills

@@ -120,6 +120,20 @@
   padding-bottom: 0.08em;
 }
 
+/* Entrance reveals (Hero): elements marked data-reveal start hidden only
+   when the pre-paint script saw motion allowed; GSAP then reveals them.
+   Failsafe: if JS never hydrates, they show anyway after 2.5s. */
+html[data-motion='ok'] [data-reveal] {
+  visibility: hidden;
+  animation: reveal-failsafe 0s linear 2.5s forwards;
+}
+
+@keyframes reveal-failsafe {
+  to {
+    visibility: visible;
+  }
+}
+
 /* Set for one frame while the theme switches, so colors snap instead of
    animating (DESIGN.md section 2, switch hygiene). */
 .theme-switching,

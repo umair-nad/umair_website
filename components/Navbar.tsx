@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollSmoother, ScrollTrigger, registerGsap } from '@/lib/gsap'
-import { prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
+import { ALWAYS_QUERY, prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
+import { scrollToElement } from '@/lib/scroll'
 import Logo from '@/components/brand/Logo'
 import StatusCapsule from '@/components/nav/StatusCapsule'
 import ThemeToggle from '@/components/theme/ThemeToggle'
@@ -45,7 +46,7 @@ const Navbar = () => {
       const mm = gsap.matchMedia()
 
       mm.add(
-        { reduceMotion: REDUCED_MOTION_QUERY, coarsePointer: COARSE_POINTER_QUERY },
+        { always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY, coarsePointer: COARSE_POINTER_QUERY },
         (context) => {
           const { reduceMotion, coarsePointer } = context.conditions as {
             reduceMotion: boolean
@@ -129,19 +130,8 @@ const Navbar = () => {
       // within the nav and ScrollSmoother would get an empty target.
       const target = document.querySelector<HTMLElement>(href)
       if (!target) return
-
-      const offset = (barRef.current?.getBoundingClientRect().bottom ?? 0) + SCROLL_GAP
-      const smoother = ScrollSmoother.get()
-      if (smoother) {
-        // "top top+=N" lands the section N pixels below the viewport top,
-        // clear of the floating bar.
-        smoother.scrollTo(target, true, `top top+=${offset}`)
-      } else {
-        // Reduced motion, or no ScrollSmoother: scroll manually so both the
-        // offset and the reduced-motion preference are respected.
-        const targetY = target.getBoundingClientRect().top + window.scrollY - offset
-        window.scrollTo({ top: targetY, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
-      }
+      // Offset measured from the live bar, so the section lands clear of it.
+      scrollToElement(target, (barRef.current?.getBoundingClientRect().bottom ?? 0) + SCROLL_GAP)
     })()
     if (isOpen) closeMenu()
   }
@@ -204,7 +194,7 @@ const Navbar = () => {
                   data-section={item.href}
                   data-magnetic
                   onClick={(e) => onAnchorClick(e, item.href)}
-                  className={`inline-flex h-6.5 items-center rounded-card px-3 text-[13px] text-fg transition-colors hover:bg-fg/5 aria-current:bg-fg/5 aria-current:text-accent ${focusRing}`}
+                  className={`inline-flex h-6.5 items-center rounded-card px-3 text-[13px] text-fg transition-[color,background-color,border-color] hover:bg-fg/5 aria-current:bg-fg/5 aria-current:text-accent ${focusRing}`}
                 >
                   {item.name}
                 </a>
@@ -215,7 +205,7 @@ const Navbar = () => {
                 href="#contact"
                 data-magnetic
                 onClick={(e) => onAnchorClick(e, '#contact')}
-                className={`inline-flex h-7.5 items-center rounded-card border border-line-strong bg-white/10 px-3 text-[13px] text-fg transition-colors hover:bg-white/20 ${focusRing}`}
+                className={`inline-flex h-7.5 items-center rounded-card border border-line-strong bg-white/10 px-3 text-[13px] text-fg transition-[color,background-color,border-color] hover:bg-white/20 ${focusRing}`}
               >
                 Get in touch
               </a>
@@ -236,7 +226,7 @@ const Navbar = () => {
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
-              className={`inline-flex size-9 items-center justify-center rounded-control text-fg transition-colors hover:bg-fg/5 md:hidden ${focusRing}`}
+              className={`inline-flex size-9 items-center justify-center rounded-control text-fg transition-[color,background-color,border-color] hover:bg-fg/5 md:hidden ${focusRing}`}
             >
               {isOpen ? <X size={20} strokeWidth={1.75} aria-hidden="true" /> : <Menu size={20} strokeWidth={1.75} aria-hidden="true" />}
             </button>
@@ -256,7 +246,7 @@ const Navbar = () => {
                     data-section={item.href}
                     data-mobile-link
                     onClick={(e) => onAnchorClick(e, item.href)}
-                    className={`block rounded-control px-3 py-2.5 text-[15px] text-fg transition-colors hover:bg-fg/5 aria-current:text-accent ${focusRing}`}
+                    className={`block rounded-control px-3 py-2.5 text-[15px] text-fg transition-[color,background-color,border-color] hover:bg-fg/5 aria-current:text-accent ${focusRing}`}
                   >
                     {item.name}
                   </a>

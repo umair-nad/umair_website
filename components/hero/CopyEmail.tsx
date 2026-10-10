@@ -1,0 +1,61 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import { Check, Copy } from 'lucide-react'
+
+type Status = 'idle' | 'copied' | 'failed'
+
+const RESET_MS = 2000
+
+// Copy-email row (DESIGN.md section 6): lucide Copy icon + the address in
+// Source Code Pro. Email is the only direct contact method (CLAUDE.md).
+export default function CopyEmail({ email, className = '' }: { email: string; className?: string }) {
+  const [status, setStatus] = useState<Status>('idle')
+  const timer = useRef<number | undefined>(undefined)
+
+  useEffect(() => () => window.clearTimeout(timer.current), [])
+
+  const copy = async () => {
+    window.clearTimeout(timer.current)
+    try {
+      await navigator.clipboard.writeText(email)
+      setStatus('copied')
+    } catch {
+      // Clipboard API blocked (insecure context, permissions): the address
+      // stays visible and selectable, so the visitor can copy it by hand.
+      setStatus('failed')
+    }
+    timer.current = window.setTimeout(() => setStatus('idle'), RESET_MS)
+  }
+
+  const Icon = status === 'copied' ? Check : Copy
+
+  return (
+    <div className={`inline-flex items-center ${className}`}>
+      <button
+        type="button"
+        onClick={copy}
+        aria-label={`Copy email address ${email}`}
+        className="group inline-flex h-12 touch-manipulation items-center gap-2.5 rounded-full px-3 font-mono text-sm text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.98]"
+      >
+        <Icon
+          size={18}
+          strokeWidth={1.75}
+          aria-hidden="true"
+          className={status === 'copied' ? 'text-accent' : 'text-fg'}
+        />
+        <span translate="no">{email}</span>
+        <span
+          aria-hidden="true"
+          className={`text-xs text-muted transition-opacity duration-200 ${status === 'idle' ? 'opacity-0' : 'opacity-100'}`}
+        >
+          {status === 'failed' ? 'Copy failed, select to copy' : 'Copied'}
+        </span>
+      </button>
+      {/* Announces the result to screen readers; the visual label above is aria-hidden. */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {status === 'copied' ? 'Email address copied to clipboard' : status === 'failed' ? 'Copy failed. The email address is shown on screen.' : ''}
+      </span>
+    </div>
+  )
+}

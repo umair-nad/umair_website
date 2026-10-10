@@ -1,6 +1,15 @@
 export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 export const COARSE_POINTER_QUERY = '(pointer: coarse)'
 
+/**
+ * A media query that always matches. GSAP's matchMedia only runs a
+ * conditions-object callback while AT LEAST ONE condition matches, so
+ * `{ reduceMotion, coarsePointer }` alone never runs on a plain desktop
+ * (neither matches). Include `always: ALWAYS_QUERY` in every conditions
+ * object whose conditions can all be false at once.
+ */
+export const ALWAYS_QUERY = 'all'
+
 export function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined') return false
   return window.matchMedia(REDUCED_MOTION_QUERY).matches
@@ -16,6 +25,8 @@ export function prefersReducedMotion(): boolean {
  *   useGSAP(() => {
  *     const mm = gsap.matchMedia()
  *
+ *     // isDesktop/isMobile are complementary, so one always matches. If your
+ *     // conditions can all be false, add `always: ALWAYS_QUERY` (see above).
  *     mm.add(
  *       {
  *         isDesktop: '(min-width: 1024px)',

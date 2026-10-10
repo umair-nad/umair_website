@@ -27,8 +27,8 @@ There is no test framework configured; UI verification is done with the playwrig
 - `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css, plus the icon file conventions (favicon.ico, icon.svg, icon1.png, apple-icon.png) and manifest.ts
 - `assets/brand/` - non-public brand sources: `un-monogram.svg` (Umair's "UN" logo, `currentColor`, the source of truth for the Logo component and any regenerated favicons), `un-monogram-original.png` (the original raster, reference only). Never serve files from here directly.
 - `review/` - local review screenshots for the user. Gitignored; never commit.
-- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
-- `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts, theme.ts) plus content.ts, the typed content source for all site copy
+- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle) and section parts (hero/CopyEmail, hero/HeroTrace). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
+- `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts, scroll.ts, theme.ts) plus content.ts, the typed content source for all site copy
 - `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.
@@ -95,17 +95,27 @@ As of 2026-10-10:
   - "Rebuild navbar shell"
 
   The upgrade decision and the remaining `npm audit` findings (5 high, all one dev-only lint chain with no upstream fix) are in DESIGN.md 10.6. Verified: `npm run lint` clean; `tsc --noEmit` clean; `npm run build` green with the page still static; playwright-cli at 390px and 1440px in both themes, with screenshots in `review/`; no flash on a hard reload in dark mode; theme toggle behavior; menu Escape and inert; console clean.
-- Old section components (Hero, About, Experience, Skills, Contact, Footer) still render with their old copy and layout on the new tokens and fonts until each is rebuilt. lucide 1.x has no brand icons, so they show a generic ExternalLink icon for LinkedIn and Upwork for now.
+- Step 1 was approved by the user on 2026-10-10.
+- Phase 4 build step 2 (Hero) is done and pushed, waiting for the user's review (commit "Build Hero section"):
+  - The status badge, the `h1` with the italic gradient "break", the subline, "Get in touch", and the copy-email row (copied/failed states with a live region) are all built from `lib/content.ts`.
+  - The gradient trace draws in and then settles.
+  - The SplitText line reveal plays once, with a reduced-motion fallback.
+  - A marked resume slot sits in the CTA row; there is no resume button until Umair approves the PDF.
+  - The old Hero and `public/muhammad.jpg` were removed. `lib/scroll.ts` is the shared anchor-scroll helper.
+  - Also fixed in this step: the GSAP matchMedia bug (DESIGN.md section 7 notes), which had silently disabled the navbar's magnetic hover on desktop; focus rings no longer fade in; the SVG favicon is now an opaque tile.
+  - Verified: lint, tsc, and build clean; exactly one `h1`; playwright-cli at 390px and 1440px in both themes (above the fold, copy feedback, keyboard focus on both CTAs, reduced motion), with screenshots in `review/hero-*`; web-design-guidelines review applied.
+- Old section components (About, Experience, Skills, Contact, Footer) still render with their old copy and layout on the new tokens and fonts until each is rebuilt. lucide 1.x has no brand icons, so they show a generic ExternalLink icon for LinkedIn and Upwork for now.
+- `next-env.d.ts` is untracked and gitignored: Next 16 regenerates it on every run.
 - Decision pending before the Hero step: Umair's OK to publish the resume PDF, which contains his phone number and an older email address (DESIGN.md 11.1).
 - Phase 2 produced `lib/content.ts`, the approved typed content source for all site copy (fact-checked against the sources, `tsc --noEmit` clean). Components do not read from it yet.
 - Key decisions: when sources conflict, LinkedIn wins; the public resume and facts the user states in chat are official content sources; the professional title is "QA Engineer"; no phone number on the site; no blog; no GitHub insights or stats.
 - Open items waiting on Umair: which automation tools he uses at Smart In Media, whether he tested AI modules (the "AI & LLM Testing" skill rests on his LinkedIn headline alone), projects worth showcasing, certifications.
-- Next step: after the user approves step 1, Phase 4 build step 2, the Hero (DESIGN.md 11.1 and 13). Stop for review afterwards.
+- Next step: after the user approves step 2, Phase 4 build step 3, the About bento (DESIGN.md 11.2 and 13). Stop for review afterwards.
 
 ## Redesign TODO
 
 Items confirmed with the user on 2026-10-04, to handle during the redesign:
 
-- New headshot is `public/umair-nadeem.jpg` (2048x2048 JPEG, copied on 2026-10-04 from the gitignored `data/Profilepic.jpg`; the original stays in `data/`). Use it with next/image and descriptive alt text when the new Hero/About is built. `public/muhammad.jpg` is still referenced by `components/Hero.tsx`: delete it only after no component references it.
+- New headshot is `public/umair-nadeem.jpg` (2048x2048 JPEG, copied on 2026-10-04 from the gitignored `data/Profilepic.jpg`; the original stays in `data/`). Use it with next/image and descriptive alt text when the new Hero/About is built. `public/muhammad.jpg` (old headshot) was deleted with the old Hero on 2026-10-10.
 - Footer year is hardcoded as "© 2024" in `components/Footer.tsx`: fix it while rebuilding the footer.
 - The resume `UmairNadeem_SQA.pdf` stays public and tracked. User approved on 2026-10-10: during the Hero build step, `git mv` it into `public/` and add "Download resume" buttons in the hero CTA row and the footer (DESIGN.md 11.1). Gated: the PDF contains Umair's phone number, so wait for his explicit OK (or a PDF without the phone) before moving it.

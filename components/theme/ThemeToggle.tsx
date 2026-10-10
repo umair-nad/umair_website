@@ -41,7 +41,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
       onClick={() => applyTheme(getTheme() === 'dark' ? 'light' : 'dark', { persist: true })}
       aria-label={label}
       title={label}
-      className={`inline-flex size-9 shrink-0 items-center justify-center rounded-control text-fg transition-colors hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
+      className={`inline-flex size-9 shrink-0 items-center justify-center rounded-control text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
     >
       <Sun size={19} strokeWidth={1.75} aria-hidden="true" className="hidden dark:block" />
       <Moon size={19} strokeWidth={1.75} aria-hidden="true" className="block dark:hidden" />

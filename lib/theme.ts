@@ -15,6 +15,8 @@ export const DARK_QUERY = '(prefers-color-scheme: dark)'
 /**
  * Runs in <head> before first paint (see ThemeScript). A stored choice
  * wins; otherwise follow the OS preference; light when neither is known.
+ * It also sets data-motion="ok" on <html> when reduced motion is off, so
+ * entrance animations can hide their elements without a flash.
  * Must stay a static string (only the module constants above are
  * interpolated, never request or user data): it is emitted with
  * dangerouslySetInnerHTML and, once the CSP lands, carries the request's
@@ -28,6 +30,11 @@ export const THEME_INIT_SCRIPT = `(function () {
   }
   d.classList.toggle('dark', t === 'dark');
   d.style.colorScheme = t;
+  // Entrance animations may pre-hide their elements only when motion is
+  // allowed (globals.css, [data-reveal]); reduced motion paints them final.
+  try {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.setAttribute('data-motion', 'ok');
+  } catch (e) {}
 })();`
 
 export function getTheme(): Theme {
