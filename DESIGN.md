@@ -283,13 +283,13 @@ All metadata stays in `app/layout.tsx` (static export) plus Next.js file convent
   - Never a `telephone` (locked rule).
 - **`themeColor`:** per scheme, via the `viewport` export (section 2).
 - **Icons and manifest (in place since 2026-10-10, Next.js file conventions):**
-  - `app/favicon.ico` (16, 32, and 48px images). Next 14.0.4 labels its `<link>` `sizes="16x16"` (the first embedded image) rather than `any`; this is harmless, and is re-checked after the Next upgrade.
-  - `app/icon.png` (32x32) and `app/apple-icon.png` (180x180).
-  - `public/android-chrome-192x192.png` and `public/android-chrome-512x512.png`, referenced from `app/manifest.ts`.
+  - All icons were regenerated on 2026-10-10 from the approved `assets/brand/un-monogram.svg` (the generator's grey-background originals are gone). Rendered in the browser via playwright-cli; the ICO was assembled from those renders.
+  - `app/icon.svg`: the primary tab icon. Transparent, monogram at 90% of the square, with an embedded `@media (prefers-color-scheme: dark)` rule: black on light browser UI, white on dark. It follows the browser or OS theme, not the site's own toggle; browsers don't expose the page theme to favicons.
+  - `app/favicon.ico` (PNG-encoded 16, 32, and 48px entries) and `app/icon1.png` (32x32): fallback for browsers without SVG favicon support. Black monogram at 90% on opaque white. At 16px the hairline serifs blur; that's inherent to a high-contrast serif at that size, and SVG-capable browsers use `icon.svg` instead. Next 14.0.4 labels the ICO `sizes="16x16"` (its first entry) rather than `any`; harmless, and re-checked after the Next upgrade.
+  - `app/apple-icon.png` (180x180), `public/android-chrome-192x192.png`, and `public/android-chrome-512x512.png`: opaque white with a black monogram at 65%, inside the circular maskable safe zone (iOS fills transparency with black, so these stay opaque).
+  - The PNG is named `icon1.png`, not `icon.png`: with both `icon.svg` and `icon.png` present, Next 14.0.4 emits a `<link>` for only one of them; the numbered suffix makes it emit both.
   - `app/manifest.ts` (served as `/manifest.webmanifest`) replaces the generator's `site.webmanifest`: `name` from `content.seo.title`, `short_name` from `content.name`, `description` from `content.seo.description`, `display: standalone`, and `theme_color` / `background_color` `#ffffff` (the light `bg`; a manifest can't follow the viewer's theme).
-  - The generator's 16x16 PNG is kept in `assets/brand/` but not served: it duplicated the ICO's 16px image as a second `16x16` icon link.
-  - Generated tags (checked against the dev server): one `icon` link for the ICO, one for the 32px PNG, one `apple-touch-icon`, one `manifest`, and no duplicates. The old `app/icon.svg` (Signal & Noise dot) was removed.
-  - **Open:** all icon files carry the original's opaque grey background, with the monogram filling only about a third of the canvas. Regenerating them from the approved SVG waits for the user's OK.
+  - Generated tags (checked on a freshly started dev server): `icon` for the ICO, `icon` for `icon.svg` (`image/svg+xml`, `sizes="any"`), `icon` for the 32px PNG, one `apple-touch-icon`, and one `manifest`. Every file returns 200, and there are no duplicates.
 
 ---
 

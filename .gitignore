@@ -20,3 +20,6 @@ skills-lock.json
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
+
+# Local review screenshots (not part of the site)
+review/
