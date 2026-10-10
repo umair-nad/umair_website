@@ -9,22 +9,15 @@ registerGsap()
 
 const PATH_D = 'M0 20 Q25 0 50 20 T100 20 T150 20 T200 20 T250 20 T300 20'
 
-const STROKE: Record<'accent' | 'accent2', string> = {
-  accent: 'var(--accent)',
-  accent2: 'var(--accent-2)',
-}
-
 interface WaveformDividerProps {
-  colorVar?: 'accent' | 'accent2'
   scrub?: boolean
   className?: string
 }
 
-export default function WaveformDivider({
-  colorVar = 'accent2',
-  scrub = false,
-  className = '',
-}: WaveformDividerProps) {
+// The QA signature between sections (DESIGN.md section 2): a neutral
+// stroke in `fg` at 12% opacity, so it follows the light/dark theme via
+// currentColor. Decorative only (aria-hidden), so no contrast minimum.
+export default function WaveformDivider({ scrub = false, className = '' }: WaveformDividerProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const pathRef = useRef<SVGPathElement>(null)
 
@@ -55,14 +48,15 @@ export default function WaveformDivider({
       ref={svgRef}
       viewBox="0 0 300 40"
       preserveAspectRatio="none"
-      className={`h-10 w-full ${className}`}
+      className={`h-10 w-full text-fg ${className}`}
       aria-hidden="true"
     >
       <path
         ref={pathRef}
         d={PATH_D}
         fill="none"
-        stroke={`rgb(${STROKE[colorVar]})`}
+        stroke="currentColor"
+        strokeOpacity={0.12}
         strokeWidth="1.5"
         vectorEffect="non-scaling-stroke"
       />

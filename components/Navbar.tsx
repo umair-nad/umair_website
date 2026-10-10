@@ -6,6 +6,7 @@ import { useGSAP } from '@gsap/react'
 import { gsap, ScrollSmoother, registerGsap } from '@/lib/gsap'
 import { prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
+import ThemeToggle from '@/components/theme/ThemeToggle'
 
 registerGsap()
 
@@ -164,8 +165,10 @@ const Navbar = () => {
             </div>
           </div>
 
+          <ThemeToggle className="ml-auto md:ml-6" />
+
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden ml-2">
             <button
               onClick={toggleMenu}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}

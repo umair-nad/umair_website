@@ -1,26 +1,29 @@
 import type { Metadata, Viewport } from 'next'
-import { Bricolage_Grotesque, JetBrains_Mono } from 'next/font/google'
-import localFont from 'next/font/local'
+import { Alata, EB_Garamond, Source_Code_Pro } from 'next/font/google'
+import ThemeScript from '@/components/theme/ThemeScript'
+import { THEME_COLOR } from '@/lib/theme'
 import './globals.css'
 
-const bricolageGrotesque = Bricolage_Grotesque({
+// The three faces from DESIGN.md section 4, all self-hosted by next/font.
+// EB Garamond loads its real italic (the reference only synthesizes one).
+const ebGaramond = EB_Garamond({
   subsets: ['latin'],
-  variable: '--font-bricolage',
+  style: ['normal', 'italic'],
+  variable: '--font-eb-garamond',
   display: 'swap',
 })
 
-const jetbrainsMono = JetBrains_Mono({
+// Alata ships a single weight.
+const alata = Alata({
   subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  weight: '400',
+  variable: '--font-alata',
   display: 'swap',
 })
 
-const satoshi = localFont({
-  src: [
-    { path: './fonts/Satoshi-Variable.woff2', weight: '300 900', style: 'normal' },
-    { path: './fonts/Satoshi-VariableItalic.woff2', weight: '300 900', style: 'italic' },
-  ],
-  variable: '--font-satoshi',
+const sourceCodePro = Source_Code_Pro({
+  subsets: ['latin'],
+  variable: '--font-source-code-pro',
   display: 'swap',
 })
 
@@ -38,10 +41,15 @@ export const metadata: Metadata = {
   },
 }
 
+// One theme-color per OS scheme; ThemeToggle re-points both at the active
+// theme when the visitor's choice differs from the OS (lib/theme.ts).
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0A0C10',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR.light },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR.dark },
+  ],
 }
 
 export default function RootLayout({
@@ -50,14 +58,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    // suppressHydrationWarning: ThemeScript sets the `dark` class and
+    // color-scheme on <html> before React hydrates.
     <html
       lang="en"
-      className={`${bricolageGrotesque.variable} ${jetbrainsMono.variable} ${satoshi.variable}`}
+      className={`${ebGaramond.variable} ${alata.variable} ${sourceCodePro.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-bg text-fg">
-        {children}
-      </body>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="bg-bg text-fg antialiased">{children}</body>
     </html>
   )
-} 
+}

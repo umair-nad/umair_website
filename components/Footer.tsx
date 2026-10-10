@@ -72,7 +72,7 @@ const Footer = () => {
   return (
     <footer ref={footerRef} className="pt-4 pb-8 border-t border-muted/20">
       <div ref={waveformWrapperRef} className="mb-4">
-        <WaveformDivider colorVar="accent2" />
+        <WaveformDivider />
       </div>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div ref={contentRef} className="flex flex-col md:flex-row justify-between items-center">

@@ -1,56 +1,131 @@
 @import 'tailwindcss';
 
-@theme {
-  --color-bg: rgb(var(--bg));
-  --color-fg: rgb(var(--fg));
-  --color-muted: rgb(var(--muted));
-  --color-accent: rgb(var(--accent));
-  --color-accent2: rgb(var(--accent-2));
+/* Dark mode is class-driven: the no-flash script in app/layout.tsx (and
+   ThemeToggle afterwards) puts `dark` on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
 
-  --font-sans: var(--font-satoshi), ui-sans-serif, sans-serif;
-  --font-display: var(--font-bricolage), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+/* Theme tokens, values exactly as in DESIGN.md section 3 (measured on the
+   reference site; AA contrast computed there). `inline` so every utility
+   resolves the variable at the element, which is what lets `.dark`
+   re-point them. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-line-card: var(--line-card);
+  --color-fg: var(--fg);
+  --color-text: var(--text);
+  --color-text-hero: var(--text-hero);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-inverse: var(--inverse);
+  --color-inverse-fg: var(--inverse-fg);
+  --color-live: var(--live);
+  --color-live-fg: var(--live-fg);
+
+  --font-display: var(--font-eb-garamond), ui-serif, Georgia, serif;
+  --font-sans: var(--font-alata), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-source-code-pro), ui-monospace, monospace;
+
+  /* Radius system (DESIGN.md section 5). Pills use rounded-full. */
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-inset: 14px;
+  --radius-panel: 24px;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #fafafa;
+  --line: rgb(0 0 0 / 0.1);
+  --line-strong: rgb(0 0 0 / 0.2);
+  --line-card: rgb(0 0 0 / 0.1);
+  --fg: #000000;
+  --text: #404040;
+  --text-hero: #404040;
+  --muted: rgb(0 0 0 / 0.6);
+  --accent: #7928ca;
+  --inverse: #171717;
+  --inverse-fg: #ffffff;
+  --live: #00c950;
+  --live-fg: #000000;
+  /* The one accent word per headline, and the hero trace. Light uses three
+     reference stops (lowest sampled contrast 3.77:1 on white). */
+  --accent-gradient: linear-gradient(135deg, #ff0080, #7928ca, #0070f3);
+  --accent-stop-1: #ff0080;
+  --accent-stop-2: #7928ca;
+  --accent-stop-3: #0070f3;
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+  /* Fixed navbar height for CSS consumers (Hero's top padding, etc.). */
+  --nav-height: 4rem;
+}
+
+.dark {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #0a0a0a;
+  --line: rgb(255 255 255 / 0.1);
+  --line-strong: rgb(255 255 255 / 0.2);
+  --line-card: rgb(36 36 36 / 0.3); /* #242424/0.30, as on the reference */
+  --fg: #ffffff;
+  --text: #a1a1a1;
+  --text-hero: #d4d4d4;
+  --muted: rgb(255 255 255 / 0.6);
+  --accent: #c27aff;
+  --inverse: #ffffff;
+  --inverse-fg: #000000;
+  --live: #00c950;
+  --live-fg: #000000;
+  /* Dark drops #7928ca (2.80:1 on #0a0a0a): pink to sky, lowest 4.17:1.
+     stop-2 is the sRGB midpoint, so SVG gradients match the CSS one. */
+  --accent-gradient: linear-gradient(135deg, #ff0080, #38bdf8);
+  --accent-stop-1: #ff0080;
+  --accent-stop-2: color-mix(in srgb, #ff0080 50%, #38bdf8);
+  --accent-stop-3: #38bdf8;
+}
+
 @layer base {
+  /* Tailwind 4 defaults borders to currentColor; the design's default
+     1px border is the `line` token. */
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
   }
 }
 
-:root {
-  /* "Signal & Noise" palette, replaced by the DESIGN.md light/dark
-     token sets in the theme-system commit. */
-  --bg: 10 12 16; /* #0A0C10 */
-  --fg: 232 234 240; /* #E8EAF0 */
-  --muted: 148 163 184; /* #94A3B8 */
-  --accent: 255 92 92; /* #FF5C5C coral */
-  --accent-2: 45 224 198; /* #2DE0C6 teal */
-
-  /* Single source for the fixed navbar's height, so Navbar's own size
-     and anything that needs to clear it (Hero's top padding, etc.)
-     can't drift apart by being edited independently. The nav scroll
-     offset in Navbar.tsx's scrollToSection deliberately measures the
-     live rendered height instead of reading this variable, since that
-     also automatically accounts for the 1px border and any future
-     responsive height change - this variable is for CSS consumers. */
-  --nav-height: 4rem; /* 64px, matches Navbar's h-[var(--nav-height)] */
+/* Gradient accent word (DESIGN.md section 4). The bottom padding keeps
+   descenders from being clipped by background-clip: text. */
+@utility text-gradient-accent {
+  background-image: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
 }
 
-html {
-  scroll-behavior: smooth;
+/* Set for one frame while the theme switches, so colors snap instead of
+   animating (DESIGN.md section 2, switch hygiene). */
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
