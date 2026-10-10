@@ -1,22 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, JetBrains_Mono } from 'next/font/google'
 import localFont from 'next/font/local'
-import Script from 'next/script'
 import './globals.css'
-
-// Must decide overlay visibility before first paint, so it runs via
-// next/script's beforeInteractive strategy rather than a useEffect.
-// Keep this literal 'preloader-shown' key in sync with
-// components/Preloader.tsx's SESSION_KEY.
-const PRELOADER_DECISION_SCRIPT = `(function () {
-  try {
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var shown = window.sessionStorage.getItem('preloader-shown');
-    document.documentElement.setAttribute('data-preloader', (reduce || shown) ? 'skip' : 'show');
-  } catch (e) {
-    document.documentElement.setAttribute('data-preloader', 'skip');
-  }
-})();`
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ['latin'],
@@ -71,9 +56,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-bg text-fg">
-        <Script id="preloader-decision" strategy="beforeInteractive">
-          {PRELOADER_DECISION_SCRIPT}
-        </Script>
         {children}
       </body>
     </html>

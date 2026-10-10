@@ -1,10 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
 import { Mail, ExternalLink } from 'lucide-react'
-
-const ParticleCanvas = dynamic(() => import('./hero/ParticleCanvas'), { ssr: false })
 
 const focusRing =
   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
@@ -78,10 +75,6 @@ const Hero = () => {
                 </a>
               </div>
             </div>
-          </div>
-
-          <div className="h-64 sm:h-72 lg:h-112">
-            <ParticleCanvas />
           </div>
         </div>
       </div>

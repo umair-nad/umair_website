@@ -9,7 +9,6 @@ Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer.
 - Framework: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9 (upgraded 2026-10-10)
 - Styling: Tailwind CSS 4 (CSS-first config: theme tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.js`), PostCSS via `@tailwindcss/postcss`
 - Animation: GSAP 3 with @gsap/react (ScrollTrigger, ScrollSmoother, SplitText; registered in `lib/gsap.ts`)
-- 3D: Three.js, lazy-loaded and isolated to the Hero particle canvas
 - Icons: lucide-react. Fonts: Bricolage Grotesque and JetBrains Mono (Google), Satoshi (local in `app/fonts/`)
 - Package manager: npm
 
@@ -27,8 +26,8 @@ There is no test framework configured; UI verification is done with the playwrig
 - `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css, plus the icon file conventions (favicon.ico, icon.svg, icon1.png, apple-icon.png) and manifest.ts
 - `assets/brand/` - non-public brand sources: `un-monogram.svg` (Umair's "UN" logo, `currentColor`, the source of truth for the Logo component and any regenerated favicons), `un-monogram-original.png` (the original raster, reference only). Never serve files from here directly.
 - `review/` - local review screenshots for the user. Gitignored; never commit.
-- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (Preloader, Cursor, AmbientBackground, WaveformDivider, hero/ParticleCanvas, providers/SmoothScrollProvider)
-- `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts, three/particle-field.ts) plus content.ts, the typed content source for all site copy
+- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
+- `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts) plus content.ts, the typed content source for all site copy
 - `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.

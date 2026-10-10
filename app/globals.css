@@ -1,11 +1,6 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-primary: rgb(var(--legacy-accent));
-  --color-secondary: rgb(var(--legacy-muted));
-  --color-dark: rgb(var(--legacy-bg));
-  --color-light: rgb(var(--legacy-fg));
-  --color-slate: rgb(var(--legacy-muted));
   --color-bg: rgb(var(--bg));
   --color-fg: rgb(var(--fg));
   --color-muted: rgb(var(--muted));
@@ -36,17 +31,8 @@
 }
 
 :root {
-  /* Legacy palette (kept only until each component's motion/visual
-     pass in Phases 2-6 migrates it away; removed once unused). */
-  --legacy-bg: 10 25 47; /* #0a192f */
-  --legacy-fg: 204 214 246; /* #ccd6f6 */
-  --legacy-accent: 100 255 218; /* #64ffda */
-  --legacy-accent-hover: 79 209 199; /* #4fd1c7 */
-  --legacy-muted: 136 146 176; /* #8892b0 */
-
-  /* "Signal & Noise" palette (locked). Coral is the primary accent for
-     interactive/large elements; teal is reserved for waveform and
-     data-detail treatments only. */
+  /* "Signal & Noise" palette, replaced by the DESIGN.md light/dark
+     token sets in the theme-system commit. */
   --bg: 10 12 16; /* #0A0C10 */
   --fg: 232 234 240; /* #E8EAF0 */
   --muted: 148 163 184; /* #94A3B8 */
@@ -76,49 +62,4 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Preloader visibility is decided before first paint by the
-   beforeInteractive script in app/layout.tsx, which sets this
-   attribute from sessionStorage + prefers-reduced-motion. No attribute
-   yet (or "show") means visible - the correct default for a genuine
-   first visit, since the script simply hasn't run yet. */
-html[data-preloader='skip'] #preloader-overlay {
-  display: none !important;
-}
-
-/* Pure-CSS last resort: if JS partially loads and throws before
-   Preloader's own effects/failsafe ever register (so neither the
-   try/catch nor its setTimeout runs), this removes the overlay 3s
-   after paint regardless - no JS required. During the 3s delay it has
-   no effect, so it never interferes with the normal GSAP-driven fade
-   or the JS failsafe, both of which complete well before 3s. */
-#preloader-overlay {
-  animation: preloader-failsafe 0s linear 3s forwards;
-}
-
-@keyframes preloader-failsafe {
-  to {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgb(var(--legacy-bg));
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgb(var(--legacy-accent));
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--legacy-accent-hover));
 }
