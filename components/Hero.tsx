@@ -125,13 +125,16 @@ export default function Hero() {
           className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/10 px-3 py-1 text-[13px] text-fg backdrop-blur-[10px] md:text-sm"
         >
           <span className="size-1.5 rounded-full bg-live" aria-hidden="true" />
-          {currentRole.title} · <span translate="no">{currentRole.company}</span>
+          {/* One span, so the flex gap only separates the dot from the label. */}
+          <span>
+            {currentRole.title} · <span translate="no">{currentRole.company}</span>
+          </span>
         </p>
 
         <h1
           ref={headlineRef}
           data-reveal
-          className="mt-7 max-w-3xl font-display text-4xl leading-[1.15] font-normal text-balance text-fg md:mt-8 md:text-5xl lg:text-[60px] lg:leading-[1.375]"
+          className="mt-7 max-w-3xl font-display text-4xl leading-[1.15] font-normal text-balance text-fg md:mt-8 md:text-5xl lg:text-[60px] lg:leading-snug"
         >
           {BEFORE}
           {HAS_ACCENT && <em className="text-gradient-accent pr-[0.06em] italic">{ACCENT_WORD}</em>}
@@ -153,10 +156,10 @@ export default function Hero() {
             onClick={(e) => {
               if (scrollToHash('#contact')) e.preventDefault()
             }}
-            className={`group inline-flex h-12 touch-manipulation items-center gap-4 rounded-full border border-black/10 bg-black/20 py-1 pr-1 pl-6 text-base text-fg backdrop-blur-[4px] transition-[color,background-color,border-color] hover:bg-black/25 active:scale-[0.98] dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 ${focusRing}`}
+            className={`group inline-flex h-12 touch-manipulation items-center gap-4 rounded-full border border-black/10 bg-black/20 py-1 pr-1 pl-6 text-base text-fg backdrop-blur-xs transition-[color,background-color,border-color] hover:bg-black/25 active:scale-[0.98] dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 ${focusRing}`}
           >
             Get in touch
-            <span className="inline-flex size-[38px] items-center justify-center rounded-full bg-inverse text-inverse-fg transition-transform duration-300 group-hover:translate-x-0.5">
+            <span className="inline-flex size-9.5 items-center justify-center rounded-full bg-inverse text-inverse-fg transition-transform duration-300 group-hover:translate-x-0.5">
               <ArrowRight size={18} strokeWidth={1.75} aria-hidden="true" />
             </span>
           </a>
