@@ -60,7 +60,8 @@
   --accent-stop-3: #0070f3;
 
   /* Fixed navbar height for CSS consumers (Hero's top padding, etc.). */
-  --nav-height: 4rem;
+  /* Floating bar: 16px top offset + 40px bar + 16px gap (Navbar SCROLL_GAP). */
+  --nav-height: 4.5rem;
 }
 
 .dark {

@@ -1,17 +1,19 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
-import { gsap, ScrollSmoother, registerGsap } from '@/lib/gsap'
+import { gsap, ScrollSmoother, ScrollTrigger, registerGsap } from '@/lib/gsap'
 import { prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
+import Logo from '@/components/brand/Logo'
+import StatusCapsule from '@/components/nav/StatusCapsule'
 import ThemeToggle from '@/components/theme/ThemeToggle'
 
 registerGsap()
 
 const focusRing =
-  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 const navItems = [
   { name: 'About', href: '#about' },
@@ -20,10 +22,21 @@ const navItems = [
   { name: 'Contact', href: '#contact' },
 ]
 
+// Gap kept between the floating bar and a section heading after an anchor
+// jump (the bar sits 16px from the top and is 40px tall).
+const SCROLL_GAP = 16
+
+// Floating pill navbar (DESIGN.md section 6). Three zones on one row: the
+// Logo (home link) on the left, the centered pill with the 4 anchors and
+// the embedded "Get in touch" CTA, and on the right the status capsule
+// (lg and up) then the theme toggle, which sits at the far right at every
+// width, as on the reference. Below md the pill becomes a menu panel.
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   const { contextSafe } = useGSAP({ scope: navRef })
 
@@ -46,154 +59,219 @@ const Navbar = () => {
         }
       )
 
-      return () => mm.revert()
+      // Active-section tint: each section toggles aria-current on its link
+      // when it crosses the viewport center. Written straight to the DOM,
+      // so scroll position never becomes React state (DESIGN.md section 7).
+      // Elements are resolved with document.querySelector because the
+      // sections live in <main>, outside this hook's <nav> scope.
+      const triggers = navItems.flatMap((item) => {
+        const section = document.querySelector<HTMLElement>(item.href)
+        if (!section) return []
+        const links = navRef.current?.querySelectorAll<HTMLElement>(`[data-section="${item.href}"]`) ?? []
+        return [
+          ScrollTrigger.create({
+            trigger: section,
+            start: 'top center',
+            end: 'bottom center',
+            onToggle: (self) =>
+              links.forEach((link) =>
+                self.isActive ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current')
+              ),
+          }),
+        ]
+      })
+
+      return () => {
+        triggers.forEach((t) => t.kill())
+        mm.revert()
+      }
     },
     { scope: navRef }
   )
 
-  // Shared close path so the mobile menu actually collapses (its height
-  // is entirely GSAP-managed via inline styles set when it opens -
-  // flipping the `isOpen` React state alone doesn't touch that style,
-  // so callers other than toggleMenu need this to actually close it).
-  const closeMenu = contextSafe(() => {
+  // The GSAP work below goes through contextSafe at event time, never
+  // during render, so every tween is still reverted on unmount.
+  const closeMenu = () => {
     setIsOpen(false)
-    if (!menuRef.current) return
-    if (prefersReducedMotion()) {
-      gsap.set(menuRef.current, { height: 0 })
-    } else {
-      gsap.to(menuRef.current, { height: 0, duration: 0.3, ease: 'power2.in' })
-    }
-  })
+    contextSafe(() => {
+      // The menu's height is entirely GSAP-managed via inline styles, so
+      // flipping `isOpen` alone wouldn't collapse it.
+      if (!menuRef.current) return
+      if (prefersReducedMotion()) {
+        gsap.set(menuRef.current, { height: 0 })
+      } else {
+        gsap.to(menuRef.current, { height: 0, duration: 0.3, ease: 'power2.in' })
+      }
+    })()
+  }
 
-  const scrollToSection = contextSafe((href: string) => {
-    // Resolve via plain DOM lookup, not a GSAP selector string: this
-    // function is wrapped in contextSafe (useGSAP({ scope: navRef })),
-    // which scopes GSAP's own selector-text resolution to inside <nav>.
-    // The target sections live in <main>, outside that scope, so handing
-    // ScrollSmoother a string here made its internal _toArray(href)
-    // return [], then crash on undefined.style - passing the already-
-    // resolved element sidesteps that scoping entirely.
-    const target = document.querySelector<HTMLElement>(href)
-    if (!target) return
-
-    const navHeight = navRef.current?.getBoundingClientRect().height ?? 0
-    const smoother = ScrollSmoother.get()
-    if (smoother) {
-      // Offset by the fixed navbar's height so the section heading
-      // doesn't land hidden underneath it. "top top+=N" is ScrollTrigger's
-      // start syntax (confirmed against gsap.com's docs): it shifts the
-      // viewport reference point down by N, so the scroll lands with the
-      // target's top N pixels below the viewport top instead of flush
-      // with it (which is exactly where the fixed nav covers).
-      smoother.scrollTo(target, true, `top top+=${navHeight}`)
-    } else {
-      // Reduced motion, or ScrollSmoother wasn't created for any reason.
-      // scrollIntoView has no offset parameter, and its explicit
-      // `behavior` option overrides the CSS scroll-behavior:auto
-      // reduced-motion rule, so both the offset and the reduced-motion
-      // check are done manually here instead.
-      const targetY = target.getBoundingClientRect().top + window.scrollY - navHeight
-      window.scrollTo({ top: targetY, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
-    }
-    closeMenu()
-  })
-
-  const scrollToTop = contextSafe(() => {
-    const smoother = ScrollSmoother.get()
-    if (smoother) {
-      smoother.scrollTo(0, true)
-    } else {
-      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
-    }
-    closeMenu()
-  })
-
-  const openMenu = contextSafe(() => {
+  const openMenu = () => {
     setIsOpen(true)
-    if (!menuRef.current) return
-
-    if (prefersReducedMotion()) {
+    contextSafe(() => {
+      if (!menuRef.current) return
       gsap.set(menuRef.current, { height: 'auto' })
-      return
-    }
-
-    gsap.set(menuRef.current, { height: 'auto' })
-    gsap.from(menuRef.current, { height: 0, duration: 0.35, ease: 'power2.out' })
-    gsap.fromTo(
-      menuRef.current.querySelectorAll('[data-mobile-link]'),
-      { autoAlpha: 0, y: -8 },
-      { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
-    )
-  })
+      if (prefersReducedMotion()) return
+      gsap.from(menuRef.current, { height: 0, duration: 0.35, ease: 'power2.out' })
+      gsap.fromTo(
+        menuRef.current.querySelectorAll('[data-mobile-link]'),
+        { autoAlpha: 0, y: -8 },
+        { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
+      )
+    })()
+  }
 
   const toggleMenu = () => (isOpen ? closeMenu() : openMenu())
 
-  return (
-    <nav
-      ref={navRef}
-      className="fixed top-0 w-full bg-bg/90 backdrop-blur-xs z-50 border-b border-muted/20"
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-(--nav-height)">
-          <div className="shrink-0">
-            <a
-              href="#main-content"
-              onClick={(e) => {
-                e.preventDefault()
-                scrollToTop()
-              }}
-              data-magnetic
-              className={`font-display font-semibold text-xl text-fg hover:text-accent transition-colors duration-200 ${focusRing}`}
-            >
-              Umair Nadeem
-            </a>
-          </div>
+  const scrollToSection = (href: string) => {
+    contextSafe(() => {
+      // Resolve via plain DOM lookup, not a GSAP selector string: inside
+      // contextSafe (scoped to <nav>), GSAP would resolve the selector
+      // within the nav and ScrollSmoother would get an empty target.
+      const target = document.querySelector<HTMLElement>(href)
+      if (!target) return
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navItems.map((item) => (
-                <button
-                  key={item.name}
+      const offset = (barRef.current?.getBoundingClientRect().bottom ?? 0) + SCROLL_GAP
+      const smoother = ScrollSmoother.get()
+      if (smoother) {
+        // "top top+=N" lands the section N pixels below the viewport top,
+        // clear of the floating bar.
+        smoother.scrollTo(target, true, `top top+=${offset}`)
+      } else {
+        // Reduced motion, or no ScrollSmoother: scroll manually so both the
+        // offset and the reduced-motion preference are respected.
+        const targetY = target.getBoundingClientRect().top + window.scrollY - offset
+        window.scrollTo({ top: targetY, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+      }
+    })()
+    if (isOpen) closeMenu()
+  }
+
+  const scrollToTop = () => {
+    contextSafe(() => {
+      const smoother = ScrollSmoother.get()
+      if (smoother) {
+        smoother.scrollTo(0, true)
+      } else {
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+      }
+    })()
+    if (isOpen) closeMenu()
+  }
+
+  // Escape closes the open mobile menu and returns focus to its button.
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      closeMenu()
+      menuButtonRef.current?.focus()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+    // closeMenu is recreated each render; the listener only needs isOpen.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
+
+  const onAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    scrollToSection(href)
+  }
+
+  return (
+    <nav ref={navRef} aria-label="Primary" className="fixed inset-x-0 top-4 z-50">
+      <div className="mx-auto max-w-7xl px-4 md:px-8">
+        <div ref={barRef} className="relative flex h-10 items-center justify-between">
+          {/* Left: Logo, home link */}
+          <a
+            href="#main-content"
+            onClick={(e) => {
+              e.preventDefault()
+              scrollToTop()
+            }}
+            aria-label="Umair Nadeem, back to top"
+            data-magnetic
+            className={`inline-flex items-center rounded-control text-fg ${focusRing}`}
+          >
+            <Logo className="h-8 w-auto" />
+          </a>
+
+          {/* Center: the pill (md and up), centered on the row */}
+          <ul className="absolute left-1/2 top-0 hidden h-10 -translate-x-1/2 items-center gap-0.5 rounded-card border border-line bg-black/10 px-1.25 backdrop-blur-md md:flex dark:bg-white/5">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <a
+                  href={item.href}
+                  data-section={item.href}
                   data-magnetic
-                  onClick={() => scrollToSection(item.href)}
-                  className={`font-mono text-xs uppercase tracking-widest text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
+                  onClick={(e) => onAnchorClick(e, item.href)}
+                  className={`inline-flex h-6.5 items-center rounded-card px-3 text-[13px] text-fg transition-colors hover:bg-fg/5 aria-current:bg-fg/5 aria-current:text-accent ${focusRing}`}
                 >
                   {item.name}
-                </button>
-              ))}
+                </a>
+              </li>
+            ))}
+            <li className="ml-0.5">
+              <a
+                href="#contact"
+                data-magnetic
+                onClick={(e) => onAnchorClick(e, '#contact')}
+                className={`inline-flex h-7.5 items-center rounded-card border border-line-strong bg-white/10 px-3 text-[13px] text-fg transition-colors hover:bg-white/20 ${focusRing}`}
+              >
+                Get in touch
+              </a>
+            </li>
+          </ul>
+
+          {/* Right: status capsule (lg+), menu button (below md), theme toggle */}
+          <div className="flex items-center gap-2">
+            {/* Visibility lives on a wrapper: the capsule's own inline-flex
+                would otherwise compete with `hidden`. */}
+            <div className="hidden lg:block">
+              <StatusCapsule />
             </div>
-          </div>
-
-          <ThemeToggle className="ml-auto md:ml-6" />
-
-          {/* Mobile menu button */}
-          <div className="md:hidden ml-2">
             <button
+              ref={menuButtonRef}
+              type="button"
               onClick={toggleMenu}
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
-              className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
+              aria-controls="mobile-menu"
+              className={`inline-flex size-9 items-center justify-center rounded-control text-fg transition-colors hover:bg-fg/5 md:hidden ${focusRing}`}
             >
-              {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+              {isOpen ? <X size={20} strokeWidth={1.75} aria-hidden="true" /> : <Menu size={20} strokeWidth={1.75} aria-hidden="true" />}
             </button>
+            <ThemeToggle />
           </div>
         </div>
-      </div>
 
-      {/* Mobile Navigation */}
-      <div ref={menuRef} className="md:hidden overflow-hidden h-0">
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-bg/95 border-t border-muted/20">
-          {navItems.map((item) => (
-            <button
-              key={item.name}
+        {/* Mobile menu panel (below md). Inert while closed, so its links
+            can't be reached by keyboard while it is collapsed. */}
+        <div id="mobile-menu" ref={menuRef} inert={!isOpen} className="h-0 overflow-hidden md:hidden">
+          <div className="mt-3 rounded-card border border-line bg-surface/95 p-2 shadow-lg backdrop-blur-md">
+            <ul>
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <a
+                    href={item.href}
+                    data-section={item.href}
+                    data-mobile-link
+                    onClick={(e) => onAnchorClick(e, item.href)}
+                    className={`block rounded-control px-3 py-2.5 text-[15px] text-fg transition-colors hover:bg-fg/5 aria-current:text-accent ${focusRing}`}
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="#contact"
               data-mobile-link
-              onClick={() => scrollToSection(item.href)}
-              className={`font-mono text-muted hover:text-accent block px-3 py-2 text-sm uppercase tracking-widest transition-colors duration-200 ${focusRing}`}
+              onClick={(e) => onAnchorClick(e, '#contact')}
+              className={`mt-2 flex h-10 items-center justify-center rounded-card border border-line-strong bg-fg/5 text-[15px] text-fg ${focusRing}`}
             >
-              {item.name}
-            </button>
-          ))}
+              Get in touch
+            </a>
+          </div>
         </div>
       </div>
     </nav>
