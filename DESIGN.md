@@ -60,7 +60,7 @@ Grain: none. No glow surfaces exist in this revision.
 
 ## 3. Color palette and roles
 
-Tokens stay in the existing `rgb(var(--token) / <alpha-value>)` architecture in `globals.css` + `tailwind.config.js`, now with two sets: `:root` (light) and `.dark` (dark), `darkMode: 'class'`. The Signal & Noise tokens (coral `accent`, teal `accent-2`), the five legacy navy/teal aliases (`primary/secondary/dark/light/slate` and `--legacy-*`), and the legacy-colored webkit scrollbar are all **deleted**.
+Implemented in build step 1 (2026-10-10) on Tailwind 4: the raw values live as CSS variables in `app/globals.css`, in two sets, `:root` (light) and `.dark` (dark). `@theme inline` maps them to utilities (`bg-bg`, `text-text`, `border-line`, and so on), and `@custom-variant dark` makes `dark:` follow the `dark` class on `<html>`. Opacity modifiers (`bg-fg/5`) work through Tailwind 4's `color-mix`. There is no `tailwind.config.js`. The Signal & Noise tokens (coral `accent`, teal `accent-2`), the five legacy navy/teal aliases (`primary/secondary/dark/light/slate` and `--legacy-*`), and the legacy-colored webkit scrollbar are all **deleted**.
 
 The reference's `:root` / `.dark` CSS variables are stock shadcn/ui "slate" values that its visible UI barely uses; the real visible colors come from hard-coded utility classes. The table below uses the **visible** computed values.
 
@@ -129,7 +129,7 @@ Rules: one gradient accent word per headline, no other gradient text. Saturated 
 
 ## 4. Typography
 
-All three faces are free on Google Fonts and load through `next/font/google`, replacing the current Bricolage Grotesque, JetBrains Mono, and Satoshi wiring (the Satoshi files in `app/fonts/` become unused and can be deleted in build step 1).
+All three faces are free on Google Fonts and load through `next/font/google` in `app/layout.tsx` (CSS variables `--font-eb-garamond`, `--font-alata`, `--font-source-code-pro`, exposed as `font-display`, `font-sans`, `font-mono`). They replaced Bricolage Grotesque, JetBrains Mono, and Satoshi in build step 1; the Satoshi files were deleted.
 
 | Voice | Face (reference file) | Load (ours) | Use |
 |---|---|---|---|
@@ -199,7 +199,7 @@ New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in
 
 ### New component vocabulary
 
-- **Logo (Umair's own "UN" serif monogram, added 2026-10-10):** source of truth is `assets/brand/un-monogram.svg`, traced from the original raster (`assets/brand/un-monogram-original.png`, kept for reference, not public). Pixel overlap with the original's ink is 0.988 IoU at zero offset. It has a transparent background and `fill="currentColor"`, viewBox `0 0 401 396`, one even-odd path. A `Logo` component (built in the Navbar step) inlines it, colored `fg` so it follows the theme. Inside the home link the SVG is `aria-hidden` and the link carries `aria-label="Umair Nadeem, back to top"`; standalone it is `role="img"` with an accessible name. Sizes (ours): 32px tall in the nav (the reference's mark measures about 34px), 40px in the footer. Never recolor it with the accent gradient, stretch it, or put it on a tinted plate.
+- **Logo (Umair's own "UN" serif monogram, added 2026-10-10):** source of truth is `assets/brand/un-monogram.svg`, traced from the original raster (`assets/brand/un-monogram-original.png`, kept for reference, not public). Pixel overlap with the original's ink is 0.988 IoU at zero offset. It has a transparent background and `fill="currentColor"`, viewBox `0 0 401 396`, one even-odd path. The `Logo` component (`components/brand/Logo.tsx`, built in step 1, with the path copied verbatim from the SVG) inlines it, colored `fg` so it follows the theme. Inside the home link the SVG is `aria-hidden` and the link carries `aria-label="Umair Nadeem, back to top"`; standalone it is `role="img"` with an accessible name. Sizes (ours): 32px tall in the nav (the reference's mark measures about 34px), 40px in the footer. Never recolor it with the accent gradient, stretch it, or put it on a tinted plate.
 - **Floating nav (measured):** three zones on one row. Left: the `Logo` (home link). Center: a 40px-tall pill (`line` border, 10px radius, backdrop blur 12px; reference fill white/5 in dark, black/10 in light) holding the 4 anchor links (About, Experience, Skills, Contact) in Alata 13px, the active one in `accent` with a 10px-radius tint (reference: white/5), and one embedded "Get in touch" button (reference "Book a Call": 30px tall, white/10 fill, white/20 border, 10px radius). The reference's light-mode pill border is white/10, which is invisible on white, so we use `line` (black/10) in light. Right: status capsule (desktop, `lg`+) then the theme toggle. Hamburger below `md`, reusing the existing GSAP menu logic, placed left of the toggle.
 - **Status capsule (desktop only):** 38px tall, 14px radius, backdrop blur 12px; light fill black/8, border black/15; dark fill white/5, border white/10 (all measured). Mono 11px. The reference's capsule holds weather, a place name, a clock, and a ⌘K keycap. Ours holds only the green `live` dot and Umair's local time, `ISB 14:32 PKT`, drawn from `content.location` (Islamabad). No weather, no visitor counter, no greeting, no ⌘K.
 - **Primary button (measured):** full pill, 48px tall, padding `4px 4px 4px 12px`, backdrop blur 4px; light fill black/20 with black/10 border, dark fill white/10 with white/10 border; Alata 16px label; embedded 38px circular arrow chip in `inverse` (black in light, white in dark). `:active` scale 0.98; magnetic on fine pointers. Exactly one contact-intent label site-wide: **"Get in touch"** (the nav CTA is the same anchor link, not a second styled intent).
@@ -285,9 +285,9 @@ All metadata stays in `app/layout.tsx` (static export) plus Next.js file convent
 - **Icons and manifest (in place since 2026-10-10, Next.js file conventions):**
   - All icons were regenerated on 2026-10-10 from the approved `assets/brand/un-monogram.svg` (the generator's grey-background originals are gone). Rendered in the browser via playwright-cli; the ICO was assembled from those renders.
   - `app/icon.svg`: the primary tab icon. Transparent, monogram at 90% of the square, with an embedded `@media (prefers-color-scheme: dark)` rule: black on light browser UI, white on dark. It follows the browser or OS theme, not the site's own toggle; browsers don't expose the page theme to favicons.
-  - `app/favicon.ico` (PNG-encoded 16, 32, and 48px entries) and `app/icon1.png` (32x32): fallback for browsers without SVG favicon support. Black monogram at 90% on opaque white. At 16px the hairline serifs blur; that's inherent to a high-contrast serif at that size, and SVG-capable browsers use `icon.svg` instead. Next 14.0.4 labels the ICO `sizes="16x16"` (its first entry) rather than `any`; harmless, and re-checked after the Next upgrade.
+  - `app/favicon.ico` (PNG-encoded 16, 32, and 48px entries) and `app/icon1.png` (32x32): fallback for browsers without SVG favicon support. Black monogram at 90% on opaque white. At 16px the hairline serifs blur; that's inherent to a high-contrast serif at that size, and SVG-capable browsers use `icon.svg` instead. Next 16 labels the ICO `sizes="48x48"` (its largest entry; 14.0.4 used the first, 16x16); harmless.
   - `app/apple-icon.png` (180x180), `public/android-chrome-192x192.png`, and `public/android-chrome-512x512.png`: opaque white with a black monogram at 65%, inside the circular maskable safe zone (iOS fills transparency with black, so these stay opaque).
-  - The PNG is named `icon1.png`, not `icon.png`: with both `icon.svg` and `icon.png` present, Next 14.0.4 emits a `<link>` for only one of them; the numbered suffix makes it emit both.
+  - The PNG is named `icon1.png`, not `icon.png`: with both `icon.svg` and `icon.png` present, Next 14.0.4 emitted a `<link>` for only one of them; the numbered suffix makes it emit both. Re-checked on Next 16.4: still one link per file, with no duplicates.
   - `app/manifest.ts` (served as `/manifest.webmanifest`) replaces the generator's `site.webmanifest`: `name` from `content.seo.title`, `short_name` from `content.name`, `description` from `content.seo.description`, `display: standalone`, and `theme_color` / `background_color` `#ffffff` (the light `bg`; a manifest can't follow the viewer's theme).
   - Generated tags (checked on a freshly started dev server): `icon` for the ICO, `icon` for `icon.svg` (`image/svg+xml`, `sizes="any"`), `icon` for the 32px PNG, one `apple-touch-icon`, and one `manifest`. Every file returns 200, and there are no duplicates.
 
@@ -299,7 +299,7 @@ The site is static: no database, no forms, no file uploads, no API routes or ser
 
 ### 10.1 XSS and Content Security Policy
 
-- **Why the CSP lives in `middleware.ts`, not `next.config.js`:** the App Router emits its own inline `<script>` tags (the `self.__next_f.push(...)` flight data; observed on the reference site, which is also App Router). A static header in `next.config.js` can't allow those without `'unsafe-inline'`, and hashing them is impractical because their content changes with every build. The supported pattern is a **per-request nonce**: `middleware.ts` generates a random nonce, sets the CSP on the response and the request headers, and Next applies it to its own scripts (`next@14.0.4` reads it via `getScriptNonceFromHeader` in `app-render`, verified in `node_modules`). The layout reads the same nonce through `headers()` and puts it on the theme script. Consequence: the page renders per request instead of being prerendered, which costs some time-to-first-byte on Vercel. All other security headers stay static in `next.config.js` (10.2).
+- **Why the CSP lives in `proxy.ts`, not `next.config.js`:** the App Router emits its own inline `<script>` tags (the `self.__next_f.push(...)` flight data; observed on the reference site, which is also App Router). A static header in `next.config.js` can't allow those without `'unsafe-inline'`, and hashing them is impractical because their content changes with every build. The supported pattern is a **per-request nonce**, per the Next.js 16 CSP guide. `proxy.ts` (Next 16's name for middleware; it runs on the Node.js runtime) generates a random nonce and sets the CSP on both the response and the request headers. Next parses the request CSP and applies the nonce to its own framework and inline scripts. The root layout becomes `async`, reads the nonce with `(await headers()).get('x-nonce')` (async-only since Next 16), and passes it to `<ThemeScript nonce={...} />`, which already accepts it. Consequence, confirmed in the guide: nonces require dynamic rendering, so the page renders per request instead of being prerendered. That costs some time-to-first-byte on Vercel, and Partial Prerendering can't be used. Next's experimental SRI (`experimental.sri`) keeps static rendering, but it is experimental, so it isn't the plan. All other security headers stay static in `next.config.js` (10.2).
 - **Production policy:**
   - `default-src 'self'`
   - `script-src 'self' 'nonce-{nonce}' 'strict-dynamic'` (no `'unsafe-inline'`, no `'unsafe-eval'`)
@@ -309,10 +309,10 @@ The site is static: no database, no forms, no file uploads, no API routes or ser
   - `connect-src 'self'`
   - `object-src 'none'`, `base-uri 'self'`, `form-action 'none'`, `frame-ancestors 'none'`, `upgrade-insecure-requests`
 - **Development only:** `script-src` adds `'unsafe-eval'` (React dev tooling needs it). Never in production.
-- **Middleware matcher** skips `_next/static`, `_next/image`, `favicon`/icons, and the resume PDF.
+- **Proxy matcher** skips `_next/static`, `_next/image`, the favicon and icon files, the resume PDF, and `next/link` prefetch requests (the guide's `missing` header conditions).
 - **JSON-LD:** a `type="application/ld+json"` data block. It is not executed, so CSP doesn't apply to it, but React still needs `dangerouslySetInnerHTML`. Output is `JSON.stringify(person).replace(/</g, '\\u003c')`, built only from typed `lib/content.ts` constants, so a `</script>` sequence can never break out.
 - **`dangerouslySetInnerHTML`** is allowed in exactly two places: the JSON-LD block above and the static theme script. Never with interpolated or user-supplied data.
-- **Known advisory:** GHSA-ffhc-5mcf-pf4q (XSS in App Router apps using CSP nonces) affects Next `>=13.4.0 <15.5.16`, and the 14.x line has no fix. See 10.6.
+- **Advisory GHSA-ffhc-5mcf-pf4q** (XSS in App Router apps using CSP nonces) is fixed: patched in 16.2.5, and the site runs 16.4.0 (10.6).
 
 ### 10.2 Static security headers (`next.config.js` `headers()`, all routes)
 
@@ -346,17 +346,15 @@ Keep the defaults: Next sends no `Access-Control-Allow-Origin` on pages or asset
   - **Repo visibility:** `origin` (`github.com/umair-nad/umair_website`) answers 404 to an unauthenticated GitHub API request, so it isn't public today. Scrubbing history would mean rewriting `main` and force-pushing; that is the user's call, and nothing is planned.
 - **Resume PDF:** it contains the phone number and the older email. It is not moved into `public/` until Umair confirms it may be published (section 11.1).
 
-### 10.6 Dependencies (baseline `npm audit`, 2026-10-10)
+### 10.6 Dependencies
 
-22 findings: 1 critical, 18 high, 3 moderate.
+**Decision (user, 2026-10-10):** upgrade to the latest stable majors, done in build step 1: `next` and `eslint-config-next` 16.4.0, `react` and `react-dom` 19.3.0, `lucide-react` 1.55.0, Tailwind 4.3.3, ESLint 9.39.5 with a flat config, TypeScript 5.9.3.
 
-| Package | Status | Proposal |
-|---|---|---|
-| `next` 14.0.4 (direct) | Critical. Among them, GHSA-f82v-jwr5-mffw (middleware authorization bypass, fixed in 14.2.25) matters directly, because the CSP middleware must not be skippable. | **Upgrade to 14.2.35 together with `eslint-config-next` 14.2.35** (same major; npm audit's own fix target). Proposed for build step 1, so all later work runs on the patched line. |
-| Next advisories still open on 14.2.35 | They need Next 15.5.24+, a **major** upgrade that also requires React 19. They include GHSA-ffhc-5mcf-pf4q (nonce XSS), GHSA-p293-qw3h-jr36 (RCE on Windows-hosted servers; not applicable on Vercel), GHSA-2xp9-vwfh-vxw4 (image optimizer RCE when AVIF is used; we keep the default image formats, without AVIF, and set no `remotePatterns`), and several Server Actions and rewrites issues (not applicable: none are used). | **User decision before build step 1:** stay on 14.2.35 and accept the listed residual risk, or move to Next 15 + React 19 first. No major upgrade without approval. |
-| Transitive dev/build-time packages (brace-expansion, minimatch, picomatch, nanoid, glob, js-yaml, flatted, ajv, browserslist, source-map-js, yaml, postcss-selector-parser, `@typescript-eslint/*`) | High/moderate, build-time only | `npm audit fix` without `--force` (non-breaking). |
-| `tailwindcss` 3.x (via braces, chokidar, micromatch) | High, build-time only; nothing ships to the browser | Fix needs Tailwind 4 (major). Accept for now; ask before any move. |
-| `postcss` (direct) | High, build-time only | Resolved by the `next` 14.2.35 bump plus `npm audit fix`, per npm audit. |
+- **Baseline before the upgrade** (`next` 14.0.4): 22 findings, 1 critical, 18 high, 3 moderate.
+- **Fixed by the upgrade:** GHSA-ffhc-5mcf-pf4q (nonce CSP XSS, patched in 16.2.5); GHSA-2xp9-vwfh-vxw4 (image optimizer RCE with AVIF) and GHSA-p293-qw3h-jr36 (RCE on Windows-hosted servers), both patched in 16.3.3; GHSA-f82v-jwr5-mffw (middleware authorization bypass); every other `next` advisory; and all Tailwind 3 build-chain findings.
+- **After the upgrade** (`npm audit`, 2026-10-10): 5 high, 0 critical, 0 moderate. All five are one dev-only lint chain: `braces` GHSA-vfj7-8cjw-p6xm (no patched version exists) via `micromatch` and `fast-glob` inside `@next/eslint-plugin-next`, which reaches the tree through `eslint-config-next`. It runs only when linting and never ships to the browser. npm's suggested "fix" is a downgrade to `eslint-config-next` 14, which is rejected. Re-check at the hardening step.
+- **ESLint 9 is marked unsupported** by ESLint, but `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, and `eslint-plugin-import` (all pulled in by `eslint-config-next` 16) cap their peer range at ESLint 9. Move to ESLint 10 once they support it. Biome is the documented alternative.
+- Any further major upgrade needs the user's approval (CLAUDE.md).
 
 ### 10.7 Not applicable (verified 2026-10-10)
 
@@ -366,7 +364,7 @@ Keep the defaults: Next sends no `Access-Control-Allow-Origin` on pages or asset
 | CSRF | No forms, no server actions, no API routes, no cookies or sessions | No `<form>`, `<input>`, `'use server'`, or `app/api` |
 | File uploads | No upload inputs or handlers | No `type="file"`, no route handlers |
 | SSRF | No server-side fetches, no external rewrites, no image `remotePatterns`; the OG image renders from bundled fonts | No `fetch(` or `axios` in `app/`, `components/`, `lib/` |
-| Webhook signatures | No webhook endpoints | No route handlers or `middleware.ts` yet (the CSP middleware will only set headers) |
+| Webhook signatures | No webhook endpoints | No route handlers or `proxy.ts` yet (the CSP proxy will only set headers) |
 
 If a contact form, API route, server action, or any server-side fetch is ever added, CSRF protection, server-side input validation, and rate limiting become required, and this table must be redone.
 
@@ -444,16 +442,19 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
 
 ## 13. Build order (Phase 4+, one step per review stop)
 
-Before step 1: the user decides the Next.js line (14.2.35 now, or a major move to Next 15 + React 19 first; section 10.6).
-
-1. **Theme foundation:** apply the approved dependency upgrade (proposed: `next` and `eslint-config-next` to 14.2.35, then `npm audit fix` without `--force`); delete the Signal & Noise and legacy tokens and scrollbar colors; add the light (`:root`) and dark (`.dark`) token sets from section 3 with `darkMode: 'class'`; swap fonts to EB Garamond, Alata, and Source Code Pro; add the no-flash inline script (static string, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`. Remove Three.js (`ParticleCanvas`, `lib/three/`, the `three` and `@types/three` dependencies), `Cursor`, `AmbientBackground`, and `Preloader`.
-2. Navbar shell (`Logo` component from `assets/brand/un-monogram.svg`, pill, status capsule, toggle placement)
-3. Hero, including the "Download resume" button and the `git mv` of the PDF into `public/`, only once the PDF gate in 11.1 is cleared
-4. About bento
-5. Experience timeline
-6. Skills
-7. Contact CTA + Footer
-8. SEO pass: `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, OG image, `sitemap.xml`, `robots.txt`, JSON-LD
-9. **Security hardening (section 10):** CSP nonce middleware wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
+1. **Theme foundation and navbar shell (done 2026-10-10, awaiting review):**
+   - The framework upgrade (section 10.6).
+   - Removal of the dropped chrome (Three.js, `ParticleCanvas`, `lib/three/`, `Cursor`, `AmbientBackground`, `Preloader`) and of the legacy tokens and scrollbar colors.
+   - The light (`:root`) and dark (`.dark`) token sets from section 3.
+   - EB Garamond, Alata, and Source Code Pro via `next/font`.
+   - The no-flash `ThemeScript` (static, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`.
+   - The floating navbar with the `Logo`, the pill, the status capsule, the toggle placement, and the mobile menu.
+2. Hero, including the "Download resume" button and the `git mv` of the PDF into `public/`, only once the PDF gate in 11.1 is cleared
+3. About bento
+4. Experience timeline
+5. Skills
+6. Contact CTA + Footer
+7. SEO pass: `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, OG image, `sitemap.xml`, `robots.txt`, JSON-LD
+8. **Security hardening (section 10):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
 
 Each step ends with `npm run lint`, `tsc --noEmit`, and playwright-cli checks at 390px and 1440px in both themes, then stops for review.
