@@ -47,18 +47,33 @@ All user-visible copy is still hardcoded in component JSX or local const arrays;
 - Content sources are `data/` (LinkedIn PDF), the public resume `UmairNadeem_SQA.pdf`, the existing site content, and facts the user provides directly in chat about Umair's work. When sources conflict, follow LinkedIn (user decision 2026-10-04). Never invent projects, metrics, dates, tools, or achievements. If something is missing from all sources, stop and ask the user.
 - Smart In Media content: present only what the user stated in chat or what is publicly visible on smartinmedia.com. Write product names as "PathoZoom Digital Lab" and "PathoZoom Scan & LiveView", skip the ® symbol in body text, and never describe internal details or clients.
 - Do not publish Umair's phone number anywhere on the site (user decision 2026-10-04). Email is the only direct contact method.
-- The reference site in `refrence/` belongs to a developer (Dhiraj Bhawsar). Use it only for design inspiration: layout, typography, spacing, animation. Never copy its content or its section structure.
+- The reference site in `refrence/` belongs to a developer (Dhiraj Bhawsar). Match the reference site's theme (colors, light/dark modes, typography); never reuse its logo, text, images, video, or developer-only sections.
 - Do NOT include a blog page or blog section.
 - Do NOT include GitHub insights, contribution graphs, GitHub stats, or repo activity widgets.
 - The reference site also contains these developer-specific or novelty sections: code-centric case studies with dev-stack chips, a developer Skills and Tools icon wall, a "From Concept to Code" CTA, a developer-framed experience timeline, a Uses page, a Guest Book, a Bucket List, a Links page, and a Spotify integration. Before adding anything similar, list what is being considered and ask the user first.
 
 ### Design
-- Follow DESIGN.md (once it exists) and the taste-skill (design-taste-frontend). Avoid generic AI layouts such as a centered hero with three feature cards and gradient blobs.
+- Follow DESIGN.md (approved 2026-10-10) and the taste-skill (design-taste-frontend). Avoid generic AI layouts such as a centered hero with three feature cards and gradient blobs.
 - Do not use em dashes in any text content on the site.
+
+### Security (every build step; details in DESIGN.md section 10)
+- CSP: production `script-src` never contains `'unsafe-inline'` or `'unsafe-eval'`. Every inline script, including the no-flash theme script, carries the per-request nonce from the CSP middleware. Keep the theme script a static string with no interpolated data. Don't add inline scripts or third-party script, style, font, image, or connect origins without updating the CSP and asking the user.
+- `dangerouslySetInnerHTML` only for the static theme script and the JSON-LD block. JSON-LD is `JSON.stringify(...)` with `<` escaped to `<`, built only from `lib/content.ts`. Never pass unescaped or user-supplied data.
+- Every `target="_blank"` link has `rel="noopener noreferrer"`.
+- Never disable text selection, copying, or the context menu.
+- Keep production browser source maps off. Never add a wildcard `Access-Control-Allow-Origin`.
+- No secrets in the repo. `.env*` stays gitignored; only `NEXT_PUBLIC_*` values that are safe to be public go into client code.
+- The site has no forms, API routes, server actions, uploads, webhooks, or server-side fetches. If any of these is ever added (for example a contact form), CSRF protection, server-side input validation, and rate limiting become required, and the DESIGN.md 10.7 not-applicable table must be redone first.
+- Ask the user before any major version upgrade of a dependency.
 
 ### SEO (required on every page)
 - Unique title and meta description per page, Open Graph tags, semantic HTML, exactly one h1 per page, and alt text on every image.
 - Today all metadata lives in the static export in `app/layout.tsx`.
+- Every absolute URL (metadataBase, canonical, sitemap, robots, JSON-LD, OG) comes from `SITE_URL` in `lib/site-url.ts`, which reads `NEXT_PUBLIC_SITE_URL` with a `http://localhost:3000` fallback for development. Never hard-code or invent a domain.
+
+### Deployment
+- Hosting: Vercel (free tier) first; there is no domain yet, and a custom domain may be bought later.
+- After the first Vercel deploy, set `NEXT_PUBLIC_SITE_URL` in the Vercel project settings (Production) to the deployment's URL, then redeploy: `NEXT_PUBLIC_*` values are inlined at build time. If a custom domain is added later, update the variable to that domain and redeploy again.
 
 ### Workflow
 - Work in small steps, one section at a time, and stop for the user's review after each section.
@@ -66,12 +81,14 @@ All user-visible copy is still hardcoded in component JSX or local const arrays;
 
 ## Progress
 
-As of 2026-10-04:
+As of 2026-10-10:
 
-- Phases 0 to 2 are complete. Phase 2 produced `lib/content.ts`, the approved typed content source for all site copy (fact-checked against the sources, `tsc --noEmit` clean). Components do not read from it yet.
+- Phases 0 to 3 are complete. Phase 3 produced DESIGN.md, approved by the user on 2026-10-10 (theme matches dhirajbhawsar.in in light and dark, with values measured on the live site using playwright-cli; contrast computed; Security section added).
+- Decisions pending before or during Phase 4: (1) before build step 1, the Next.js line: the proposed non-major upgrade to 14.2.35, or a major move to Next 15 + React 19 (DESIGN.md 10.6); (2) before the Hero step, Umair's OK to publish the resume PDF, which contains his phone number and an older email address (DESIGN.md 11.1).
+- Phase 2 produced `lib/content.ts`, the approved typed content source for all site copy (fact-checked against the sources, `tsc --noEmit` clean). Components do not read from it yet.
 - Key decisions: when sources conflict, LinkedIn wins; the public resume and facts the user states in chat are official content sources; the professional title is "QA Engineer"; no phone number on the site; no blog; no GitHub insights or stats.
 - Open items waiting on Umair: which automation tools he uses at Smart In Media, whether he tested AI modules (the "AI & LLM Testing" skill rests on his LinkedIn headline alone), projects worth showcasing, certifications.
-- Next step: Phase 3. Analyze the `refrence/` screenshots and write DESIGN.md, then stop for the user's approval before building any section.
+- Next step: Phase 4 build step 1, the theme foundation (DESIGN.md section 13): tokens, fonts, no-flash script, toggle, removal of the old chrome. Stop for review afterwards.
 
 ## Redesign TODO
 
@@ -79,4 +96,4 @@ Items confirmed with the user on 2026-10-04, to handle during the redesign:
 
 - New headshot is `public/umair-nadeem.jpg` (2048x2048 JPEG, copied on 2026-10-04 from the gitignored `data/Profilepic.jpg`; the original stays in `data/`). Use it with next/image and descriptive alt text when the new Hero/About is built. `public/muhammad.jpg` is still referenced by `components/Hero.tsx`: delete it only after no component references it.
 - Footer year is hardcoded as "© 2024" in `components/Footer.tsx`: fix it while rebuilding the footer.
-- The resume `UmairNadeem_SQA.pdf` stays public and tracked at the repo root. If a "Download resume" button is added, move the PDF into `public/` so Next.js can serve it, and tell the user before moving it.
+- The resume `UmairNadeem_SQA.pdf` stays public and tracked. User approved on 2026-10-10: during the Hero build step, `git mv` it into `public/` and add "Download resume" buttons in the hero CTA row and the footer (DESIGN.md 11.1). Gated: the PDF contains Umair's phone number, so wait for his explicit OK (or a PDF without the phone) before moving it.
