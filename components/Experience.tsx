@@ -141,7 +141,7 @@ const Experience = () => {
             <div
               key={index}
               data-exp-card
-              className="bg-muted/5 rounded-lg p-8 border border-muted/20 hover:border-accent/30 transition-colors duration-300 lg:w-[36rem]"
+              className="bg-muted/5 rounded-lg p-8 border border-muted/20 hover:border-accent/30 transition-colors duration-300 lg:w-xl"
             >
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
                 <div>

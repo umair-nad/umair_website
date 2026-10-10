@@ -222,7 +222,7 @@ export default function AmbientBackground() {
           ref={(el) => {
             blobRefs.current[i] = el
           }}
-          className="absolute h-[40rem] w-[40rem] rounded-full"
+          className="absolute h-160 w-160 rounded-full"
           style={{
             top: i === 0 ? '8%' : '55%',
             left: i === 0 ? '58%' : '8%',

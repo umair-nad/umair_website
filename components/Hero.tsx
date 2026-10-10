@@ -2,12 +2,12 @@
 
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { Mail, Linkedin, ExternalLink } from 'lucide-react'
+import { Mail, ExternalLink } from 'lucide-react'
 
 const ParticleCanvas = dynamic(() => import('./hero/ParticleCanvas'), { ssr: false })
 
 const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-sm'
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
 
 const Hero = () => {
   return (
@@ -64,7 +64,7 @@ const Hero = () => {
                   data-magnetic
                   className={`text-muted hover:text-accent transition-colors duration-200 p-2 ${focusRing}`}
                 >
-                  <Linkedin className="w-6 h-6" aria-hidden="true" />
+                  <ExternalLink className="w-6 h-6" aria-hidden="true" />
                 </a>
                 <a
                   href="https://www.upwork.com/freelancers/~01862b323ce960e4b6"
@@ -80,7 +80,7 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="h-64 sm:h-72 lg:h-[28rem]">
+          <div className="h-64 sm:h-72 lg:h-112">
             <ParticleCanvas />
           </div>
         </div>

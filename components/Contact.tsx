@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Mail, Phone, MapPin, Linkedin, ExternalLink } from 'lucide-react'
+import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, registerGsap } from '@/lib/gsap'
 import { REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
@@ -34,7 +34,7 @@ const socialLinks = [
   {
     name: 'LinkedIn',
     url: 'https://www.linkedin.com/in/umair-nadeem-qa/',
-    icon: Linkedin
+    icon: ExternalLink
   },
   {
     name: 'Upwork',
@@ -44,7 +44,7 @@ const socialLinks = [
 ]
 
 const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-sm'
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
 
 const Contact = () => {
   const sectionRef = useRef<HTMLDivElement>(null)

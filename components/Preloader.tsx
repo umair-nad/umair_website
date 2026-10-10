@@ -92,7 +92,7 @@ export default function Preloader() {
         id="preloader-overlay"
         aria-hidden="true"
         role="presentation"
-        className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-bg"
+        className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 bg-bg"
       >
         <svg width="160" height="40" viewBox="0 0 160 40" fill="none">
           <path ref={pathRef} d={PATH_D} stroke="rgb(var(--accent))" strokeWidth="2" />

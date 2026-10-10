@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Linkedin, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, registerGsap } from '@/lib/gsap'
 import { REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
@@ -11,7 +11,7 @@ import WaveformDivider from '@/components/WaveformDivider'
 registerGsap()
 
 const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-sm'
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
 
 const Footer = () => {
   const footerRef = useRef<HTMLDivElement>(null)
@@ -89,7 +89,7 @@ const Footer = () => {
               data-magnetic
               className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
             >
-              <Linkedin size={20} aria-hidden="true" />
+              <ExternalLink size={20} aria-hidden="true" />
             </a>
             <a
               href="https://www.upwork.com/freelancers/~01862b323ce960e4b6"

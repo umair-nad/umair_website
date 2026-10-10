@@ -56,7 +56,7 @@ export default function Cursor() {
     <div
       ref={dotRef}
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[90] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent transition-opacity duration-150"
+      className="pointer-events-none fixed left-0 top-0 z-90 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent transition-opacity duration-150"
       style={{ opacity: active ? 1 : 0 }}
     />
   )

@@ -10,7 +10,7 @@ import { applyMagneticHover } from '@/lib/magnetic'
 registerGsap()
 
 const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-sm'
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
 
 const navItems = [
   { name: 'About', href: '#about' },
@@ -130,11 +130,11 @@ const Navbar = () => {
   return (
     <nav
       ref={navRef}
-      className="fixed top-0 w-full bg-bg/90 backdrop-blur-sm z-50 border-b border-muted/20"
+      className="fixed top-0 w-full bg-bg/90 backdrop-blur-xs z-50 border-b border-muted/20"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-[var(--nav-height)]">
-          <div className="flex-shrink-0">
+        <div className="flex justify-between items-center h-(--nav-height)">
+          <div className="shrink-0">
             <a
               href="#main-content"
               onClick={(e) => {

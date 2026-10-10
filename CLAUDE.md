@@ -6,8 +6,8 @@ Guidance for Claude Code when working in this repository.
 
 Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer. Currently a single-page site (all sections on one route with hash-anchor navigation), being rebuilt on the `redesign` branch.
 
-- Framework: Next.js 14 (App Router), React 18, TypeScript 5
-- Styling: Tailwind CSS 3 plus `app/globals.css`
+- Framework: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9 (upgraded 2026-10-10)
+- Styling: Tailwind CSS 4 (CSS-first config: theme tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.js`), PostCSS via `@tailwindcss/postcss`
 - Animation: GSAP 3 with @gsap/react (ScrollTrigger, ScrollSmoother, SplitText; registered in `lib/gsap.ts`)
 - 3D: Three.js, lazy-loaded and isolated to the Hero particle canvas
 - Icons: lucide-react. Fonts: Bricolage Grotesque and JetBrains Mono (Google), Satoshi (local in `app/fonts/`)
@@ -18,7 +18,7 @@ Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer.
 - `npm run dev` - dev server at http://localhost:3000
 - `npm run build` - production build
 - `npm start` - serve the production build
-- `npm run lint` - ESLint via next lint
+- `npm run lint` - ESLint 9 CLI with the flat `eslint.config.mjs` (`next lint` no longer exists in Next 16, and `next build` no longer lints, so run lint yourself)
 
 There is no test framework configured; UI verification is done with the playwright-cli skill (see Workflow below).
 
@@ -75,6 +75,7 @@ All user-visible copy is still hardcoded in component JSX or local const arrays;
 
 ### Deployment
 - Hosting: Vercel (free tier) first; there is no domain yet, and a custom domain may be bought later.
+- Node.js: Next.js 16 needs Node 20.9 or newer. Set the Vercel project's Node.js version to 20.x or later (22.x recommended); `package.json` declares `"engines": { "node": ">=20.9.0" }`.
 - After the first Vercel deploy, set `NEXT_PUBLIC_SITE_URL` in the Vercel project settings (Production) to the deployment's URL, then redeploy: `NEXT_PUBLIC_*` values are inlined at build time. If a custom domain is added later, update the variable to that domain and redeploy again.
 
 ### Workflow
