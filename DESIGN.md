@@ -199,7 +199,8 @@ New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in
 
 ### New component vocabulary
 
-- **Floating nav (measured):** three zones on one row. Left: wordmark "UN." (EB Garamond). Center: a 40px-tall pill (`line` border, 10px radius, backdrop blur 12px; reference fill white/5 in dark, black/10 in light) holding the 4 anchor links (About, Experience, Skills, Contact) in Alata 13px, the active one in `accent` with a 10px-radius tint (reference: white/5), and one embedded "Get in touch" button (reference "Book a Call": 30px tall, white/10 fill, white/20 border, 10px radius). The reference's light-mode pill border is white/10, which is invisible on white, so we use `line` (black/10) in light. Right: status capsule (desktop, `lg`+) then the theme toggle. Hamburger below `md`, reusing the existing GSAP menu logic, placed left of the toggle.
+- **Logo (Umair's own "UN" serif monogram, added 2026-10-10):** source of truth is `assets/brand/un-monogram.svg`, traced from the original raster (`assets/brand/un-monogram-original.png`, kept for reference, not public). Pixel overlap with the original's ink is 0.988 IoU at zero offset. It has a transparent background and `fill="currentColor"`, viewBox `0 0 401 396`, one even-odd path. A `Logo` component (built in the Navbar step) inlines it, colored `fg` so it follows the theme. Inside the home link the SVG is `aria-hidden` and the link carries `aria-label="Umair Nadeem, back to top"`; standalone it is `role="img"` with an accessible name. Sizes (ours): 32px tall in the nav (the reference's mark measures about 34px), 40px in the footer. Never recolor it with the accent gradient, stretch it, or put it on a tinted plate.
+- **Floating nav (measured):** three zones on one row. Left: the `Logo` (home link). Center: a 40px-tall pill (`line` border, 10px radius, backdrop blur 12px; reference fill white/5 in dark, black/10 in light) holding the 4 anchor links (About, Experience, Skills, Contact) in Alata 13px, the active one in `accent` with a 10px-radius tint (reference: white/5), and one embedded "Get in touch" button (reference "Book a Call": 30px tall, white/10 fill, white/20 border, 10px radius). The reference's light-mode pill border is white/10, which is invisible on white, so we use `line` (black/10) in light. Right: status capsule (desktop, `lg`+) then the theme toggle. Hamburger below `md`, reusing the existing GSAP menu logic, placed left of the toggle.
 - **Status capsule (desktop only):** 38px tall, 14px radius, backdrop blur 12px; light fill black/8, border black/15; dark fill white/5, border white/10 (all measured). Mono 11px. The reference's capsule holds weather, a place name, a clock, and a ⌘K keycap. Ours holds only the green `live` dot and Umair's local time, `ISB 14:32 PKT`, drawn from `content.location` (Islamabad). No weather, no visitor counter, no greeting, no ⌘K.
 - **Primary button (measured):** full pill, 48px tall, padding `4px 4px 4px 12px`, backdrop blur 4px; light fill black/20 with black/10 border, dark fill white/10 with white/10 border; Alata 16px label; embedded 38px circular arrow chip in `inverse` (black in light, white in dark). `:active` scale 0.98; magnetic on fine pointers. Exactly one contact-intent label site-wide: **"Get in touch"** (the nav CTA is the same anchor link, not a second styled intent).
 - **Download resume button (measured on the reference's "CV" button):** 8px radius, padding `6px 12px`, Source Code Pro 12px/700, `inverse` fill with `inverse-fg` text. `href="/UmairNadeem_SQA.pdf"` with the `download` attribute. Appears in the hero CTA row and the footer.
@@ -241,7 +242,7 @@ No scroll cues, no pinned/hijacked sections in v1, no infinite loops outside the
 - Breakpoints: Tailwind defaults. Mobile-first; every multi-column section declares its collapse in the same component.
 - Bento collapses to a single column in content-priority order (role card, specializations, portrait, tools, time zone, contact).
 - Timeline collapses to a single column: metadata block above its evidence card, spine hidden.
-- Nav: pill collapses to wordmark left, hamburger + theme toggle right (toggle at the far right, as on the reference); status capsule hidden below `lg`.
+- Nav: pill collapses to the `Logo` left, hamburger + theme toggle right (toggle at the far right, as on the reference); status capsule hidden below `lg`.
 - Hero type scale: `text-4xl md:text-5xl lg:text-[60px]` (the headline is 9 words; no 7xl vanity scale). Headline max 2 lines at desktop.
 - Test at 390px and 1440px with playwright-cli after each section, **in both themes** (locked workflow rule).
 
@@ -281,6 +282,14 @@ All metadata stays in `app/layout.tsx` (static export) plus Next.js file convent
   - `url`: `SITE_URL`; `image`: `${SITE_URL}/umair-nadeem.jpg`
   - Never a `telephone` (locked rule).
 - **`themeColor`:** per scheme, via the `viewport` export (section 2).
+- **Icons and manifest (in place since 2026-10-10, Next.js file conventions):**
+  - `app/favicon.ico` (16, 32, and 48px images). Next 14.0.4 labels its `<link>` `sizes="16x16"` (the first embedded image) rather than `any`; this is harmless, and is re-checked after the Next upgrade.
+  - `app/icon.png` (32x32) and `app/apple-icon.png` (180x180).
+  - `public/android-chrome-192x192.png` and `public/android-chrome-512x512.png`, referenced from `app/manifest.ts`.
+  - `app/manifest.ts` (served as `/manifest.webmanifest`) replaces the generator's `site.webmanifest`: `name` from `content.seo.title`, `short_name` from `content.name`, `description` from `content.seo.description`, `display: standalone`, and `theme_color` / `background_color` `#ffffff` (the light `bg`; a manifest can't follow the viewer's theme).
+  - The generator's 16x16 PNG is kept in `assets/brand/` but not served: it duplicated the ICO's 16px image as a second `16x16` icon link.
+  - Generated tags (checked against the dev server): one `icon` link for the ICO, one for the 32px PNG, one `apple-touch-icon`, one `manifest`, and no duplicates. The old `app/icon.svg` (Signal & Noise dot) was removed.
+  - **Open:** all icon files carry the original's opaque grey background, with the monogram filling only about a third of the canvas. Regenerating them from the approved SVG waits for the user's OK.
 
 ---
 
@@ -425,7 +434,7 @@ No contact form (nothing to back it), no booking tool (none exists in sources), 
 
 ### 11.6 Footer
 
-Compact single-page footer, not the reference's 12-link sitemap: wordmark + one role line left (`content.title` and `content.location`, "QA Engineer | Islamabad, Pakistan"; no new copy); right side Alata uppercase micro-labels (`muted`) over short Source Code Pro link rows: the 4 anchors and the 2 external links from content.ts. A **"Download resume"** button pointing to the PDF moved in the Hero step (11.1). Hairline `line` rule, then a legal line with `© {new Date().getFullYear()} Umair Nadeem` (fixes the hardcoded 2024). Above it, the WaveformDivider settles to flatline: the sign-off beat.
+Compact single-page footer, not the reference's 12-link sitemap: the `Logo` (40px) + one role line left (`content.title` and `content.location`, "QA Engineer | Islamabad, Pakistan"; no new copy); right side Alata uppercase micro-labels (`muted`) over short Source Code Pro link rows: the 4 anchors and the 2 external links from content.ts. A **"Download resume"** button pointing to the PDF moved in the Hero step (11.1). Hairline `line` rule, then a legal line with `© {new Date().getFullYear()} Umair Nadeem` (fixes the hardcoded 2024). Above it, the WaveformDivider settles to flatline: the sign-off beat.
 
 ---
 
@@ -438,7 +447,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
 Before step 1: the user decides the Next.js line (14.2.35 now, or a major move to Next 15 + React 19 first; section 10.6).
 
 1. **Theme foundation:** apply the approved dependency upgrade (proposed: `next` and `eslint-config-next` to 14.2.35, then `npm audit fix` without `--force`); delete the Signal & Noise and legacy tokens and scrollbar colors; add the light (`:root`) and dark (`.dark`) token sets from section 3 with `darkMode: 'class'`; swap fonts to EB Garamond, Alata, and Source Code Pro; add the no-flash inline script (static string, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`. Remove Three.js (`ParticleCanvas`, `lib/three/`, the `three` and `@types/three` dependencies), `Cursor`, `AmbientBackground`, and `Preloader`.
-2. Navbar shell (pill, status capsule, toggle placement)
+2. Navbar shell (`Logo` component from `assets/brand/un-monogram.svg`, pill, status capsule, toggle placement)
 3. Hero, including the "Download resume" button and the `git mv` of the PDF into `public/`, only once the PDF gate in 11.1 is cleared
 4. About bento
 5. Experience timeline

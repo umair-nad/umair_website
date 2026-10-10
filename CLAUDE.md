@@ -24,10 +24,11 @@ There is no test framework configured; UI verification is done with the playwrig
 
 ### Repo layout
 
-- `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css
+- `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css, plus the icon file conventions (favicon.ico, icon.png, apple-icon.png) and manifest.ts
+- `assets/brand/` - non-public brand sources: `un-monogram.svg` (Umair's "UN" logo, `currentColor`, the source of truth for the Logo component and any regenerated favicons), `un-monogram-original.png` (the original raster, reference only), and the unused generator 16px PNG. Never serve files from here directly.
 - `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (Preloader, Cursor, AmbientBackground, WaveformDivider, hero/ParticleCanvas, providers/SmoothScrollProvider)
 - `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts, three/particle-field.ts) plus content.ts, the typed content source for all site copy
-- `public/` - static assets (headshot)
+- `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.
 - `UmairNadeem_SQA.pdf` at the repo root is the public resume and is already tracked in git history. Do not confuse it with the private LinkedIn PDF in `data/`.
@@ -84,6 +85,7 @@ All user-visible copy is still hardcoded in component JSX or local const arrays;
 As of 2026-10-10:
 
 - Phases 0 to 3 are complete. Phase 3 produced DESIGN.md, approved by the user on 2026-10-10 (theme matches dhirajbhawsar.in in light and dark, with values measured on the live site using playwright-cli; contrast computed; Security section added).
+- Brand (2026-10-10): Umair's own "UN" monogram is the site logo. It is traced to `assets/brand/un-monogram.svg` (transparent, `currentColor`) and is awaiting the user's approval of the trace. Favicons and the manifest are in place via Next.js file conventions (DESIGN.md section 9) but still carry the original's grey background; regenerate them from the SVG only after the user's OK.
 - Decisions pending before or during Phase 4: (1) before build step 1, the Next.js line: the proposed non-major upgrade to 14.2.35, or a major move to Next 15 + React 19 (DESIGN.md 10.6); (2) before the Hero step, Umair's OK to publish the resume PDF, which contains his phone number and an older email address (DESIGN.md 11.1).
 - Phase 2 produced `lib/content.ts`, the approved typed content source for all site copy (fact-checked against the sources, `tsc --noEmit` clean). Components do not read from it yet.
 - Key decisions: when sources conflict, LinkedIn wins; the public resume and facts the user states in chat are official content sources; the professional title is "QA Engineer"; no phone number on the site; no blog; no GitHub insights or stats.
