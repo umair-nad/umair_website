@@ -72,6 +72,8 @@ export interface SiteContent {
   skills: SkillGroup[];
   /** Headline QA specializations for the About bento (DESIGN.md 11.2). */
   specializations: string[];
+  /** The two scrolling word rows behind the About portrait (decorative). */
+  portraitWords: [string[], string[]];
   certifications: Certification[];
   links: SiteLink[];
   /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA. */
@@ -231,6 +233,16 @@ export const content = {
   // Exploratory Testing, Test Automation (Smart In Media tag), API Testing,
   // Regression Testing. "AI & LLM Testing" stays out until Umair confirms it.
   specializations: ["Manual and Exploratory", "Test Automation", "API Testing", "Regression Testing"],
+
+  // Words for the two scrolling rows behind the About portrait (user
+  // decision 2026-10-12). Verbatim strings only: row 1 is the title plus
+  // three specializations, row 2 four items from skills["testing-types"].
+  // Tools stay out (the tools marquee shows them); "AI & LLM Testing" stays
+  // out until Umair confirms it.
+  portraitWords: [
+    ["QA Engineer", "Test Automation", "API Testing", "Regression Testing"],
+    ["Manual Testing", "E2E Testing", "Smoke Testing", "UAT & Exploratory Testing"],
+  ],
 
   links: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/umair-nadeem-qa/" },
