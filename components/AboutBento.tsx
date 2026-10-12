@@ -1,0 +1,33 @@
+'use client'
+
+import RoleCard from '@/components/about/RoleCard'
+
+// About bento (DESIGN.md 11.2). Six cards, six real content items, filling
+// a 3-column grid exactly (no empty cells):
+//
+//   lg (3 cols, 22rem rows)       md (2 cols)         base (1 col)
+//   [ role 2x1      ][ portr ]    [ role 2x1     ]    role
+//   [ specs ][ contact][ 1x2  ]   [ specs ][ port ]   specializations
+//   [ time  ][ tools 2x1     ]    [ tools ][ 1x2  ]   portrait
+//                                 [ time  ][ cont ]   tools
+//                                                     time zone
+//                                                     contact
+//
+// DOM order is the mobile content-priority order (DESIGN.md section 8);
+// the lg placement is explicit per card below.
+const PLACEMENT = {
+  role: 'md:col-span-2 lg:col-start-1 lg:row-start-1',
+} as const
+
+export default function AboutBento() {
+  return (
+    <section id="about" aria-labelledby="about-heading" className="px-4 py-28 md:px-8 md:py-40">
+      <h2 id="about-heading" className="sr-only">
+        About
+      </h2>
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-4 md:auto-rows-[minmax(20rem,auto)] md:grid-cols-2 lg:auto-rows-[22rem] lg:grid-cols-3">
+        <RoleCard className={PLACEMENT.role} />
+      </div>
+    </section>
+  )
+}
