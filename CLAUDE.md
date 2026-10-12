@@ -117,6 +117,10 @@ As of 2026-10-12:
   - `988d44c` the contact label is now "Let’s Connect" (typographic apostrophe) in `content.contact.cta`, read by the hero CTA, the nav pill, and the mobile menu. DESIGN.md's single contact-label rule updated.
   - `next dev` now generates an untracked `AGENTS.md` (Next 16 agent rules). Not committed; the user decides whether to commit it, gitignore it, or turn it off with `agentRules: false` in `next.config.js`.
   - `npm audit` reports 5 high findings, all in the `eslint-config-next` dev chain (braces, micromatch, fast-glob); they predate canvas-confetti and don't ship to the browser.
+- About round 2 (2026-10-12), in progress.
+  - `9a83b8a` rotating globe in the time zone card (cobe 2.0.1; details in DESIGN.md 11.2). Verified on the production build: cobe loads only near the viewport (separate 5.9 KB gzip chunk), 0 WebGL draws while scrolled away, static frame under reduced motion (it redraws for about 1s so cobe's async map texture appears), CSS dot-sphere fallback without WebGL, card text AA over the globe in both themes at 390 and 1440 (worst pixel 7.13:1). Screenshots `review/globe-*`, reference `review/ref-globe-*`.
+  - Cut-out portrait: made with rembg 2.0.67 `birefnet-portrait` (run through uvx, outside the project; the model lives in ~/.u2net). The cut-out is `review/umair-nadeem-cutout.png` (gitignored, not in public/ yet); comparison sheets `review/cutout-*`. **Waiting for the user's approval** before the portrait card rebuild (scrolling EB Garamond rows from content.ts behind the cut-out; reference measured: 60px bold, -0.02em, 80px rows, row 1 left ~36 px/s, row 2 right ~44 px/s, photo bottom-anchored with a drop shadow and a card-colored bottom fade).
+  - Lighthouse mobile (median of 3, prod build): before 83 (LCP 3.5 s, TBT 350 ms, CLS 0); after the globe 83 (LCP 3.5 s, TBT 360 ms). Re-measure after the portrait card.
 - Still old: Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt.
 
 ### Decisions
@@ -138,10 +142,11 @@ GSAP `matchMedia` only runs a conditions-object callback while at least one cond
 
 ### Next steps, in order
 
-1. The user reviews the About bento and the hero feedback round (screenshots in `review/about-*`, `review/hero-arc-*`, `review/stars-*`), and says what the "1 Issue" overlay showed if it comes back.
-2. Phase 4 step 4: Experience timeline (DESIGN.md 11.3).
-3. Then the remaining build steps in DESIGN.md section 13: Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button (`content.resume.href`) and fix the hardcoded "© 2024" year.
-4. The README is stale throughout (Next 14, Three.js, old fonts and colors, a contact form, an old email). Rewrite it in its own commit when the user wants; only the resume path was updated so far.
+1. The user approves (or rejects) the portrait cut-out; then build the portrait card (item 3 of the About round 2 request): text rows field in content.ts, cut-out into public/ as an optimized transparent image, DESIGN.md and CLAUDE.md updates (second approved marquee), screenshots, Lighthouse after.
+2. The user reviews the About bento and the hero feedback round (screenshots in `review/about-*`, `review/hero-arc-*`, `review/stars-*`), and says what the "1 Issue" overlay showed if it comes back.
+3. Phase 4 step 4: Experience timeline (DESIGN.md 11.3).
+4. Then the remaining build steps in DESIGN.md section 13: Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button (`content.resume.href`) and fix the hardcoded "© 2024" year.
+5. The README is stale throughout (Next 14, Three.js, old fonts and colors, a contact form, an old email). Rewrite it in its own commit when the user wants; only the resume path was updated so far.
 
 ### Open items waiting on Umair
 
