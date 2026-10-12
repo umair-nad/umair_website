@@ -118,10 +118,12 @@ As of 2026-10-12:
   - `988d44c` the contact label is now "Let’s Connect" (typographic apostrophe) in `content.contact.cta`, read by the hero CTA, the nav pill, and the mobile menu. DESIGN.md's single contact-label rule updated.
   - `next dev` now generates an untracked `AGENTS.md` (Next 16 agent rules). Not committed; the user decides whether to commit it, gitignore it, or turn it off with `agentRules: false` in `next.config.js`.
   - `npm audit` reports 5 high findings, all in the `eslint-config-next` dev chain (braces, micromatch, fast-glob); they predate canvas-confetti and don't ship to the browser.
-- About round 2 (2026-10-12), in progress.
+- About round 2 (2026-10-12): built, awaiting the user's review.
   - `9a83b8a` rotating globe in the time zone card (cobe 2.0.1; details in DESIGN.md 11.2). Verified on the production build: cobe loads only near the viewport (separate 5.9 KB gzip chunk), 0 WebGL draws while scrolled away, static frame under reduced motion (it redraws for about 1s so cobe's async map texture appears), CSS dot-sphere fallback without WebGL, card text AA over the globe in both themes at 390 and 1440 (worst pixel 7.13:1). Screenshots `review/globe-*`, reference `review/ref-globe-*`.
-  - Cut-out portrait: made with rembg 2.0.67 `birefnet-portrait` (run through uvx, outside the project; the model lives in ~/.u2net). The cut-out is `review/umair-nadeem-cutout.png` (gitignored, not in public/ yet); comparison sheets `review/cutout-*`. **Waiting for the user's approval** before the portrait card rebuild (scrolling EB Garamond rows from content.ts behind the cut-out; reference measured: 60px bold, -0.02em, 80px rows, row 1 left ~36 px/s, row 2 right ~44 px/s, photo bottom-anchored with a drop shadow and a card-colored bottom fade).
-  - Lighthouse mobile (median of 3, prod build): before 83 (LCP 3.5 s, TBT 350 ms, CLS 0); after the globe 83 (LCP 3.5 s, TBT 360 ms). Re-measure after the portrait card.
+  - `63c8ff9` the time zone card is two tiles wide at lg and the tools card single; the globe uses the reference placement at lg (170% of the card height, top-aligned, 12% past the right edge) and a card-colored bottom fade at every width.
+  - `90e74cd` portrait card rebuilt after the reference: the user-approved cut-out (rembg 2.0.67 `birefnet-portrait`, run through uvx outside the project; trimmed to `public/umair-nadeem-cutout.webp`, 808x1400, 154 KB; the original jpg is kept but unused), unframed and bottom-anchored with the reference drop shadow and a bottom fade, two `content.portraitWords` rows scrolling behind it at the measured 36 and 44 px/s (verified), caption = bio sentence 3. Details in DESIGN.md 11.2. Screenshots `review/portrait-*`, `review/about-final-*`, reference `review/ref-portrait-*`.
+  - Open: bio sentence 2 ("5+ years in QA hunting bugs, ...") no longer appears anywhere on the page; suggested home: the standfirst under the Experience headline (DESIGN.md 11.3). Waiting on the user.
+  - Lighthouse mobile, user flow (navigation, then a timespan that scrolls through About so the globe and portrait load), median of 3, production builds: before (`fb46555`) navigation 82 (LCP 3.5 s, TBT 375 ms, CLS 0, 402 KiB), scroll 100 (TBT 0 ms, CLS 0); after (`90e74cd`) navigation 85 (LCP 3.5 s, TBT 257 ms, CLS 0, 437 KiB: +33 KiB is the cut-out, which Chrome fetches early on slow connections), scroll 99 (TBT 103 ms from cobe starting up, CLS 0). Plain navigation-only runs were 83 before and 83 with the globe.
 - Still old: Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt.
 
 ### Decisions
@@ -143,7 +145,7 @@ GSAP `matchMedia` only runs a conditions-object callback while at least one cond
 
 ### Next steps, in order
 
-1. The user approves (or rejects) the portrait cut-out; then build the portrait card (item 3 of the About round 2 request): text rows field in content.ts, cut-out into public/ as an optimized transparent image, DESIGN.md and CLAUDE.md updates (second approved marquee), screenshots, Lighthouse after.
+1. The user reviews About round 2 (globe card, portrait card) and decides where bio sentence 2 goes.
 2. The user reviews the About bento and the hero feedback round (screenshots in `review/about-*`, `review/hero-arc-*`, `review/stars-*`), and says what the "1 Issue" overlay showed if it comes back.
 3. Phase 4 step 4: Experience timeline (DESIGN.md 11.3).
 4. Then the remaining build steps in DESIGN.md section 13: Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button (`content.resume.href`) and fix the hardcoded "© 2024" year.
