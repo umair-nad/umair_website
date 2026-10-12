@@ -74,7 +74,8 @@ export interface SiteContent {
   specializations: string[];
   certifications: Certification[];
   links: SiteLink[];
-  contact: { email: string };
+  /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA. */
+  contact: { email: string; cta: string };
   /** Public resume PDF, served from public/. */
   resume: { href: string };
   seo: { title: string; description: string };
@@ -240,6 +241,9 @@ export const content = {
   // No phone number anywhere on the site (user decision 2026-10-04).
   contact: {
     email: "uminadeem06@gmail.com",
+    // The single contact-intent label site-wide (user decision 2026-10-12,
+    // replacing "Get in touch"). Typographic apostrophe, as in the hero h1.
+    cta: "Let’s Connect",
   },
 
   // Umair approved publishing this PDF as is, phone number included

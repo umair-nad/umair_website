@@ -145,7 +145,7 @@ export default function Hero() {
               aria-hidden="true"
               className="absolute inset-0 -z-10 translate-x-[45%] scale-0 rounded-full bg-fg opacity-0 transition-[translate,scale,opacity] duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100"
             />
-            <span className="transition-colors duration-300 ease-in-out group-hover:text-bg">Get in touch</span>
+            <span className="transition-colors duration-300 ease-in-out group-hover:text-bg">{content.contact.cta}</span>
             <span className="relative inline-flex size-9.5 items-center justify-center overflow-hidden rounded-full bg-inverse text-inverse-fg transition-colors duration-300 ease-in-out group-hover:bg-transparent">
               <ArrowRight
                 size={18}
@@ -163,7 +163,7 @@ export default function Hero() {
           </a>
 
           {/* Download resume (DESIGN.md section 6): the secondary pill. Same
-              height, shape, and Alata label as "Get in touch", but outlined
+              height, shape, and Alata label as the primary CTA, but outlined
               instead of filled, so the primary still leads. */}
           <a
             href={content.resume.href}

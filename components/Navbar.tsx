@@ -7,6 +7,7 @@ import { gsap, ScrollSmoother, ScrollTrigger, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
 import { scrollToElement } from '@/lib/scroll'
+import { content } from '@/lib/content'
 import Logo from '@/components/brand/Logo'
 import StatusCapsule from '@/components/nav/StatusCapsule'
 import ThemeToggle from '@/components/theme/ThemeToggle'
@@ -29,7 +30,7 @@ const SCROLL_GAP = 16
 
 // Floating pill navbar (DESIGN.md section 6). Three zones on one row: the
 // Logo (home link) on the left, the centered pill with the 4 anchors and
-// the embedded "Get in touch" CTA, and on the right the status capsule
+// the embedded contact CTA (content.contact.cta), and on the right the status capsule
 // (lg and up) then the theme toggle, which sits at the far right at every
 // width, as on the reference. Below md the pill becomes a menu panel.
 const Navbar = () => {
@@ -207,7 +208,7 @@ const Navbar = () => {
                 onClick={(e) => onAnchorClick(e, '#contact')}
                 className={`inline-flex h-7.5 items-center rounded-card border border-line-strong bg-white/10 px-3 text-[13px] text-fg transition-[color,background-color,border-color] hover:bg-white/20 ${focusRing}`}
               >
-                Get in touch
+                {content.contact.cta}
               </a>
             </li>
           </ul>
@@ -259,7 +260,7 @@ const Navbar = () => {
               onClick={(e) => onAnchorClick(e, '#contact')}
               className={`mt-2 flex h-10 items-center justify-center rounded-card border border-line-strong bg-fg/5 text-[15px] text-fg ${focusRing}`}
             >
-              Get in touch
+              {content.contact.cta}
             </a>
           </div>
         </div>
