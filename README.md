@@ -69,6 +69,7 @@ yarn dev
 │   ├── Contact.tsx
 │   └── Footer.tsx
 ├── public/
+│   └── umair-nadeem-qa-engineer-resume.pdf   # public resume ("Download resume")
 ├── package.json
 ├── tailwind.config.js
 ├── next.config.js

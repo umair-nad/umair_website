@@ -32,7 +32,7 @@ There is no test framework configured; UI verification is done with the playwrig
 - `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.
-- `UmairNadeem_SQA.pdf` at the repo root is the public resume, tracked in git and approved for publishing (Progress, Decisions). It moves to `public/umair-nadeem-qa-engineer-resume.pdf` next. Do not confuse it with the private LinkedIn PDF in `data/`.
+- `public/umair-nadeem-qa-engineer-resume.pdf` is the public resume, approved for publishing (Progress, Decisions); its path is `content.resume.href`. Do not confuse it with the private LinkedIn PDF in `data/`.
 
 `lib/content.ts` is the typed content source for all site copy, and every rebuilt section (the Hero so far) reads from it. The old sections still hardcode their copy until they are rebuilt. There is no CMS. The headshot for the About section is `public/umair-nadeem.jpg` (2048x2048); use next/image with descriptive alt text.
 
@@ -53,7 +53,7 @@ There is no test framework configured; UI verification is done with the playwrig
 - Never commit anything inside `data/`, `refrence/`, or `review/`. All three are gitignored; `data/` contains personal information.
 
 ### Content
-- Content sources are `data/` (LinkedIn PDF), the public resume `UmairNadeem_SQA.pdf`, the existing site content, and facts the user provides directly in chat about Umair's work. When sources conflict, follow LinkedIn (user decision 2026-10-04). Never invent projects, metrics, dates, tools, or achievements. If something is missing from all sources, stop and ask the user.
+- Content sources are `data/` (LinkedIn PDF), the public resume `public/umair-nadeem-qa-engineer-resume.pdf`, the existing site content, and facts the user provides directly in chat about Umair's work. When sources conflict, follow LinkedIn (user decision 2026-10-04). Never invent projects, metrics, dates, tools, or achievements. If something is missing from all sources, stop and ask the user.
 - Smart In Media content: present only what the user stated in chat or what is publicly visible on smartinmedia.com. Write product names as "PathoZoom Digital Lab" and "PathoZoom Scan & LiveView", skip the ® symbol in body text, and never describe internal details or clients.
 - Do not publish Umair's phone number anywhere in the site text (user decision 2026-10-04). Email is the only direct contact method. The one approved exception (2026-10-10): the downloadable resume PDF may contain it as is.
 - The reference site in `refrence/` belongs to a developer (Dhiraj Bhawsar). Match the reference site's theme (colors, light/dark modes, typography); never reuse its logo, text, images, video, or developer-only sections.
@@ -105,7 +105,7 @@ As of 2026-10-12:
 - Stack: Next.js 16.4.0, React 19.3.0, Tailwind 4 (CSS-first), lucide-react 1.x, ESLint 9 with flat `eslint.config.mjs`, TypeScript 5.9. lucide 1.x has no brand icons, so LinkedIn and Upwork are text links. Vercel needs Node 20.9 or newer.
 - Theme: light is the default; dark mode via the toggle (OS preference on the first visit, remembered choice afterwards). Palette and fonts match the reference: EB Garamond, Alata, Source Code Pro. Values are in DESIGN.md sections 3 and 4.
 - Logo and favicons: the SVG monogram (`assets/brand/un-monogram.svg`, `currentColor`) is the logo (`components/brand/Logo.tsx`). `app/icon.svg` is a dark rounded tile with a white monogram, so it is visible on any tab color.
-- Resume: Umair approved publishing the current `UmairNadeem_SQA.pdf` as is, including the phone number and older details in it (user, 2026-10-10). Website text still follows LinkedIn (`lib/content.ts`), and the no-phone-number rule still applies to all site text. Replace the PDF when Umair sends an updated version.
+- Resume: Umair approved publishing the current resume (now `public/umair-nadeem-qa-engineer-resume.pdf`) as is, including the phone number and older details in it (user, 2026-10-10). Website text still follows LinkedIn (`lib/content.ts`), and the no-phone-number rule still applies to all site text. Replace the PDF when Umair sends an updated version.
 - Domain: none yet. Deploy free on Vercel first, then set `NEXT_PUBLIC_SITE_URL` after the first deploy (see Deployment).
 - Content: when sources conflict, LinkedIn wins; the professional title is "QA Engineer"; no blog; no GitHub insights or stats.
 

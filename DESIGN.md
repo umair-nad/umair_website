@@ -203,7 +203,7 @@ New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in
 - **Floating nav (measured):** three zones on one row. Left: the `Logo` (home link). Center: a 40px-tall pill (`line` border, 10px radius, backdrop blur 12px; reference fill white/5 in dark, black/10 in light) holding the 4 anchor links (About, Experience, Skills, Contact) in Alata 13px, the active one in `accent` with a 10px-radius tint (reference: white/5), and one embedded "Get in touch" button (reference "Book a Call": 30px tall, white/10 fill, white/20 border, 10px radius). The reference's light-mode pill border is white/10, which is invisible on white, so we use `line` (black/10) in light. Right: status capsule (desktop, `lg`+) then the theme toggle. Hamburger below `md`, reusing the existing GSAP menu logic, placed left of the toggle.
 - **Status capsule (desktop only):** 38px tall, 14px radius, backdrop blur 12px; light fill black/8, border black/15; dark fill white/5, border white/10 (all measured). Mono 11px. The reference's capsule holds weather, a place name, a clock, and a ⌘K keycap. Ours holds only the green `live` dot and Umair's local time, `ISB 14:32 PKT`, drawn from `content.location` (Islamabad). No weather, no visitor counter, no greeting, no ⌘K.
 - **Primary button (measured):** full pill, 48px tall, padding `4px 4px 4px 12px`, backdrop blur 4px; light fill black/20 with black/10 border, dark fill white/10 with white/10 border; Alata 16px label; embedded 38px circular arrow chip in `inverse` (black in light, white in dark). `:active` scale 0.98; magnetic on fine pointers. Exactly one contact-intent label site-wide: **"Get in touch"** (the nav CTA is the same anchor link, not a second styled intent).
-- **Download resume button (measured on the reference's "CV" button):** 8px radius, padding `6px 12px`, Source Code Pro 12px/700, `inverse` fill with `inverse-fg` text. `href="/UmairNadeem_SQA.pdf"` with the `download` attribute. Appears in the hero CTA row and the footer.
+- **Download resume button (measured on the reference's "CV" button):** 8px radius, padding `6px 12px`, Source Code Pro 12px/700, `inverse` fill with `inverse-fg` text. `href` is `content.resume.href` (`/umair-nadeem-qa-engineer-resume.pdf`) with the `download` attribute. Appears in the hero CTA row and the footer.
 - **Copy-email row:** lucide `Copy` icon + Source Code Pro email, with "copied" feedback; sits beside the CTAs. Email is the only direct contact method (locked rule).
 - **Bento card (measured):** `surface` fill, 1px border (light `line` black/10; dark `#242424/0.30`, as on the reference), 10px radius, light-mode `shadow-lg`, backdrop blur 8px; caption lockup bottom-left; one focal visual per card; hover lift 2px + border step to `line-strong`.
 - **Chip (ours; the reference's chips were not separately measured):** full pill, `surface-2`, 1px `line`, Source Code Pro 13px. **Text only, no icons**, for tool and skill chips alike (user decision 2026-10-10).
@@ -349,7 +349,7 @@ Keep the defaults: Next sends no `Access-Control-Allow-Origin` on pages or asset
   - **Phone number:** in `components/Contact.tsx` from the first commit (`e074d83`) up to the current tree, in `.next` build output committed in `e074d83` (untracked in `f75e7a1`), and in `UmairNadeem_SQA.pdf`, tracked since `e074d83`. The rebuilt Contact section removes it from the tree. History keeps it on `main` and `redesign`.
   - **Older email address** (not the one in `content.ts`): in the PDF and earlier code.
   - **Repo visibility:** `origin` (`github.com/umair-nad/umair_website`) answers 404 to an unauthenticated GitHub API request, so it isn't public today. Scrubbing history would mean rewriting `main` and force-pushing; that is the user's call, and nothing is planned.
-- **Resume PDF:** it contains the phone number and the older email. It is not moved into `public/` until Umair confirms it may be published (section 11.1).
+- **Resume PDF:** it contains the phone number and the older email. Umair approved publishing it as is (2026-10-10), and it is served from `public/umair-nadeem-qa-engineer-resume.pdf` (section 11.1).
 
 ### 10.6 Dependencies
 
@@ -394,7 +394,7 @@ Centered stage (the one intentionally centered section; everything after is asym
 
 Below the stack, the gradient signal trace settles to baseline at the fold. No color washes, no horizon arc, no trust strips, no scroll cue, no version labels.
 
-**Resume move (Hero step, user decision 2026-10-10):** `git mv UmairNadeem_SQA.pdf public/UmairNadeem_SQA.pdf` (keeps its history), then the hero and footer buttons point to `/UmairNadeem_SQA.pdf`. Update the README and CLAUDE.md references to the old path in the same step. **Gate:** the PDF's text contains Umair's phone number and an older email address (no street address; location is "Islamabad, Pakistan" only). Publishing the phone would conflict with the no-phone rule, so the move waits for Umair's explicit OK, or for a replacement PDF without the phone. If the gate isn't cleared when the Hero step starts, build the hero without the resume button and add it once cleared.
+**Resume (done 2026-10-12):** the PDF was moved with `git mv` (keeping its history) to `public/umair-nadeem-qa-engineer-resume.pdf`, an SEO-friendly name. The path lives in `content.resume.href`; the hero button and, later, the footer button read it from there. The PDF contains Umair's phone number and an older email address (no street address). Umair approved publishing it as is (2026-10-10), so it is the one exception to the no-phone rule; site text still never shows the phone. Replace the file in place when Umair sends an updated resume.
 
 ### 11.2 About bento (`#about`)
 
@@ -454,7 +454,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
    - EB Garamond, Alata, and Source Code Pro via `next/font`.
    - The no-flash `ThemeScript` (static, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`.
    - The floating navbar with the `Logo`, the pill, the status capsule, the toggle placement, and the mobile menu.
-2. **Hero (done 2026-10-10, awaiting review):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroTrace.tsx`, with all copy from `lib/content.ts`. The "Download resume" button and the `git mv` of the PDF into `public/` are still gated (11.1); a marked slot in the CTA row is waiting for them.
+2. **Hero (done 2026-10-10; resume button added 2026-10-12):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroTrace.tsx`, with all copy from `lib/content.ts`. The "Download resume" button sits between the two CTAs (11.1).
 3. About bento
 4. Experience timeline
 5. Skills
