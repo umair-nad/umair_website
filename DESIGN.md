@@ -404,7 +404,7 @@ Single route, hash anchors preserved: `#about`, `#experience`, `#skills`, `#cont
 Centered stage (the one intentionally centered section; everything after is asymmetric), on the plain page background. Stack of 3 text elements (the status badge was removed by the user on 2026-10-12; the current role is shown in the About role card):
 
 1. `h1`, 2 lines: **"I break things so your users don't have to."** (verbatim from the approved bio; "break" is the italic gradient accent word)
-2. Mono subline (`text-hero`): **"Umair Nadeem | Islamabad, Pakistan"** (`content.name` + `content.location`; set by the user 2026-10-10)
+2. Mono subline (`text-hero`): **"Hello I’m Umair | A Software Quality Assurance Engineer"** (`content.heroSubline`, two parts; wording set by the user 2026-10-12, replacing "Umair Nadeem | Islamabad, Pakistan"). One line with the pipe from `sm`; below `sm` the two parts stack on two lines with no pipe, so 390px breaks at the separator, never mid-phrase. The site's title stays "QA Engineer" elsewhere; this subline spells the role out by the user's choice.
 3. CTA row: "Let’s Connect" primary pill + "Download resume" button + copy-email row (`uminadeem06@gmail.com`)
 
 Behind the stack, the warm (light) or cool (dark) corner washes; under the CTA row, the glowing horizon arc (section 2, approved 2026-10-12). No trust strips, no scroll cue, no version labels.

@@ -76,6 +76,8 @@ export interface SiteContent {
   portraitWords: [string[], string[]];
   certifications: Certification[];
   links: SiteLink[];
+  /** Hero subline, in two parts joined by " | " (one line from sm, two below). */
+  heroSubline: [string, string];
   /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA. */
   contact: { email: string; cta: string };
   /** Public resume PDF, served from public/. */
@@ -89,6 +91,9 @@ export const content = {
   // Voice: LinkedIn summary, near verbatim (user decision 2026-10-04).
   bio: "I break things so your users don't have to. 5+ years in QA hunting bugs, writing tight test cases, and keeping releases from turning into dumpster fires. Manual, regression, UAT, smoke, API, edge cases no one else thinks about: that's my lane.",
   location: "Islamabad, Pakistan",
+  // Wording set by the user (2026-10-12), typographic apostrophe included.
+  // Reads "Hello I’m Umair | A Software Quality Assurance Engineer".
+  heroSubline: ["Hello I’m Umair", "A Software Quality Assurance Engineer"],
   // Derived from the location, not a claim about Umair's working hours
   // (DESIGN.md 11.2). Pakistan observes no daylight saving time.
   timeZone: { iana: "Asia/Karachi", abbr: "PKT", label: "PKT (UTC+5)" },

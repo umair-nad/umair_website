@@ -103,8 +103,16 @@ export default function Hero() {
           {AFTER}
         </h1>
 
-        <p data-reveal data-hero-sub className="mt-5 font-mono text-[15px] text-text-hero md:mt-6 md:text-xl">
-          <span translate="no">{content.name}</span> | {content.location}
+        {/* Two lines below sm (broken at the separator, never mid-phrase),
+            one line with " | " from sm up. The comma is for screen readers,
+            which would otherwise run the two parts together. */}
+        <p data-reveal data-hero-sub className="mt-5 font-mono text-[15px] leading-relaxed text-balance text-text-hero md:mt-6 md:text-xl">
+          <span className="block sm:inline">{content.heroSubline[0]}</span>
+          <span className="sr-only">, </span>
+          <span aria-hidden="true" className="hidden sm:inline">
+            {' | '}
+          </span>
+          <span className="block sm:inline">{content.heroSubline[1]}</span>
         </p>
 
         <div
