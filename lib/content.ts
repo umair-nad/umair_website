@@ -63,6 +63,8 @@ export interface SiteContent {
   title: string;
   bio: string;
   location: string;
+  /** Standard time zone of `location`; drives the local clocks. */
+  timeZone: { iana: string; abbr: string; label: string };
   spokenLanguages: string[];
   experience: Role[];
   education: EducationEntry[];
@@ -84,6 +86,9 @@ export const content = {
   // Voice: LinkedIn summary, near verbatim (user decision 2026-10-04).
   bio: "I break things so your users don't have to. 5+ years in QA hunting bugs, writing tight test cases, and keeping releases from turning into dumpster fires. Manual, regression, UAT, smoke, API, edge cases no one else thinks about: that's my lane.",
   location: "Islamabad, Pakistan",
+  // Derived from the location, not a claim about Umair's working hours
+  // (DESIGN.md 11.2). Pakistan observes no daylight saving time.
+  timeZone: { iana: "Asia/Karachi", abbr: "PKT", label: "PKT (UTC+5)" },
   spokenLanguages: ["English", "Urdu"],
 
   experience: [
