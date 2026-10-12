@@ -42,9 +42,13 @@ export function IconChip({ icon: Icon }: { icon: LucideIcon }) {
 }
 
 // Text-only chip (DESIGN.md section 6: no icons on tool or skill chips).
-export function Chip({ children }: { children: ReactNode }) {
+// `wrap` lets a chip that is wider than its whole row break onto two lines
+// instead of overflowing (only the longest names, on the narrowest phones).
+export function Chip({ children, wrap = false }: { children: ReactNode; wrap?: boolean }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-line bg-surface-2 px-3 py-1 font-mono text-[13px] whitespace-nowrap text-fg">
+    <span
+      className={`inline-flex items-center rounded-full border border-line bg-surface-2 px-3 py-1 font-mono text-[13px] text-fg ${wrap ? 'text-center' : 'whitespace-nowrap'}`}
+    >
       {children}
     </span>
   )

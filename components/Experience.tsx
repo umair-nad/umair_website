@@ -1,197 +1,232 @@
 'use client'
 
-import { useRef } from 'react'
-import { Calendar, MapPin, Building } from 'lucide-react'
+import { useRef, type ReactNode } from 'react'
+import { BriefcaseBusiness, Check, GraduationCap, type LucideIcon } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
-import { REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
+import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
+import { content, type SkillGroupId } from '@/lib/content'
+import { Chip } from '@/components/about/BentoCard'
 
 registerGsap()
 
-const experiences = [
-  {
-    title: 'Senior QA Engineer',
-    company: 'Adrem Technologies',
-    location: 'Islamabad',
-    period: 'November 2023 — Present',
-    description: [
-      'Conducted functional, regression, smoke, and usability testing for web and mobile applications to ensure defect-free releases',
-      'Developed comprehensive test plans, test cases, and test scripts aligned with project requirements and deadlines',
-      'Identified, documented, and tracked bugs using tools like Jira and Trello, collaborating with developers for timely resolution',
-      'Performed API validations using Postman to ensure proper integration and data flow between services',
-      'Worked closely with product managers, developers, and other stakeholders to clarify requirements and improve product quality',
-    ],
-    skills: ['Manual Testing', 'Jira', 'Trello', 'Postman', 'API Testing', 'Test Planning'],
-  },
-  {
-    title: 'Senior QA Analyst',
-    company: 'Workbox Pvt Ltd',
-    location: 'Peshawar',
-    period: 'August 2021 — October 2023',
-    description: [
-      'Led QA efforts, including standup and retrospective meetings, to ensure effective team communication and collaboration',
-      'Prepared detailed bug reports using tools like Jira, identifying and documenting UI/UX and functional issues',
-      'Developed and executed end-to-end test cases and scenarios to validate application functionality',
-      'Wrote and maintained automated test scripts in various frameworks, improving testing efficiency',
-      'Created technical documentation, including test plans and workflows, to support project goals',
-      'Managed workflows using project management tools, ensuring timely task completion',
-      'Generated weekly and monthly project progress reports to track milestones and communicate updates',
-      'Collaborated with development teams to resolve issues and deliver high-quality software products',
-    ],
-    skills: ['Agile Methodology', 'Automated Testing', 'Test Documentation', 'Project Management', 'Reporting'],
-  },
-]
+// Experience timeline (DESIGN.md 11.3), after the reference's "Growth &
+// Experience" layout, measured 2026-10-12: a 2px spine down the left, a
+// 40px circled glyph per entry whose 4px page-colored ring cuts the spine,
+// and a 1fr / 2fr split per entry (meta left, evidence card and chips
+// right) that stacks below md. Everything comes from lib/content.ts: the
+// three roles, education, and after the timeline the testing types and
+// practices, which no source ties to one role.
 
-const Experience = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const pinRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
+const [HEAD_BEFORE, HEAD_ACCENT, HEAD_AFTER] = content.experienceHeadline
+const INTRO = content.bio.split(/(?<=\.)\s+/)[1] ?? '' // bio sentence 2, verbatim
+const GROUPS: SkillGroupId[] = ['testing-types', 'practices']
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+// "May 2025" -> "2025-05" for <time dateTime>.
+function isoMonth(date: string) {
+  const [month, year] = date.split(' ')
+  const i = MONTHS.indexOf(month)
+  return i === -1 ? undefined : `${year}-${String(i + 1).padStart(2, '0')}`
+}
+
+// Ranges use a spaced hyphen (no em dashes, CLAUDE.md).
+function DateRange({ start, end }: { start: string; end: string }) {
+  return (
+    <p>
+      <time dateTime={isoMonth(start)}>{start}</time> -{' '}
+      {end === 'Present' ? end : <time dateTime={isoMonth(end)}>{end}</time>}
+    </p>
+  )
+}
+
+function Entry({
+  icon: Icon,
+  title,
+  org,
+  meta,
+  children,
+}: {
+  icon: LucideIcon
+  title: string
+  org: string
+  meta: ReactNode
+  children?: ReactNode
+}) {
+  return (
+    <li className="relative pb-16 pl-13 last:pb-0 md:pb-20">
+      <span
+        data-reveal
+        aria-hidden="true"
+        className="absolute top-0 left-0 flex size-10 items-center justify-center rounded-full border-4 border-bg bg-node text-node-icon"
+      >
+        <Icon size={16} strokeWidth={1.75} />
+      </span>
+      <div className="grid grid-cols-1 gap-y-5 md:grid-cols-[1fr_2fr] md:gap-x-8">
+        <div data-reveal className="pt-1.5">
+          {/* The organization is repeated for screen readers so the heading
+              list tells the two "Senior QA Engineer" roles apart. */}
+          <h3 className="font-sans text-lg leading-7 text-balance text-fg md:text-xl">
+            {title}
+            <span className="sr-only">, {org}</span>
+          </h3>
+          <div className="mt-2 flex flex-col gap-1 font-mono text-sm leading-6 text-text md:text-[15px]">
+            <p translate="no" className="font-semibold text-fg">
+              {org}
+            </p>
+            {meta}
+          </div>
+        </div>
+        {children && <div>{children}</div>}
+      </div>
+    </li>
+  )
+}
+
+export default function Experience() {
+  const rootRef = useRef<HTMLElement>(null)
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
 
-      mm.add(
-        { isDesktop: '(min-width: 1024px)', reduceMotion: REDUCED_MOTION_QUERY },
-        (context) => {
-          const { isDesktop, reduceMotion } = context.conditions as {
-            isDesktop: boolean
-            reduceMotion: boolean
-          }
-          const cards = gsap.utils.toArray<HTMLElement>('[data-exp-card]', trackRef.current)
+      mm.add({ always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY }, (ctx) => {
+        const { reduceMotion } = ctx.conditions as { reduceMotion: boolean }
+        const all = gsap.utils.toArray<HTMLElement>('[data-reveal]', rootRef.current)
+        const spine = rootRef.current?.querySelector<HTMLElement>('[data-spine]')
 
-          if (reduceMotion) {
-            gsap.set(cards, { autoAlpha: 1, x: 0, y: 0 })
-            return
-          }
+        // Undo the pre-paint hiding (globals.css [data-reveal]).
+        gsap.set(all, { autoAlpha: 1 })
+        if (reduceMotion) return // static final state: full spine, all entries
 
-          if (!isDesktop) {
-            gsap.from(cards, {
-              autoAlpha: 0,
-              y: 30,
-              stagger: 0.15,
-              duration: 0.6,
-              ease: 'power2.out',
-              scrollTrigger: { trigger: trackRef.current, start: 'top 85%' },
-            })
-            return
-          }
-
-          // Desktop: horizontal pin. Distance is computed from the track's
-          // actual content width (not a fixed number) and invalidateOnRefresh
-          // forces that computation to re-run on resize/refresh rather than
-          // reusing a stale value - both the tween's `x` and the
-          // ScrollTrigger's `end` are functions for exactly this reason.
-          const track = trackRef.current
-          const pinEl = pinRef.current
-          if (!track || !pinEl) return
-
-          const getScrollDistance = () => Math.max(track.scrollWidth - pinEl.clientWidth, 0)
-
-          const tween = gsap.to(track, {
-            x: () => -getScrollDistance(),
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              pin: true,
-              scrub: 1,
-              invalidateOnRefresh: true,
-              end: () => '+=' + getScrollDistance(),
-            },
-          })
-
-          // Card text affects track width, and fonts affect card text width -
-          // refresh once the final fonts are in so the pin distance isn't
-          // computed against fallback-font metrics.
-          document.fonts.ready.then(() => {
-            if (!context.isReverted) ScrollTrigger.refresh()
-          })
-
-          return () => {
-            // ScrollTrigger.kill() reverts its own pin-related inline
-            // styles automatically, but tween.kill() does NOT revert the
-            // transform it already applied - without clearProps, crossing
-            // back below 1024px mid-scroll would leave the track visibly
-            // shifted by its last translateX under the vertical layout.
-            tween.scrollTrigger?.kill()
-            tween.kill()
-            gsap.set(track, { clearProps: 'x' })
-          }
+        // The spine draws down as you read: its tip follows a line 70% down
+        // the viewport (the reference's tip sits about 64% down). The
+        // trigger is the list, not the spine: a spine scaled to 0 would
+        // measure 0px tall and collapse start and end into one point.
+        if (spine?.parentElement) {
+          gsap.fromTo(
+            spine,
+            { scaleY: 0 },
+            {
+              scaleY: 1,
+              ease: 'none',
+              scrollTrigger: { trigger: spine.parentElement, start: 'top 70%', end: 'bottom 70%', scrub: true },
+            }
+          )
         }
-      )
+
+        // Heading, intro, then each entry's node, meta, card, and chips rise
+        // in reading order as they scroll in, once. fromTo with explicit end
+        // values (Hero pattern).
+        const items = all.filter((el) => el !== spine)
+        const from = { autoAlpha: 0, y: 16 }
+        gsap.set(items, from)
+        ScrollTrigger.batch(items, {
+          start: 'top 85%',
+          once: true,
+          onEnter: (batch) =>
+            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.08, overwrite: true }),
+        })
+      })
 
       return () => mm.revert()
     },
-    { scope: sectionRef }
+    { scope: rootRef }
   )
 
   return (
-    <section id="experience" ref={sectionRef} className="py-20 lg:py-0 lg:h-screen lg:overflow-hidden">
-      <div
-        ref={pinRef}
-        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 lg:h-full lg:flex lg:flex-col lg:justify-center lg:overflow-hidden"
-      >
-        <h2 className="text-3xl font-display font-bold text-fg mb-12 text-center lg:mb-10">Experience</h2>
+    <section ref={rootRef} id="experience" aria-labelledby="experience-heading" className="px-4 py-28 md:px-8 md:py-40">
+      <div className="mx-auto max-w-4xl">
+        <h2 id="experience-heading" data-reveal className="max-w-3xl font-display text-4xl leading-tight text-balance text-fg lg:text-[56px]">
+          {HEAD_BEFORE} <em className="text-gradient-accent pr-[0.06em] italic">{HEAD_ACCENT}</em> {HEAD_AFTER}
+        </h2>
+        <p data-reveal className="mt-6 max-w-2xl font-mono text-base leading-relaxed text-text md:text-lg">
+          {INTRO}
+        </p>
 
-        <div
-          ref={trackRef}
-          className="space-y-12 lg:space-y-0 lg:flex lg:items-stretch lg:gap-8 lg:w-max"
-        >
-          {experiences.map((exp, index) => (
-            <div
-              key={index}
-              data-exp-card
-              className="bg-muted/5 rounded-lg p-8 border border-muted/20 hover:border-accent/30 transition-colors duration-300 lg:w-xl"
+        <ol className="relative mt-16 md:mt-20">
+          {/* Spine: centered under the 40px nodes, fading out past the last
+              one. Decorative; the list order carries the sequence. */}
+          <span
+            data-spine
+            data-reveal
+            aria-hidden="true"
+            className="absolute top-5 bottom-0 left-4.75 w-0.5 origin-top rounded-full bg-[linear-gradient(to_bottom,var(--line-strong)_calc(100%-4rem),transparent)]"
+          />
+
+          {content.experience.map((role) => (
+            <Entry
+              key={`${role.company}-${role.start}`}
+              icon={BriefcaseBusiness}
+              title={role.title}
+              org={role.company}
+              meta={
+                <>
+                  <DateRange start={role.start} end={role.end} />
+                  <p className="text-muted">{role.location}</p>
+                </>
+              }
             >
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-                <div>
-                  <h3 className="text-xl font-semibold text-fg mb-2">{exp.title}</h3>
-                  <div className="flex flex-wrap items-center gap-4 text-muted">
-                    <div className="flex items-center gap-1">
-                      <Building size={16} aria-hidden="true" />
-                      <span>{exp.company}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin size={16} aria-hidden="true" />
-                      <span>{exp.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar size={16} aria-hidden="true" />
-                      <span className="font-mono text-sm">{exp.period}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <ul className="space-y-2 text-muted">
-                  {exp.description.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-start gap-2">
-                      <span className="text-accent mt-1">▹</span>
-                      <span>{item}</span>
+              <div
+                data-reveal
+                className="rounded-card border border-line-card bg-surface p-5 shadow-lg shadow-black/5 transition-[translate,border-color] duration-300 hover:-translate-y-0.5 hover:border-line-strong md:p-6 dark:shadow-none"
+              >
+                {role.summary && <p className="mb-4 font-mono text-sm leading-6 text-muted">{role.summary}</p>}
+                <ul className="space-y-3">
+                  {role.highlights.map((item) => (
+                    <li key={item} className="flex gap-3 font-mono text-sm leading-6 text-text">
+                      <Check size={16} strokeWidth={2} aria-hidden="true" className="mt-1 shrink-0 text-accent" />
+                      {item}
                     </li>
                   ))}
                 </ul>
-
-                <div className="pt-4">
-                  <div className="flex flex-wrap gap-2">
-                    {exp.skills.map((skill, skillIndex) => (
-                      <span
-                        key={skillIndex}
-                        className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-mono"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
               </div>
-            </div>
+              <ul data-reveal aria-label="Skills" className="mt-4 flex flex-wrap gap-2">
+                {role.tags.map((tag) => (
+                  <li key={tag}>
+                    <Chip>{tag}</Chip>
+                  </li>
+                ))}
+              </ul>
+            </Entry>
           ))}
+
+          {content.education.map((edu) => (
+            <Entry
+              key={edu.school}
+              icon={GraduationCap}
+              title={edu.field ? `${edu.degree}, ${edu.field}` : edu.degree}
+              org={edu.school}
+              meta={edu.start && edu.end && <DateRange start={edu.start} end={edu.end} />}
+            />
+          ))}
+        </ol>
+
+        {/* Testing types and practices: across the whole career, so they
+            sit after the timeline, on the entries' text column (full width
+            below md, where the longest chip needs the room). */}
+        <div className="mt-20 space-y-10 border-t border-line pt-12 md:mt-24 md:ml-13">
+          {GROUPS.map((id) => {
+            const group = content.skills.find((g) => g.id === id)
+            if (!group) return null
+            return (
+              <div key={id} className="grid grid-cols-1 gap-y-4 md:grid-cols-[1fr_2fr] md:gap-x-8">
+                <h3 data-reveal id={`exp-${id}`} className="font-sans text-lg leading-7 text-fg md:text-xl">
+                  {group.label}
+                </h3>
+                <ul data-reveal aria-labelledby={`exp-${id}`} className="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <li key={item} className="max-w-full">
+                      <Chip wrap>{item}</Chip>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
   )
 }
-
-export default Experience

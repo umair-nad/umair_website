@@ -31,6 +31,8 @@
   --color-dock-toggle: var(--dock-toggle);
   --color-dock-icon: var(--dock-icon);
   --color-dock-active: var(--dock-active);
+  --color-node: var(--node);
+  --color-node-icon: var(--node-icon);
 
   --font-display: var(--font-eb-garamond), ui-serif, Georgia, serif;
   --font-sans: var(--font-alata), ui-sans-serif, system-ui, sans-serif;
@@ -99,6 +101,12 @@
   --dock-icon: #a3a3a3;
   --dock-active: #c27aff;
 
+  /* Experience timeline nodes (DESIGN.md 11.3), measured on the reference:
+     neutral-300 disc with a neutral-600 glyph on the white page, neutral-800
+     with neutral-400 on the dark one. Glyph on disc: 5.3:1 and 5.9:1. */
+  --node: #d4d4d4;
+  --node-icon: #525252;
+
   /* Fixed navbar height for CSS consumers (Hero's top padding, etc.). */
   /* Floating bar: 16px top offset + 40px bar + 16px gap (Navbar SCROLL_GAP). */
   --nav-height: 4.5rem;
@@ -145,6 +153,8 @@
   --dock-toggle: #fafafa;
   --dock-icon: #737373;
   --dock-active: #7928ca;
+  --node: #262626;
+  --node-icon: #a1a1a1;
 }
 
 @layer base {
