@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project overview
 
-Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer. Currently a single-page site (all sections on one route with hash-anchor navigation), being rebuilt on the `redesign` branch.
+Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer. Currently a single-page site (all sections on one route with hash-anchor navigation), being rebuilt section by section directly on `main`.
 
 - Framework: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9 (upgraded 2026-10-10)
 - Styling: Tailwind CSS 4 (CSS-first config: theme tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.js`), PostCSS via `@tailwindcss/postcss`
@@ -42,7 +42,10 @@ There is no test framework configured; UI verification is done with the playwrig
 - This is Umair Nadeem's portfolio. Umair is a QA engineer, so the site must present QA and test automation work, not a software developer profile.
 
 ### Git
-- Work only on the branch `redesign`. Never touch `main`.
+- Work directly on `main`; there are no feature branches (user decision 2026-10-12). Commit after each reviewed step.
+- Never force-push.
+- Once Vercel is connected to `main`, every push deploys, so push only after the user has reviewed the step.
+- The tag `pre-redesign-main` (pushed to origin) marks the old site as it was before the redesign, so it can always be recovered.
 - Never commit anything inside `data/`, `refrence/`, or `review/`. All three are gitignored; `data/` contains personal information.
 
 ### Content
@@ -85,8 +88,9 @@ There is no test framework configured; UI verification is done with the playwrig
 
 ## Progress
 
-As of 2026-10-10 (end of session):
+As of 2026-10-12:
 
+- Workflow change: `redesign` was fast-forward merged into `main` and deleted (local and remote). All work now happens directly on `main` (see Git rules). Backup tag `pre-redesign-main` (`261e550`) preserves the old site. Lint, `tsc --noEmit`, and `npm run build` passed on `main` after the merge.
 - Phases 0 to 3 complete. Phase 2: `lib/content.ts` (`8798bf9`). Phase 3: DESIGN.md approved (`d67538b`).
 - Phase 4 step 1, theme foundation and navbar: complete and approved. `d37bd0d` (upgrade), `ed41941` (removed old chrome), `f9d3467` (theme system), `3d4876b` (navbar), `519ce51` (docs).
 - Phase 4 step 2, Hero: complete. `4b03407` (favicon tile), `dda3c6e` (Hero), `80eac6e` (badge spacing fix). Screenshots are in `review/hero-*` (gitignored).
