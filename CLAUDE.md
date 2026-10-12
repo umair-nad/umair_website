@@ -8,6 +8,7 @@ Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer.
 
 - Framework: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9 (upgraded 2026-10-10)
 - Styling: Tailwind CSS 4 (CSS-first config: theme tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.js`), PostCSS via `@tailwindcss/postcss`
+- WebGL: cobe 2.0.1 for the time zone globe only (`components/about/TimeZoneGlobe.tsx`, dynamically imported near the viewport)
 - Animation: GSAP 3 with @gsap/react (ScrollTrigger, ScrollSmoother, SplitText; registered in `lib/gsap.ts`); canvas-confetti 1.9 for the copy-email star burst only (`lib/star-burst.ts`, dynamically imported on click, own main-thread instance so no blob worker)
 - Icons: lucide-react 1.x (no brand icons). Fonts via next/font/google: EB Garamond (display, with real italic), Alata (UI), Source Code Pro (mono body and captions)
 - Theme: light (default) and dark via a `dark` class on `<html>`. Tokens are in `app/globals.css` (`:root` and `.dark`), logic in `lib/theme.ts`, the pre-paint script in `components/theme/ThemeScript.tsx` (nonce-ready), and the toggle in `components/theme/ThemeToggle.tsx`
@@ -64,6 +65,7 @@ There is no test framework configured; UI verification is done with the playwrig
 ### Design
 - Follow DESIGN.md (approved 2026-10-10) and the taste-skill (design-taste-frontend). Avoid generic AI layouts such as a centered hero with three feature cards and gradient blobs.
 - Do not use em dashes in any text content on the site.
+- Time zone globe (user decision 2026-10-12): a rotating dot-matrix globe (cobe 2) in the About time zone card, with markers for Islamabad and Cologne (Smart In Media) and no text claim about remote work (DESIGN.md 11.2).
 - Hero atmosphere (user decision 2026-10-12): the reference's corner light washes and glowing horizon arc are approved for the hero only, rebuilt from our own measurements (DESIGN.md section 2; no reference code or assets). All other cosmic or ambient effects stay excluded: animated glow pulses or drifts, spotlight motion, glow blobs in other sections, grain, page-wide washes.
 
 ### Security (every build step; details in DESIGN.md section 10)
