@@ -88,8 +88,9 @@ export interface SiteContent {
   links: SiteLink[];
   /** Hero subline, in two parts joined by " | " (one line from sm, two below). */
   heroSubline: [string, string];
-  /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA. */
-  contact: { email: string; cta: string };
+  /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA.
+   *  headline: the contact panel's h2 (before, accent word, after). line: its static terminal line. */
+  contact: { email: string; cta: string; headline: [string, string, string]; line: string };
   /** Public resume PDF, served from public/. */
   resume: { href: string };
   seo: { title: string; description: string };
@@ -319,6 +320,10 @@ export const content = {
     // The single contact-intent label site-wide (user decision 2026-10-12,
     // replacing "Get in touch"). Typographic apostrophe, as in the hero h1.
     cta: "Let’s Connect",
+    // Contact panel copy, approved as written in DESIGN.md 11.5 (2026-10-10).
+    // The line is plain static text, no typing (user decision 2026-10-12).
+    headline: ["Ship it", "tested", "."],
+    line: "umair@qa: all checks passed. ready when you are.",
   },
 
   // Umair approved publishing this PDF as is, phone number included
