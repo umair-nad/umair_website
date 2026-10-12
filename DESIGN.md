@@ -23,8 +23,8 @@ Dials: `DESIGN_VARIANCE: 7`, `MOTION_INTENSITY: 6`, `VISUAL_DENSITY: 4`.
 
 ### What we deliberately do differently
 
-- **No cosmic atmosphere.** The reference's hero has radial color washes and a glowing planet-horizon arc in both modes. We drop all of it (CLAUDE.md also bans gradient blobs). The hero background is the plain page color; the waveform trace is the only ornament.
-- **QA signature:** the waveform survives in exactly two places, the WaveformDivider between sections and the hero trace, recolored for both themes (section 2).
+- **Hero atmosphere only (approved by the user 2026-10-12).** The reference's hero has warm corner light washes and a glowing horizon arc in both modes; we rebuild those two from our own measurements (section 2). Every other cosmic or ambient element of the reference stays excluded: animated glow pulses and drifts, the spotlight motion, glow blobs in other sections, grain, and page-wide washes.
+- **QA signature:** the waveform survives in one place, the WaveformDivider between sections (section 2). The hero trace was replaced by the horizon arc on 2026-10-12.
 - **Correct system-preference mapping.** The reference uses next-themes with inverted styling: its `dark` class renders the white page, so a visitor whose OS prefers dark gets the white page. We map OS dark to our dark theme.
 - **Contrast fixes.** Several reference colors fail WCAG AA for the way we use them (section 3). Where that happens we keep the closest passing value from the reference's own palette and say so in the table.
 - **Novelty fonts excluded.** The reference also loads Shadows Into Light (handwritten, on its "Skills & Tools" headline) and Henny Penny (novelty, inside a bento card). Both sit in developer-novelty sections, so they are out unless you ask for them.
@@ -48,13 +48,28 @@ Dials: `DESIGN_VARIANCE: 7`, `MOTION_INTENSITY: 6`, `VISUAL_DENSITY: 4`.
 - **Switch hygiene:** transitions are suppressed for one frame during a switch so colors don't animate.
 - **Browser chrome:** `themeColor` per scheme (`#ffffff` light, `#0a0a0a` dark), via the Next.js `viewport` export.
 
+### Hero atmosphere (approved 2026-10-12)
+
+Our own CSS in `components/hero/HeroAtmosphere.tsx`, built from playwright-cli measurements of the live reference hero at 1440x900 in both themes (2026-10-12). No reference code or assets. Colors are tokens in `globals.css` (`--wash-*`, `--glow-*`, `--arc-*`); the reference's theme classes are inverted, so its `dark:` values are what we use in light.
+
+| Layer | Geometry (measured) | Light | Dark |
+|---|---|---|---|
+| Corner washes | 3 circular pools per top corner, in px from the corner: r 1021 at (245, 182), r 647 at (98, -97), r 647 at (-452, 6) | warm: `255 149 0 / .12`, `230 153 0 / .10`, `255 106 0 / .08` (mid stops `/.06`, `/.04`, `/.03`) | cool: `61 122 245 / .08`, `184 61 245 / .06`, `255 51 187 / .05` |
+| Arc stage | 1200x400, centered, bottom of a 240px block under the CTA row; faded out horizontally (0, 30%, 70%, 0) and, ours, toward its top | | |
+| Glow A | 900x120 source centered 210px above the stage bottom, 60% opacity | `#ff69b4` | `#6a0dad` |
+| Glow B | 600x100 source centered 230px above the stage bottom, 60% opacity | `#00bfff` | `#4169e1` |
+| Arc | ellipse 2244x956, apex 197px above the stage bottom; rim = `inset 0 2px 50px #6a0dad` + `0 -15px 50px 1px rgb(255 105 180 / .4)` | same | same |
+
+- **Performance:** no `filter: blur`. The reference blurs the glows by 60-70px; we enlarge each glow around the same center and give its radial gradient a soft falloff instead. The washes are one element with six gradients. Everything is static paint (the reference animates its glows and spotlights; we don't).
+- **Contrast (measured over the painted glow, 390 and 1440, both themes):** all hero text passes AA. The tightest is the gradient accent word in light (3.19:1 at 390, 3.26:1 at 1440; large text needs 3:1). Below `md` the washes render at 55% because the left and right pools overlap there.
+- **Motion:** the arc rises into place once in the hero entrance timeline (hierarchy: the light comes up after the claim lands); static under reduced motion. The washes don't move.
+- All layers are `aria-hidden` and sit behind the text (`isolate` on the hero, layers at `-z-10`).
+
 ### Waveform signature, recolored (ours)
 
-- **Hero trace:** stroked with the theme's accent gradient (light: `#ff0080 > #7928ca > #0070f3`; dark: `#ff0080 > #38bdf8`, see section 3) at low opacity, settling to flatline under the CTA row.
-- **WaveformDivider:** neutral stroke, `fg` at 12% (black/12 in light, white/12 in dark).
-- Both are `aria-hidden` decoration, so no contrast minimum applies. Nothing else on the page draws a waveform.
+- **WaveformDivider:** neutral stroke, `fg` at 12% (black/12 in light, white/12 in dark). `aria-hidden` decoration. Nothing else on the page draws a waveform.
 
-Grain: none. No glow surfaces exist in this revision.
+Grain: none. The hero atmosphere above is the only glow surface.
 
 ---
 
@@ -76,7 +91,7 @@ The reference's `:root` / `.dark` CSS variables are stock shadcn/ui "slate" valu
 | `text-hero` | `#404040` | `#d4d4d4` | Hero subline | hero subline |
 | `muted` | `#000000/0.60` | `#ffffff/0.60` | Footer links, secondary UI text, micro-labels | footer links |
 | `accent` | `#7928ca` | `#c27aff` | Active nav item, focus rings, check bullets | nav "Home" (see note 1) |
-| `accent-gradient` | `#ff0080 > #7928ca > #0070f3` | `#ff0080 > #38bdf8` | The one accent word per headline (gradient text, 135deg) and the hero trace | hero accent span (see note 2) |
+| `accent-gradient` | `#ff0080 > #7928ca > #0070f3` | `#ff0080 > #38bdf8` | The one accent word per headline (gradient text, 135deg) | hero accent span (see note 2) |
 | `inverse` / `inverse-fg` | `#171717` / `#ffffff` | `#ffffff` / `#000000` | "Download resume" button, CTA arrow chip | footer CV button; CTA chip (light #000, dark #fff) |
 | `live` | `#00c950` (label text `#000000`) | `#00c950` (label text `#000000`) | Status dot and hero badge chip | "NEW" chip (see note 3) |
 
@@ -187,12 +202,12 @@ Em dashes: **zero**, anywhere, including this file and all site strings (locked 
 | `SmoothScrollProvider` | **Keep** | ScrollSmoother 1.2 + data-speed parallax. Fixed elements stay outside `#smooth-content`; anchors go through `smoother.scrollTo`. |
 | `lib/gsap.ts`, `lib/magnetic.ts`, `lib/motion-preferences.ts` | **Keep** | The motion contract. All new sections follow the documented `gsap.matchMedia` pattern with `gsap.set` reduced-motion fallbacks. |
 | `WaveformDivider` | **Adapt** | Signature section divider; restroke from teal to the neutral `fg`/12% line in both themes (section 2). Scrub-drawn, static under reduced motion. |
-| `AmbientBackground` | **Drop** | Its graticule grid, drifting traces, teal glow blobs, grain filter, and cursor glow all belong to the retired dark-only Signal & Noise look, and a full-page waveform layer would exceed the "divider + hero trace only" signature. The reference's replacement atmosphere (radial washes, planet arc) is excluded too. |
+| `AmbientBackground` | **Drop** | Its graticule grid, drifting traces, teal glow blobs, grain filter, and cursor glow all belong to the retired dark-only Signal & Noise look, and a full-page waveform layer would exceed the divider-only waveform signature. Of the reference's atmosphere, only the hero corner washes and horizon arc are used (section 2, approved 2026-10-12). |
 | `Preloader` | **Drop** | Its only content is a waveform draw, which would be a third waveform use; a static single-page site doesn't need a loading screen. |
 | `Navbar` | **Adapt** | Keep all scroll/menu/magnetic/a11y plumbing; rebuild the shell as the floating pill nav, status capsule, and theme toggle (below). |
 | `Footer` | **Adapt** | Keep the waveform-settling-to-baseline closing beat (WaveformDivider); rebuild content (dynamic year, links from content.ts, "Download resume"). |
 | `Cursor` | **Drop** | Custom cursors are a banned tell; payoff is near zero. Magnetic hover stays. |
-| `ParticleCanvas` + `lib/three/particle-field.ts` | **Drop** | Removes Three.js and its ~580 KB async chunk (size as recorded in commit `1cce18e`; it never shipped in First Load JS). The hero trace replaces it. |
+| `ParticleCanvas` + `lib/three/particle-field.ts` | **Drop** | Removes Three.js and its ~580 KB async chunk (size as recorded in commit `1cce18e`; it never shipped in First Load JS). The hero horizon arc (section 2) now fills that space. |
 | `Hero`, `About`, `Experience`, `Skills`, `Contact` | **Drop / rebuild** | All hardcoded, partly stale or rule-violating (old headshot, "SQA Engineer" title, missing Smart In Media role, published phone number). Rebuilt from `lib/content.ts`. |
 
 New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in `app/layout.tsx`.
@@ -223,7 +238,7 @@ Every animation must answer "what does this communicate" in one sentence:
 | Moment | Animation | Why |
 |---|---|---|
 | Hero headline | SplitText line reveal, once | Hierarchy: the claim lands first |
-| Hero baseline | The gradient trace runs under the headline and settles toward flatline | Storytelling: signal verified, no defects |
+| Hero horizon | The arc rises into place under the CTA row, once | Hierarchy: the light comes up after the claim lands |
 | Section entries | `whileInView`-style fade/translate reveals, staggered, once | Sequence matches reading order |
 | Tools marquee | Two counter-scrolling chip rows inside one bento card | Breadth without a data dump. **The only marquee on the page.** |
 | Timeline spine | 1px rule draws downward on scroll | Progress through time |
@@ -392,7 +407,7 @@ Centered stage (the one intentionally centered section; everything after is asym
 3. Mono subline (`text-hero`): **"Umair Nadeem | Islamabad, Pakistan"** (`content.name` + `content.location`; set by the user 2026-10-10)
 4. CTA row: "Get in touch" primary pill + "Download resume" button + copy-email row (`uminadeem06@gmail.com`)
 
-Below the stack, the gradient signal trace settles to baseline at the fold. No color washes, no horizon arc, no trust strips, no scroll cue, no version labels.
+Behind the stack, the warm (light) or cool (dark) corner washes; under the CTA row, the glowing horizon arc (section 2, approved 2026-10-12). No trust strips, no scroll cue, no version labels.
 
 **Resume (done 2026-10-12):** the PDF was moved with `git mv` (keeping its history) to `public/umair-nadeem-qa-engineer-resume.pdf`, an SEO-friendly name. The path lives in `content.resume.href`; the hero button and, later, the footer button read it from there. The PDF contains Umair's phone number and an older email address (no street address). Umair approved publishing it as is (2026-10-10), so it is the one exception to the no-phone rule; site text still never shows the phone. Replace the file in place when Umair sends an updated resume.
 
@@ -443,7 +458,7 @@ Compact single-page footer, not the reference's 12-link sitemap: the `Logo` (40p
 
 ## 12. Explicitly out of scope
 
-Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Spotify, command palette / ⌘K (can be proposed later as its own item), visitor counter, weather widget, greeting text, the reference's cosmic atmosphere (hero color washes, planet-horizon arc), its novelty fonts (Shadows Into Light, Henny Penny), projects section (`content.projects` is empty), certifications section (empty), phone number anywhere, any metric/tool/claim not present in `lib/content.ts`.
+Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Spotify, command palette / ⌘K (can be proposed later as its own item), visitor counter, weather widget, greeting text, the reference's cosmic and ambient effects beyond the approved hero washes and horizon arc (animated glow pulses and drifts, spotlight motion, glow blobs in other sections, grain), its novelty fonts (Shadows Into Light, Henny Penny), projects section (`content.projects` is empty), certifications section (empty), phone number anywhere, any metric/tool/claim not present in `lib/content.ts`.
 
 ## 13. Build order (Phase 4+, one step per review stop)
 
@@ -454,7 +469,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
    - EB Garamond, Alata, and Source Code Pro via `next/font`.
    - The no-flash `ThemeScript` (static, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`.
    - The floating navbar with the `Logo`, the pill, the status capsule, the toggle placement, and the mobile menu.
-2. **Hero (done 2026-10-10; resume button added 2026-10-12):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroTrace.tsx`, with all copy from `lib/content.ts`. The "Download resume" button sits between the two CTAs (11.1).
+2. **Hero (done 2026-10-10; resume button added 2026-10-12):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroAtmosphere.tsx` (washes and arc, which replaced `hero/HeroTrace.tsx` on 2026-10-12), with all copy from `lib/content.ts`. The "Download resume" button sits between the two CTAs (11.1).
 3. **About bento (built 2026-10-12, awaiting review):** `components/About.tsx` plus the cards in `components/about/`, with all copy from `lib/content.ts`.
 4. Experience timeline
 5. Skills

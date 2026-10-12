@@ -27,7 +27,7 @@ There is no test framework configured; UI verification is done with the playwrig
 - `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css, plus the icon file conventions (favicon.ico, icon.svg, icon1.png, apple-icon.png) and manifest.ts
 - `assets/brand/` - non-public brand sources: `un-monogram.svg` (Umair's "UN" logo, `currentColor`, the source of truth for the Logo component and any regenerated favicons), `un-monogram-original.png` (the original raster, reference only). Never serve files from here directly.
 - `review/` - local review screenshots for the user. Gitignored; never commit.
-- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle) and section parts (hero/CopyEmail, hero/HeroTrace, and the About bento cards in about/: BentoCard shell plus Role, Specializations, Portrait, TimeZone, Contact, and ToolsMarquee cards). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
+- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle) and section parts (hero/CopyEmail, hero/HeroAtmosphere, and the About bento cards in about/: BentoCard shell plus Role, Specializations, Portrait, TimeZone, Contact, and ToolsMarquee cards). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
 - `lib/` - support code (gsap.ts, local-time.ts, magnetic.ts, motion-preferences.ts, scroll.ts, theme.ts) plus content.ts, the typed content source for all site copy
 - `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
@@ -64,6 +64,7 @@ There is no test framework configured; UI verification is done with the playwrig
 ### Design
 - Follow DESIGN.md (approved 2026-10-10) and the taste-skill (design-taste-frontend). Avoid generic AI layouts such as a centered hero with three feature cards and gradient blobs.
 - Do not use em dashes in any text content on the site.
+- Hero atmosphere (user decision 2026-10-12): the reference's corner light washes and glowing horizon arc are approved for the hero only, rebuilt from our own measurements (DESIGN.md section 2; no reference code or assets). All other cosmic or ambient effects stay excluded: animated glow pulses or drifts, spotlight motion, glow blobs in other sections, grain, page-wide washes.
 
 ### Security (every build step; details in DESIGN.md section 10)
 - CSP: production `script-src` never contains `'unsafe-inline'` or `'unsafe-eval'`. Every inline script, including the no-flash theme script, carries the per-request nonce from the CSP proxy (`proxy.ts`, Next 16's name for middleware). Keep the theme script a static string with no interpolated data (`THEME_INIT_SCRIPT` in `lib/theme.ts`; `ThemeScript` already takes a `nonce` prop). Don't add inline scripts or third-party script, style, font, image, or connect origins without updating the CSP and asking the user.

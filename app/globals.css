@@ -59,6 +59,21 @@
   --accent-stop-2: #7928ca;
   --accent-stop-3: #0070f3;
 
+  /* Hero atmosphere (DESIGN.md section 2), measured on the reference's
+     light theme: warm corner washes, a pink + sky glow over the horizon
+     arc. Values are color and alpha only; geometry lives in
+     components/hero/HeroAtmosphere.tsx. */
+  --wash-1: rgb(255 149 0 / 0.12);
+  --wash-1-mid: rgb(204 153 0 / 0.06);
+  --wash-2: rgb(230 153 0 / 0.1);
+  --wash-2-mid: rgb(179 89 0 / 0.04);
+  --wash-3: rgb(255 106 0 / 0.08);
+  --wash-3-mid: rgb(204 68 0 / 0.03);
+  --glow-a: #ff69b4;
+  --glow-b: #00bfff;
+  --arc-rim: #6a0dad;
+  --arc-halo: rgb(255 105 180 / 0.4);
+
   /* Fixed navbar height for CSS consumers (Hero's top padding, etc.). */
   /* Floating bar: 16px top offset + 40px bar + 16px gap (Navbar SCROLL_GAP). */
   --nav-height: 4.5rem;
@@ -86,6 +101,16 @@
   --accent-stop-1: #ff0080;
   --accent-stop-2: color-mix(in srgb, #ff0080 50%, #38bdf8);
   --accent-stop-3: #38bdf8;
+  /* Hero atmosphere, measured on the reference's dark theme: cool violet
+     corner washes, a violet + royal-blue glow; the arc rim is shared. */
+  --wash-1: rgb(61 122 245 / 0.08);
+  --wash-1-mid: rgb(94 26 230 / 0.03);
+  --wash-2: rgb(184 61 245 / 0.06);
+  --wash-2-mid: rgb(11 149 218 / 0.02);
+  --wash-3: rgb(255 51 187 / 0.05);
+  --wash-3-mid: rgb(10 10 194 / 0.02);
+  --glow-a: #6a0dad;
+  --glow-b: #4169e1;
 }
 
 @layer base {

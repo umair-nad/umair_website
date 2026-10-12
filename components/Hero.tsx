@@ -9,7 +9,7 @@ import { applyMagneticHover } from '@/lib/magnetic'
 import { scrollToHash } from '@/lib/scroll'
 import { content } from '@/lib/content'
 import CopyEmail from '@/components/hero/CopyEmail'
-import HeroTrace from '@/components/hero/HeroTrace'
+import { HeroArc, HeroWashes } from '@/components/hero/HeroAtmosphere'
 
 registerGsap()
 
@@ -30,14 +30,9 @@ const HAS_ACCENT = HEADLINE.includes(ACCENT_WORD)
 
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
-// The trace settles to this fraction of its full amplitude.
-const SETTLED_SCALE_Y = 0.35
-
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
-  const traceGroupRef = useRef<SVGGElement>(null)
-  const tracePathRef = useRef<SVGPathElement>(null)
 
   useGSAP(
     () => {
@@ -48,9 +43,8 @@ export default function Hero() {
         const reveal = gsap.utils.toArray<HTMLElement>('[data-reveal]', rootRef.current)
 
         if (reduceMotion) {
-          // Static final state, no SplitText, no draw (lib/motion-preferences.ts contract).
+          // Static final state, no SplitText (lib/motion-preferences.ts contract).
           gsap.set(reveal, { autoAlpha: 1 })
-          gsap.set(traceGroupRef.current, { scaleY: SETTLED_SCALE_Y, svgOrigin: '600 60' })
           return
         }
 
@@ -84,18 +78,9 @@ export default function Hero() {
         tl.fromTo('[data-hero-sub]', fadeUp.from, fadeUp.to, 0.45)
         tl.fromTo('[data-hero-cta]', fadeUp.from, fadeUp.to, 0.6)
 
-        // The trace draws in, then settles toward baseline: signal verified.
-        const path = tracePathRef.current
-        if (path) {
-          const length = path.getTotalLength()
-          tl.fromTo(path, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 0.7)
-          tl.fromTo(
-            traceGroupRef.current,
-            { scaleY: 1, svgOrigin: '600 60' },
-            { scaleY: SETTLED_SCALE_Y, svgOrigin: '600 60', duration: 1.4, ease: 'power3.out' },
-            1.9
-          )
-        }
+        // The horizon arc rises into place under the CTAs once the claim has
+        // landed: the stage is set, then the light comes up.
+        tl.fromTo('[data-hero-arc]', { y: 56, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, 0.55)
 
         // Magnetic pull on fine pointers only.
         const cleanups = coarsePointer
@@ -116,8 +101,9 @@ export default function Hero() {
   return (
     <header
       ref={rootRef}
-      className="relative flex min-h-[100dvh] flex-col items-center justify-center px-4 pt-(--nav-height) pb-12 md:px-8"
+      className="relative isolate flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-4 pt-(--nav-height) md:px-8"
     >
+      <HeroWashes />
       <div className="flex w-full max-w-4xl flex-col items-center text-center">
         <p
           data-reveal
@@ -180,8 +166,10 @@ export default function Hero() {
         </div>
       </div>
 
-      <div data-reveal className="mt-14 w-full max-w-5xl md:mt-16">
-        <HeroTrace groupRef={traceGroupRef} pathRef={tracePathRef} className="h-16 w-full md:h-24" />
+      {/* The arc's stage is anchored to the bottom of this block, so the
+          horizon sits just under the CTA row, as on the reference. */}
+      <div data-reveal data-hero-arc className="relative -z-10 mt-4 h-60 w-full">
+        <HeroArc />
       </div>
     </header>
   )
