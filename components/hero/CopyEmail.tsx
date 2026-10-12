@@ -49,7 +49,7 @@ export default function CopyEmail({ email, className = '' }: { email: string; cl
           aria-hidden="true"
           className={status === 'copied' ? 'text-accent' : 'text-fg'}
         />
-        <span translate="no">{email}</span>
+        <span translate="no" data-selectable>{email}</span>
         <span
           aria-hidden="true"
           className={`text-xs text-muted transition-opacity duration-200 ${status === 'idle' ? 'opacity-0' : 'opacity-100'}`}

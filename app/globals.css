@@ -132,6 +132,21 @@
     background-color: var(--bg);
     color: var(--fg);
     font-family: var(--font-sans);
+    /* Text selection is off site-wide (user decision 2026-10-12, DESIGN.md
+       10.8). Copying, the context menu, and shortcuts are not blocked. */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Still selectable: anything a visitor types into, and anything marked
+     data-selectable (the email address, which CopyEmail's failure message
+     asks visitors to select by hand). */
+  input,
+  textarea,
+  [contenteditable]:not([contenteditable='false']),
+  [data-selectable] {
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 

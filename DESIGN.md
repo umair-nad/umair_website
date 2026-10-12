@@ -387,9 +387,9 @@ Keep the defaults: Next sends no `Access-Control-Allow-Origin` on pages or asset
 
 If a contact form, API route, server action, or any server-side fetch is ever added, CSRF protection, server-side input validation, and rate limiting become required, and this table must be redone.
 
-### 10.8 Never disable selection or copying
+### 10.8 Text selection off; copying never blocked
 
-No `user-select: none`, `select-none`, copy, cut, or context-menu blocking anywhere (the reference sets `select-none` on its nav; we don't copy that). Verified 2026-10-10: none in the current code.
+**User decision 2026-10-12:** text selection is disabled site-wide with `user-select: none` on `body` (`globals.css`). This reverses the earlier "never disable selection" rule at the user's request. Still selectable: `input`, `textarea`, editable content, and anything marked `data-selectable` (the email address, which CopyEmail's failure message asks visitors to select by hand). Not blocked anywhere: copy and cut events, the context menu, and keyboard shortcuts. The copy-email button uses the Clipboard API, so it works regardless of selection. Note for later: `user-select: none` is a deterrent, not protection; all text stays in the HTML and the page source.
 
 ---
 
