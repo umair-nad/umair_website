@@ -68,6 +68,8 @@ export interface SiteContent {
   education: EducationEntry[];
   projects: Project[];
   skills: SkillGroup[];
+  /** Headline QA specializations for the About bento (DESIGN.md 11.2). */
+  specializations: string[];
   certifications: Certification[];
   links: SiteLink[];
   contact: { email: string };
@@ -217,6 +219,12 @@ export const content = {
     },
     // No "ci-cd" group yet: no CI/CD tool appears in any approved source.
   ],
+
+  // Four headline items, approved in DESIGN.md 11.2 (2026-10-10). Each one
+  // maps to the skills above or a role tag: Manual Testing + UAT &
+  // Exploratory Testing, Test Automation (Smart In Media tag), API Testing,
+  // Regression Testing. "AI & LLM Testing" stays out until Umair confirms it.
+  specializations: ["Manual and Exploratory", "Test Automation", "API Testing", "Regression Testing"],
 
   links: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/umair-nadeem-qa/" },
