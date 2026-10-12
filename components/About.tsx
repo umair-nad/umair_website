@@ -19,11 +19,13 @@ registerGsap()
 //   lg (3 cols, 22rem rows)       md (2 cols)         base (1 col)
 //   [ role 2x1      ][ portr ]    [ role 2x1     ]    role
 //   [ specs ][ contact][ 1x2  ]   [ specs ][ port ]   specializations
-//   [ time  ][ tools 2x1     ]    [ time  ][ 1x2  ]   portrait
+//   [ time 2x1      ][ tools ]    [ time  ][ 1x2  ]   portrait
 //                                 [ cont  ][ tools]   time zone
 //                                                     contact
 //                                                     tools
 //
+// The time zone card is two tiles wide at lg so its globe has the room the
+// reference gives it (user decision 2026-10-12); the tools card is single.
 // DOM order is the mobile order (DESIGN.md section 8). Contact comes before
 // tools so keyboard focus (contact links, then the marquee pause button)
 // follows the visual order at every width (WCAG 2.4.3). The lg placement
@@ -32,9 +34,9 @@ const PLACEMENT = {
   role: 'md:col-span-2 lg:col-start-1 lg:row-start-1',
   specializations: 'lg:col-start-1 lg:row-start-2',
   portrait: 'md:row-span-2 lg:col-start-3 lg:row-start-1',
-  tools: 'lg:col-span-2 lg:col-start-2 lg:row-start-3',
-  timeZone: 'lg:col-start-1 lg:row-start-3',
+  timeZone: 'lg:col-span-2 lg:col-start-1 lg:row-start-3',
   contact: 'lg:col-start-2 lg:row-start-2',
+  tools: 'lg:col-start-3 lg:row-start-3',
 } as const
 
 export default function About() {
