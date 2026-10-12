@@ -85,7 +85,7 @@ The reference's `:root` / `.dark` CSS variables are stock shadcn/ui "slate" valu
 | `surface` | `#ffffff` | `#141414` | Bento cards, contact panel | bento card |
 | `surface-2` | `#fafafa` | `#0a0a0a` | Inset panels, chips, email bar | secondary panel (light #fafafa / dark #0a0a0a, 14.4px radius) |
 | `line` | `#000000/0.10` | `#ffffff/0.10` | Default 1px border (cards, nav pill, chips) | card border (light); nav pill and keycap borders (dark) |
-| `line-strong` | `#000000/0.20` | `#ffffff/0.20` | Badge and nav-CTA borders | hero badge, "Book a Call" |
+| `line-strong` | `#000000/0.20` | `#ffffff/0.20` | Nav-CTA and secondary-pill borders | "Book a Call" |
 | `fg` | `#000000` | `#ffffff` | Headlines, card titles, primary text | `h1`, `h2`, card `h3` |
 | `text` | `#404040` | `#a1a1a1` | Mono body copy and captions | bento caption |
 | `text-hero` | `#404040` | `#d4d4d4` | Hero subline | hero subline |
@@ -93,7 +93,7 @@ The reference's `:root` / `.dark` CSS variables are stock shadcn/ui "slate" valu
 | `accent` | `#7928ca` | `#c27aff` | Active nav item, focus rings, check bullets | nav "Home" (see note 1) |
 | `accent-gradient` | `#ff0080 > #7928ca > #0070f3` | `#ff0080 > #38bdf8` | The one accent word per headline (gradient text, 135deg) | hero accent span (see note 2) |
 | `inverse` / `inverse-fg` | `#171717` / `#ffffff` | `#ffffff` / `#000000` | CTA arrow chip | CTA chip (light #000, dark #fff) |
-| `live` | `#00c950` (label text `#000000`) | `#00c950` (label text `#000000`) | Status dot and hero badge chip | "NEW" chip (see note 3) |
+| `live` | `#00c950` (label text `#000000`) | `#00c950` (label text `#000000`) | Status capsule dot | "NEW" chip (see note 3) |
 
 Elevation: light cards carry the reference's shadow, `0 10px 15px -3px rgb(0 0 0/0.1), 0 4px 6px -4px rgb(0 0 0/0.1)` (Tailwind `shadow-lg`). Dark cards use the same declaration, which is effectively invisible on #141414, as in the reference. Frosted chrome uses `backdrop-filter: blur(12px)` (nav pill, status capsule), `blur(10px)` (hero badge), `blur(8px)` (cards), and `blur(4px)` (primary CTA).
 
@@ -221,7 +221,7 @@ New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in
 - **Bento card (measured):** `surface` fill, 1px border (light `line` black/10; dark `#242424/0.30`, as on the reference), 10px radius, light-mode `shadow-lg`, backdrop blur 8px; caption lockup bottom-left; one focal visual per card; hover lift 2px + border step to `line-strong`.
 - **Chip (ours; the reference's chips were not separately measured):** full pill, `surface-2`, 1px `line`, Source Code Pro 13px. **Text only, no icons**, for tool and skill chips alike (user decision 2026-10-10).
 - **Check bullet:** list markers in evidence cards are small `accent` lucide `Check` glyphs.
-- **Status badge (measured):** full pill, padding `4px 12px`, white/10 fill, black/20 border, backdrop blur 10px, 12px text; holds a `live` chip (10px radius, black label). Used exactly once (hero), factual text only.
+- **Status badge:** removed from the hero by the user on 2026-10-12; not used anywhere.
 
 Icons: lucide-react (already a dependency). One family, `strokeWidth` 1.75 globally.
 
@@ -401,12 +401,11 @@ Single route, hash anchors preserved: `#about`, `#experience`, `#skills`, `#cont
 
 ### 11.1 Hero (`<header>`, full viewport stage)
 
-Centered stage (the one intentionally centered section; everything after is asymmetric), on the plain page background. Stack, max 4 text elements:
+Centered stage (the one intentionally centered section; everything after is asymmetric), on the plain page background. Stack of 3 text elements (the status badge was removed by the user on 2026-10-12; the current role is shown in the About role card):
 
-1. Status badge (`live` chip): **"Senior QA Engineer · Smart In Media"** (`experience[0].title` + `experience[0].company`; set by the user 2026-10-10)
-2. `h1`, 2 lines: **"I break things so your users don't have to."** (verbatim from the approved bio; "break" is the italic gradient accent word)
-3. Mono subline (`text-hero`): **"Umair Nadeem | Islamabad, Pakistan"** (`content.name` + `content.location`; set by the user 2026-10-10)
-4. CTA row: "Let’s Connect" primary pill + "Download resume" button + copy-email row (`uminadeem06@gmail.com`)
+1. `h1`, 2 lines: **"I break things so your users don't have to."** (verbatim from the approved bio; "break" is the italic gradient accent word)
+2. Mono subline (`text-hero`): **"Umair Nadeem | Islamabad, Pakistan"** (`content.name` + `content.location`; set by the user 2026-10-10)
+3. CTA row: "Let’s Connect" primary pill + "Download resume" button + copy-email row (`uminadeem06@gmail.com`)
 
 Behind the stack, the warm (light) or cool (dark) corner washes; under the CTA row, the glowing horizon arc (section 2, approved 2026-10-12). No trust strips, no scroll cue, no version labels.
 

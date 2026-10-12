@@ -13,7 +13,6 @@ import { HeroArc, HeroWashes } from '@/components/hero/HeroAtmosphere'
 registerGsap()
 
 // Every string comes from lib/content.ts (DESIGN.md 11.1).
-const currentRole = content.experience[0] // the role with end "Present"
 // The headline is the bio's first sentence, shown with a typographic
 // apostrophe (the content.ts string itself stays verbatim).
 const HEADLINE = content.bio.slice(0, content.bio.indexOf('.') + 1).replace(/'/g, '’')
@@ -55,9 +54,7 @@ export default function Hero() {
         const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
         const fadeUp = { from: { y: 12, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.8 } }
 
-        // Badge first, then the claim lands line by line (hierarchy), then the rest.
-        tl.fromTo('[data-hero-badge]', fadeUp.from, fadeUp.to, 0)
-
+        // The claim lands line by line first (hierarchy), then the rest.
         let split: SplitText | undefined
         if (headlineRef.current) {
           split = SplitText.create(headlineRef.current, {
@@ -68,18 +65,18 @@ export default function Hero() {
             // its progress if fonts load or a resize forces a re-split.
             onSplit: (self) => {
               const lines = gsap.fromTo(self.lines, { yPercent: 105 }, { yPercent: 0, duration: 1.1, stagger: 0.12, ease: 'expo.out' })
-              tl.add(lines, 0.1)
+              tl.add(lines, 0)
               return lines
             },
           })
         }
 
-        tl.fromTo('[data-hero-sub]', fadeUp.from, fadeUp.to, 0.45)
-        tl.fromTo('[data-hero-cta]', fadeUp.from, fadeUp.to, 0.6)
+        tl.fromTo('[data-hero-sub]', fadeUp.from, fadeUp.to, 0.35)
+        tl.fromTo('[data-hero-cta]', fadeUp.from, fadeUp.to, 0.5)
 
         // The horizon arc rises into place under the CTAs once the claim has
         // landed: the stage is set, then the light comes up.
-        tl.fromTo('[data-hero-arc]', { y: 56, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, 0.55)
+        tl.fromTo('[data-hero-arc]', { y: 56, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, 0.45)
 
         return () => split?.revert()
       })
@@ -96,22 +93,10 @@ export default function Hero() {
     >
       <HeroWashes />
       <div className="flex w-full max-w-4xl flex-col items-center text-center">
-        <p
-          data-reveal
-          data-hero-badge
-          className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/10 px-3 py-1 text-[13px] text-fg backdrop-blur-[10px] md:text-sm"
-        >
-          <span className="size-1.5 rounded-full bg-live" aria-hidden="true" />
-          {/* One span, so the flex gap only separates the dot from the label. */}
-          <span>
-            {currentRole.title} · <span translate="no">{currentRole.company}</span>
-          </span>
-        </p>
-
         <h1
           ref={headlineRef}
           data-reveal
-          className="mt-7 max-w-3xl font-display text-4xl leading-[1.15] font-normal text-balance text-fg md:mt-8 md:text-5xl lg:text-[60px] lg:leading-snug"
+          className="max-w-3xl font-display text-4xl leading-[1.15] font-normal text-balance text-fg md:mt-8 md:text-5xl lg:text-[60px] lg:leading-snug"
         >
           {BEFORE}
           {HAS_ACCENT && <em className="text-gradient-accent pr-[0.06em] italic">{ACCENT_WORD}</em>}
