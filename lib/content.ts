@@ -76,6 +76,8 @@ export interface SiteContent {
   skills: SkillGroup[];
   /** The tools shown by the About bento's marquee (a subset of the tool groups). */
   featuredTools: string[];
+  /** Skills & Tools wall: the subline under its heading. */
+  skillsSubline: string;
   /** Headline QA specializations for the About bento (DESIGN.md 11.2). */
   specializations: string[];
   /** The two scrolling word rows behind the About portrait (decorative). */
@@ -259,6 +261,10 @@ export const content = {
       ],
     },
   ],
+
+  // Our own line under the Skills & Tools heading (2026-10-12): a plain
+  // description of the wall, no claims beyond the confirmed tool list.
+  skillsSubline: "The tools I test with, from test management and automation to APIs, CI, and monitoring.",
 
   // The About bento's tools marquee shows the original 13 tools (frameworks
   // first, then tools), so it still fits its single tile; the Skills & Tools

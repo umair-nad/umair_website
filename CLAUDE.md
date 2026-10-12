@@ -29,7 +29,7 @@ There is no test framework configured; UI verification is done with the playwrig
 - `assets/brand/` - non-public brand sources: `un-monogram.svg` (Umair's "UN" logo, `currentColor`, the source of truth for the Logo component and any regenerated favicons), `un-monogram-original.png` (the original raster, reference only). Never serve files from here directly.
 - `review/` - local review screenshots for the user. Gitignored; never commit.
 - `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle) and section parts (hero/CopyEmail, hero/HeroAtmosphere, and the About bento cards in about/: BentoCard shell plus Role, Specializations, Portrait, TimeZone, Contact, and ToolsMarquee cards). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
-- `lib/` - support code (gsap.ts, local-time.ts, magnetic.ts, motion-preferences.ts, scroll.ts, theme.ts) plus content.ts, the typed content source for all site copy
+- `lib/` - support code (gsap.ts, local-time.ts, tool-icons.ts (Simple Icons marks for the Skills wall), magnetic.ts, motion-preferences.ts, scroll.ts, theme.ts) plus content.ts, the typed content source for all site copy
 - `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.
@@ -61,7 +61,8 @@ There is no test framework configured; UI verification is done with the playwrig
 - The reference site in `refrence/` belongs to a developer (Dhiraj Bhawsar). Match the reference site's theme (colors, light/dark modes, typography); never reuse its logo, text, images, video, or developer-only sections.
 - Do NOT include a blog page or blog section.
 - Do NOT include GitHub insights, contribution graphs, GitHub stats, or repo activity widgets.
-- The reference site also contains these developer-specific or novelty sections: code-centric case studies with dev-stack chips, a developer Skills and Tools icon wall, a "From Concept to Code" CTA, a developer-framed experience timeline, a Uses page, a Guest Book, a Bucket List, a Links page, and a Spotify integration. Before adding anything similar, list what is being considered and ask the user first.
+- Skills & Tools icon wall (user decision 2026-10-12): approved as the Skills section, showing the 44 confirmed tools with Simple Icons logos or text tiles (DESIGN.md 11.4). Never draw or invent a logo.
+- The reference site also contains these developer-specific or novelty sections: code-centric case studies with dev-stack chips, a "From Concept to Code" CTA, a developer-framed experience timeline, a Uses page, a Guest Book, a Bucket List, a Links page, and a Spotify integration. Before adding anything similar, list what is being considered and ask the user first.
 
 ### Design
 - Follow DESIGN.md (approved 2026-10-10) and the taste-skill (design-taste-frontend). Avoid generic AI layouts such as a centered hero with three feature cards and gradient blobs.
@@ -135,7 +136,7 @@ As of 2026-10-12:
 
 ### Decisions
 
-- Stack: Next.js 16.4.0, React 19.3.0, Tailwind 4 (CSS-first), lucide-react 1.x, ESLint 9 with flat `eslint.config.mjs`, TypeScript 5.9. lucide 1.x has no brand icons, so LinkedIn and Upwork are text links. Vercel needs Node 20.9 or newer.
+- Stack: Next.js 16.4.0, React 19.3.0, Tailwind 4 (CSS-first), lucide-react 1.x, ESLint 9 with flat `eslint.config.mjs`, TypeScript 5.9. lucide 1.x has no brand icons, so LinkedIn and Upwork are text links; brand logos for the Skills & Tools wall come from simple-icons 16 (`lib/tool-icons.ts`). Vercel needs Node 20.9 or newer.
 - Theme: light is the default; dark mode via the toggle (OS preference on the first visit, remembered choice afterwards). Palette and fonts match the reference: EB Garamond, Alata, Source Code Pro. Values are in DESIGN.md sections 3 and 4.
 - Logo and favicons: the SVG monogram (`assets/brand/un-monogram.svg`, `currentColor`) is the logo (`components/brand/Logo.tsx`). `app/icon.svg` is a dark rounded tile with a white monogram, so it is visible on any tab color.
 - Resume: Umair approved publishing the current resume (now `public/umair-nadeem-qa-engineer-resume.pdf`) as is, including the phone number and older details in it (user, 2026-10-10). Website text still follows LinkedIn (`lib/content.ts`), and the no-phone-number rule still applies to all site text. Replace the PDF when Umair sends an updated version.

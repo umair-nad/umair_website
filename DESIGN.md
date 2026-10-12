@@ -29,7 +29,7 @@ Dials: `DESIGN_VARIANCE: 7`, `MOTION_INTENSITY: 6`, `VISUAL_DENSITY: 4`.
 - **Contrast fixes.** Several reference colors fail WCAG AA for the way we use them (section 3). Where that happens we keep the closest passing value from the reference's own palette and say so in the table.
 - **Novelty fonts excluded.** The reference also loads Shadows Into Light (handwritten, on its "Skills & Tools" headline) and Henny Penny (novelty, inside a bento card). Both sit in developer-novelty sections, so they are out unless you ask for them.
 - **Real italic.** The reference loads only the EB Garamond Regular file, so its italic accent words are browser-synthesized slants. We load EB Garamond's real italic.
-- **No copied content:** no reused text, headlines, logo, images, video, or developer-only sections (Guestbook, Spotify, Uses, Bucket List, Links, Blog, GitHub insights, icon wall, "From Concept to Code").
+- **No copied content:** no reused text, headlines, logo, images, video, or developer-only sections (Guestbook, Spotify, Uses, Bucket List, Links, Blog, GitHub insights, "From Concept to Code").
 
 ---
 
@@ -186,8 +186,8 @@ Em dashes: **zero**, anywhere, including this file and all site strings (locked 
 - Section rhythm: `py-28 md:py-40` between sections; one idea per viewport. Dense clusters (bento, chips) against large voids is the page's rhythm.
 - Grid over flex math everywhere. Explicit `<768px` single-column collapse declared per section.
 - `min-h-[100dvh]` for the hero, never `h-screen`.
-- Corner radius system (measured on the reference): cards and nav pill 10px (the reference's `--radius: 0.625rem`); nav link hover/active tint 10px; inset panels 14px; status capsule 14px; large panel (contact CTA) 24px; small buttons (theme toggle) 8px; keycaps 8px; primary and secondary CTAs ("Let’s Connect", "Download resume"), badges, and chips full pill. Nothing else.
-- Layout families across the 6 sections (no family repeats): centered stage (hero), asymmetric bento, timeline split, grouped chip sheet, contact panel, footer columns.
+- Corner radius system (measured on the reference): cards and nav pill 10px (the reference's `--radius: 0.625rem`); nav link hover/active tint 10px; inset panels 14px; status capsule 14px; large panel (contact CTA) 24px; small buttons (theme toggle) 8px; keycaps 8px; primary and secondary CTAs ("Let’s Connect", "Download resume"), badges, and chips full pill; Skills & Tools icon tiles 16px (measured on the reference, 2026-10-12). Nothing else.
+- Layout families across the 6 sections (no family repeats): centered stage (hero), asymmetric bento, timeline split, centered icon wall, contact panel, footer columns.
 
 ---
 
@@ -440,7 +440,16 @@ Timeline, 4 entries (3 roles + education), reference-pattern split:
 
 ### 11.4 Skills (`#skills`)
 
-Not an icon wall (excluded by CLAUDE.md ask-first list). A grouped specimen sheet: the 4 groups from content.ts (Testing Types, Automation Frameworks, Tools, Practices) as a 2x2 grid at desktop (single column mobile), each group a borderless cluster with an Alata group label and wrapped text chips. Group count is real (4), chips are real (33). Long-list rule satisfied by grouping; no divide-y row tables.
+**Skills & Tools icon wall (approved by the user 2026-10-12, replacing the planned grouped chip sheet).** `components/Skills.tsx`, right after the About bento; the Skills tab and the mobile nav's Skills icon scroll to it.
+
+- **Heading and subline:** `h2` "Skills & *Tools*" in EB Garamond (`text-4xl`, 56px at lg, as measured; not the reference's handwritten face), "Tools" in the gradient italic accent. Subline (ours, `content.skillsSubline`): "The tools I test with, from test management and automation to APIs, CI, and monitoring." Source Code Pro 16/18px, `text`, max 672px, centered.
+- **Tools:** all 44 confirmed tools (`content.skills` tool groups; source record in CLAUDE.md), core QA tools first (Jira, Postman, Playwright, Cypress, Selenium, TestRail, Apache JMeter), then group order: automation, test management, API and debugging, CI/CD, device clouds, monitoring, SQL, collaboration.
+- **Tiles (measured on the reference):** 64px (56px below sm), 16px radius, 14px gaps (12px below sm), 1px `tile-border` hairline, `shadow-sm`; 32px monochrome logo (28px below sm) in `tile-icon` `#d4d4d4`. Light: solid grey-purple `#625668` (icon 4.64:1); dark: the reference's `neutral-900`/70 (icon 11.8:1, measured on the rendered page). Hover and keyboard focus: lift 4px, scale 1.1, `shadow-lg`, 300ms.
+- **Logos:** Simple Icons 16 (`lib/tool-icons.ts`, named imports; 31 marks). Text tiles (the name, Alata 12/13px, same tile, auto width) for the 12 tools Simple Icons doesn't have (Playwright, Zephyr, Xray, qTest, Azure DevOps, Fiddler, Chrome DevTools, BrowserStack, LambdaTest, Slack, Microsoft Teams, SQL) and for Robot Framework, whose mark is CC BY-NC-SA 4.0 (non-commercial; the user decides). Credits line under the wall for the marks with attribution licenses (Git CC BY 3.0, Jenkins CC BY-SA 3.0, Apache JMeter Apache-2.0). Never draw or invent a logo.
+- **Rows:** centered, with max widths measured so the 44 tiles wrap evenly: 15/15/14 from 1352px, 4 x 11 at xl, 9/8/9/9/9 at lg, 8/7/8/7/7/7 at md, alternating 4/5 on phones (10 rows; long but not crowded at 56px tiles).
+- **Glow:** the reference spins a blurred violet-to-pink conic gradient (800x350, 25% opacity, blur 120px). Ours: the same colors as two static radial pools (`--skills-glow-a/b`, stronger in light), no blur, no motion.
+- **Accessibility:** each tile is `role="img"` with the tool name as `aria-label`; the wall is one tab stop (roving tabindex: arrows move, up/down to the nearest tile in the next row, Home/End). A visible tooltip (inverse pill) shows on hover, keyboard focus, and tap (a tap focuses the tile), and aligns to the tile's side near the viewport edges.
+- **Motion:** heading, subline, and tiles rise in once on scroll (ScrollTrigger batch, 0.025s stagger); static under reduced motion.
 
 ### 11.5 Contact CTA (`#contact`)
 
@@ -474,7 +483,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
 2. **Hero (done 2026-10-10; resume button added 2026-10-12):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroAtmosphere.tsx` (washes and arc, which replaced `hero/HeroTrace.tsx` on 2026-10-12), with all copy from `lib/content.ts`. The "Download resume" button sits between the two CTAs (11.1).
 3. **About bento (built 2026-10-12, awaiting review):** `components/About.tsx` plus the cards in `components/about/`, with all copy from `lib/content.ts`.
 4. Experience timeline
-5. Skills
+5. **Skills (built 2026-10-12, awaiting review):** the Skills & Tools icon wall, `components/Skills.tsx` (11.4).
 6. Contact CTA + Footer
 7. SEO pass: `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, OG image, `sitemap.xml`, `robots.txt`, JSON-LD
 8. **Security hardening (section 10):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.

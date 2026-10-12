@@ -24,6 +24,9 @@
   --color-inverse-fg: var(--inverse-fg);
   --color-live: var(--live);
   --color-live-fg: var(--live-fg);
+  --color-tile: var(--tile);
+  --color-tile-border: var(--tile-border);
+  --color-tile-icon: var(--tile-icon);
   --color-dock: var(--dock);
   --color-dock-toggle: var(--dock-toggle);
   --color-dock-icon: var(--dock-icon);
@@ -78,6 +81,15 @@
   --arc-rim: #6a0dad;
   --arc-halo: rgb(255 105 180 / 0.4);
 
+  /* Skills & Tools wall (DESIGN.md 11.4). Light: a solid grey-purple tile
+     (the reference's translucent neutral-900/70 reads #5c5b5c to #6b5772
+     over its glow) under a pink-violet glow; icon contrast 4.7:1. */
+  --tile: #625668;
+  --tile-border: rgb(64 64 64 / 0.5);
+  --tile-icon: #d4d4d4;
+  --skills-glow-a: rgb(124 58 237 / 0.26);
+  --skills-glow-b: rgb(236 72 153 / 0.2);
+
   /* Floating mobile nav (DESIGN.md section 6), measured on the reference's
      phone nav: inverse-colored circles. The active icon uses the other
      theme's accent so it stays readable on the inverse fill.
@@ -124,6 +136,11 @@
   --wash-3-mid: rgb(10 10 194 / 0.02);
   --glow-a: #6a0dad;
   --glow-b: #4169e1;
+  /* Dark: the reference's near-black translucent tile with a thin light
+     hairline, under a purple glow. */
+  --tile: rgb(23 23 23 / 0.7);
+  --skills-glow-a: rgb(124 58 237 / 0.17);
+  --skills-glow-b: rgb(236 72 153 / 0.13);
   --dock: #fafafa;
   --dock-toggle: #fafafa;
   --dock-icon: #737373;
