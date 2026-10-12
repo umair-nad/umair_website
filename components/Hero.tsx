@@ -150,15 +150,20 @@ export default function Hero() {
             </span>
           </a>
 
-          {/* Download resume (DESIGN.md 11.1), measured on the reference's
-              CV button: 8px radius, 6px 12px padding, mono 12px/700, inverse
-              fill. min-h-9 keeps a comfortable tap target. */}
+          {/* Download resume (DESIGN.md section 6): the secondary pill. Same
+              height, shape, and Alata label as "Get in touch", but outlined
+              instead of filled, so the primary still leads. */}
           <a
             href={content.resume.href}
             download
-            className={`inline-flex min-h-9 touch-manipulation items-center gap-2 rounded-control bg-inverse px-3 py-1.5 font-mono text-xs font-bold text-inverse-fg transition-opacity hover:opacity-85 active:scale-[0.98] ${focusRing}`}
+            className={`group inline-flex h-12 touch-manipulation items-center gap-2.5 rounded-full border border-line-strong px-6 text-base text-fg transition-[color,background-color,border-color] hover:border-fg/40 hover:bg-fg/5 active:scale-[0.98] ${focusRing}`}
           >
-            <Download size={14} strokeWidth={2} aria-hidden="true" />
+            <Download
+              size={18}
+              strokeWidth={1.75}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:translate-y-0.5"
+            />
             Download resume
           </a>
 

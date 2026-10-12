@@ -92,7 +92,7 @@ The reference's `:root` / `.dark` CSS variables are stock shadcn/ui "slate" valu
 | `muted` | `#000000/0.60` | `#ffffff/0.60` | Footer links, secondary UI text, micro-labels | footer links |
 | `accent` | `#7928ca` | `#c27aff` | Active nav item, focus rings, check bullets | nav "Home" (see note 1) |
 | `accent-gradient` | `#ff0080 > #7928ca > #0070f3` | `#ff0080 > #38bdf8` | The one accent word per headline (gradient text, 135deg) | hero accent span (see note 2) |
-| `inverse` / `inverse-fg` | `#171717` / `#ffffff` | `#ffffff` / `#000000` | "Download resume" button, CTA arrow chip | footer CV button; CTA chip (light #000, dark #fff) |
+| `inverse` / `inverse-fg` | `#171717` / `#ffffff` | `#ffffff` / `#000000` | CTA arrow chip | CTA chip (light #000, dark #fff) |
 | `live` | `#00c950` (label text `#000000`) | `#00c950` (label text `#000000`) | Status dot and hero badge chip | "NEW" chip (see note 3) |
 
 Elevation: light cards carry the reference's shadow, `0 10px 15px -3px rgb(0 0 0/0.1), 0 4px 6px -4px rgb(0 0 0/0.1)` (Tailwind `shadow-lg`). Dark cards use the same declaration, which is effectively invisible on #141414, as in the reference. Frosted chrome uses `backdrop-filter: blur(12px)` (nav pill, status capsule), `blur(10px)` (hero badge), `blur(8px)` (cards), and `blur(4px)` (primary CTA).
@@ -114,7 +114,6 @@ Notes:
 | Light | `muted` on inset panel | `#646464` | `#fafafa` | 5.67:1 | AA |
 | Light | `accent` (active nav, 13px) | `#7928ca` | `#ffffff` | 7.07:1 | AAA |
 | Light | Accent gradient, worst sampled point (large) | `#ff0080` | `#ffffff` | 3.77:1 | AA large |
-| Light | "Download resume" (`inverse-fg` on `inverse`) | `#ffffff` | `#171717` | 17.93:1 | AAA |
 | Light | Live chip label | `#000000` | `#00c950` | 9.47:1 | AAA |
 | Dark | Headlines, titles (`fg`) | `#ffffff` | `#0a0a0a` | 19.80:1 | AAA |
 | Dark | `fg` on card | `#ffffff` | `#141414` | 18.42:1 | AAA |
@@ -125,7 +124,6 @@ Notes:
 | Dark | `muted` on card | `#a1a1a1` | `#141414` | 7.13:1 | AAA |
 | Dark | `accent` (active nav, 13px) | `#c27aff` | `#0a0a0a` | 7.09:1 | AAA |
 | Dark | Accent gradient, worst sampled point (large) | `#b942aa` | `#0a0a0a` | 4.17:1 | AA large |
-| Dark | "Download resume" (`inverse-fg` on `inverse`) | `#000000` | `#ffffff` | 21.00:1 | AAA |
 | Dark | Live chip label | `#000000` | `#00c950` | 9.47:1 | AAA |
 
 Rejected for text (decorative use only, or not at all):
@@ -166,7 +164,7 @@ Measured scale (desktop 1440):
 | Primary CTA label | Alata | 16px | 400 (ours; reference computes 500) | normal |
 | Footer column micro-label | Alata | 10.4px / 15.6px, uppercase | 400 (ours) | 2.08px (0.2em) |
 | Footer link | Source Code Pro | 14px | 600 | normal |
-| "Download resume" button | Source Code Pro | 12px | 700 | normal |
+| "Download resume" button | Alata | 16px | 400 | normal |
 | Capsule text / keycap | Source Code Pro | 11px / 10px | Medium file | normal |
 
 - **Faux weights.** The reference computes weight 600 or 700 on Alata (single-weight family), so the browser synthesizes the bold. We render Alata at 400 to avoid faux bold; hierarchy comes from size and the serif/sans contrast. Source Code Pro gets real 600 and 700 files instead of synthesized ones.
@@ -188,7 +186,7 @@ Em dashes: **zero**, anywhere, including this file and all site strings (locked 
 - Section rhythm: `py-28 md:py-40` between sections; one idea per viewport. Dense clusters (bento, chips) against large voids is the page's rhythm.
 - Grid over flex math everywhere. Explicit `<768px` single-column collapse declared per section.
 - `min-h-[100dvh]` for the hero, never `h-screen`.
-- Corner radius system (measured on the reference): cards and nav pill 10px (the reference's `--radius: 0.625rem`); nav link hover/active tint 10px; inset panels 14px; status capsule 14px; large panel (contact CTA) 24px; small buttons ("Download resume", theme toggle) 8px; keycaps 8px; primary CTA, badges, and chips full pill. Nothing else.
+- Corner radius system (measured on the reference): cards and nav pill 10px (the reference's `--radius: 0.625rem`); nav link hover/active tint 10px; inset panels 14px; status capsule 14px; large panel (contact CTA) 24px; small buttons (theme toggle) 8px; keycaps 8px; primary and secondary CTAs ("Get in touch", "Download resume"), badges, and chips full pill. Nothing else.
 - Layout families across the 6 sections (no family repeats): centered stage (hero), asymmetric bento, timeline split, grouped chip sheet, contact panel, footer columns.
 
 ---
@@ -218,7 +216,7 @@ New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in
 - **Floating nav (measured):** three zones on one row. Left: the `Logo` (home link). Center: a 40px-tall pill (`line` border, 10px radius, backdrop blur 12px; reference fill white/5 in dark, black/10 in light) holding the 4 anchor links (About, Experience, Skills, Contact) in Alata 13px, the active one in `accent` with a 10px-radius tint (reference: white/5), and one embedded "Get in touch" button (reference "Book a Call": 30px tall, white/10 fill, white/20 border, 10px radius). The reference's light-mode pill border is white/10, which is invisible on white, so we use `line` (black/10) in light. Right: status capsule (desktop, `lg`+) then the theme toggle. Hamburger below `md`, reusing the existing GSAP menu logic, placed left of the toggle.
 - **Status capsule (desktop only):** 38px tall, 14px radius, backdrop blur 12px; light fill black/8, border black/15; dark fill white/5, border white/10 (all measured). Mono 11px. The reference's capsule holds weather, a place name, a clock, and a ⌘K keycap. Ours holds only the green `live` dot and Umair's local time, `ISB 14:32 PKT`, drawn from `content.location` (Islamabad). No weather, no visitor counter, no greeting, no ⌘K.
 - **Primary button (measured):** full pill, 48px tall, padding `4px 4px 4px 12px`, backdrop blur 4px; light fill black/20 with black/10 border, dark fill white/10 with white/10 border; Alata 16px label; embedded 38px circular arrow chip in `inverse` (black in light, white in dark). `:active` scale 0.98; magnetic on fine pointers. Exactly one contact-intent label site-wide: **"Get in touch"** (the nav CTA is the same anchor link, not a second styled intent).
-- **Download resume button (measured on the reference's "CV" button):** 8px radius, padding `6px 12px`, Source Code Pro 12px/700, `inverse` fill with `inverse-fg` text. `href` is `content.resume.href` (`/umair-nadeem-qa-engineer-resume.pdf`) with the `download` attribute. Appears in the hero CTA row and the footer.
+- **Download resume button (secondary pill; user decision 2026-10-12, replacing the reference's square mono "CV" button):** same family as the primary: full pill, 48px tall, padding `0 24px`, Alata 16px in `fg`, 1px `line-strong` outline and no fill (hover: `fg`/5 fill, `fg`/40 border), lucide `Download` icon (18px) that nudges down on hover, `:active` scale 0.98. Not magnetic, so the primary still leads. `href` is `content.resume.href` (`/umair-nadeem-qa-engineer-resume.pdf`) with the `download` attribute. Appears in the hero CTA row and the footer.
 - **Copy-email row:** lucide `Copy` icon + Source Code Pro email, with "copied" feedback; sits beside the CTAs. Email is the only direct contact method (locked rule).
 - **Bento card (measured):** `surface` fill, 1px border (light `line` black/10; dark `#242424/0.30`, as on the reference), 10px radius, light-mode `shadow-lg`, backdrop blur 8px; caption lockup bottom-left; one focal visual per card; hover lift 2px + border step to `line-strong`.
 - **Chip (ours; the reference's chips were not separately measured):** full pill, `surface-2`, 1px `line`, Source Code Pro 13px. **Text only, no icons**, for tool and skill chips alike (user decision 2026-10-10).
