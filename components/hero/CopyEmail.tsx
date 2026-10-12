@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { Check, Copy } from 'lucide-react'
+import { starBurst } from '@/lib/star-burst'
 
 type Status = 'idle' | 'copied' | 'failed'
 
@@ -15,11 +16,15 @@ export default function CopyEmail({ email, className = '' }: { email: string; cl
 
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
-  const copy = async () => {
+  const copy = async (event: MouseEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget
     window.clearTimeout(timer.current)
     try {
       await navigator.clipboard.writeText(email)
       setStatus('copied')
+      // Celebration only; the "Copied" label and the live region stay the
+      // real feedback. A failed library load must never break the copy.
+      starBurst(button).catch(() => {})
     } catch {
       // Clipboard API blocked (insecure context, permissions): the address
       // stays visible and selectable, so the visitor can copy it by hand.

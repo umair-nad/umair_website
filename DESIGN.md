@@ -244,6 +244,7 @@ Every animation must answer "what does this communicate" in one sentence:
 | Timeline spine | 1px rule draws downward on scroll | Progress through time |
 | Typewriter | One mono line in the contact CTA | The machine voice speaks once |
 | Hovers | Card lift, button magnetic pull, chip border step | Feedback |
+| Copy email | A short burst of violet, blue, cyan, and pale stars from the button on a successful copy (canvas-confetti, loaded on click, main thread, skipped under reduced motion; added 2026-10-12). The "Copied" label stays the real feedback | Feedback |
 | Theme switch | None (transitions suppressed for one frame) | A theme change is a state change, not a show |
 
 Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; typewriter renders full text. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.

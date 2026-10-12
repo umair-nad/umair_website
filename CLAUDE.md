@@ -8,7 +8,7 @@ Personal portfolio of Umair Nadeem, a Software Quality Assurance (SQA) engineer.
 
 - Framework: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9 (upgraded 2026-10-10)
 - Styling: Tailwind CSS 4 (CSS-first config: theme tokens live in `@theme` in `app/globals.css`; there is no `tailwind.config.js`), PostCSS via `@tailwindcss/postcss`
-- Animation: GSAP 3 with @gsap/react (ScrollTrigger, ScrollSmoother, SplitText; registered in `lib/gsap.ts`)
+- Animation: GSAP 3 with @gsap/react (ScrollTrigger, ScrollSmoother, SplitText; registered in `lib/gsap.ts`); canvas-confetti 1.9 for the copy-email star burst only (`lib/star-burst.ts`, dynamically imported on click, own main-thread instance so no blob worker)
 - Icons: lucide-react 1.x (no brand icons). Fonts via next/font/google: EB Garamond (display, with real italic), Alata (UI), Source Code Pro (mono body and captions)
 - Theme: light (default) and dark via a `dark` class on `<html>`. Tokens are in `app/globals.css` (`:root` and `.dark`), logic in `lib/theme.ts`, the pre-paint script in `components/theme/ThemeScript.tsx` (nonce-ready), and the toggle in `components/theme/ThemeToggle.tsx`
 - Package manager: npm
