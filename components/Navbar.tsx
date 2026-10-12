@@ -65,7 +65,11 @@ const Navbar = () => {
       // state (DESIGN.md section 7). Sections are resolved with
       // document.querySelector because they live in <main>, outside this
       // hook's <nav> scope.
-      const triggers = navItems.flatMap((item) => {
+      // The last section (Contact) stays active to the end of the page, the
+      // footer included: its trigger ends 1px past the maximum scroll, a
+      // point never reached ('max' itself counts the very end of the page
+      // as already left).
+      const triggers = navItems.flatMap((item, i) => {
         const section = document.querySelector<HTMLElement>(item.href)
         if (!section) return []
         const links = navRef.current?.querySelectorAll<HTMLElement>(`[data-section="${item.href}"]`) ?? []
@@ -73,7 +77,7 @@ const Navbar = () => {
           ScrollTrigger.create({
             trigger: section,
             start: 'top center',
-            end: 'bottom center',
+            end: i === navItems.length - 1 ? () => ScrollTrigger.maxScroll(window) + 1 : 'bottom center',
             onToggle: (self) =>
               links.forEach((link) =>
                 self.isActive ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current')
