@@ -17,7 +17,9 @@ registerGsap()
 const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
+// Home (the hero, #home) comes first; it scrolls to the top like the logo.
 const navItems = [
+  { name: 'Home', href: '#home' },
   { name: 'About', href: '#about' },
   { name: 'Experience', href: '#experience' },
   { name: 'Skills', href: '#skills' },
@@ -29,7 +31,7 @@ const navItems = [
 const SCROLL_GAP = 16
 
 // Floating pill navbar (DESIGN.md section 6). Three zones on one row: the
-// Logo (home link) on the left, the centered pill with the 4 anchors and
+// Logo (home link) on the left, the centered pill with Home and the 4 anchors and
 // the embedded contact CTA (content.contact.cta), and on the right the status capsule
 // (lg and up) then the theme toggle, which sits at the far right at every
 // width, as on the reference. Below md the pill becomes a menu panel.
@@ -165,7 +167,8 @@ const Navbar = () => {
 
   const onAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
-    scrollToSection(href)
+    if (href === '#home') scrollToTop()
+    else scrollToSection(href)
   }
 
   return (

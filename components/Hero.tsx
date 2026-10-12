@@ -89,6 +89,7 @@ export default function Hero() {
   return (
     <header
       ref={rootRef}
+      id="home"
       className="relative isolate flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-4 pt-(--nav-height) md:px-8"
     >
       <HeroWashes />
