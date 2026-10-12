@@ -242,13 +242,14 @@ Every animation must answer "what does this communicate" in one sentence:
 | Tools marquee | Two counter-scrolling chip rows inside one bento card | Breadth without a data dump. One of exactly two marquees on the page. |
 | Portrait word rows | Two rows of large EB Garamond words scrolling in opposite directions behind the cut-out portrait (36 and 44 px/s, measured on the reference); paused off screen | Storytelling: the work passes behind the person. **The second and last approved marquee (user decision 2026-10-12)**; no other marquee may be added without asking. |
 | Timeline spine | 1px rule draws downward on scroll | Progress through time |
-| Typewriter | One mono line in the contact CTA | The machine voice speaks once |
+| Hero subline typing | Measured on the reference (2026-10-12, ~125 samples per theme, fit RMSE 0.004): a staggered per-character fade, no cursor, blur, scramble, or movement; each character fades in over ~0.32s on CSS `ease` (ours: `power2.out` over 0.26s, the second-best fit), 0.02s apart. The reference starts it with its headline; ours starts at 1.2s, after the headline's lines have landed, and finishes by ~2.4s. The sentence is in the HTML from the first render (an `sr-only` copy, read once; the per-character copy is `aria-hidden`); every character holds its space from the first paint, so CLS stays 0 (measured). Full text immediately under reduced motion. | The machine voice introduces him once |
+| Typewriter (contact CTA) | Planned: one mono line in the contact CTA. **On hold (2026-10-12):** the hero subline now uses the typing effect, so a second one would repeat it; the user decides whether it stays, becomes a static line, or goes. | The machine voice speaks once |
 | Hovers | Card lift, chip border step, primary CTA color inversion (button stays still), magnetic pull on the nav links only | Feedback |
 | Time zone globe | The dot-matrix globe turns slowly (about one turn per 21s) while the card is on screen; static under reduced motion | Storytelling: where Umair is, and where his current company is |
 | Copy email | A short burst of violet, blue, cyan, and pale stars from the button on a successful copy (canvas-confetti, loaded on click, main thread, skipped under reduced motion; added 2026-10-12). The "Copied" label stays the real feedback | Feedback |
 | Theme switch | None (transitions suppressed for one frame) | A theme change is a state change, not a show |
 
-Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; typewriter renders full text. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
+Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; the hero subline and any typewriter line render their full text at once. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
 
 Implementation notes (learned in build step 2):
 - **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). The old Contact, Footer, and Skills components still have the bug; it goes away as they are rebuilt.
@@ -405,7 +406,7 @@ Single route, hash anchors preserved: `#about`, `#experience`, `#skills`, `#cont
 Centered stage (the one intentionally centered section; everything after is asymmetric), on the plain page background. Stack of 3 text elements (the status badge was removed by the user on 2026-10-12; the current role is shown in the About role card):
 
 1. `h1`, 2 lines: **"I break things so your users don't have to."** (verbatim from the approved bio; "break" is the italic gradient accent word)
-2. Mono subline (`text-hero`): **"Hello I’m Umair | A Software Quality Assurance Engineer"** (`content.heroSubline`, two parts; wording set by the user 2026-10-12, replacing "Umair Nadeem | Islamabad, Pakistan"). One line with the pipe from `sm`; below `sm` the two parts stack on two lines with no pipe, so 390px breaks at the separator, never mid-phrase. The site's title stays "QA Engineer" elsewhere; this subline spells the role out by the user's choice.
+2. Mono subline (`text-hero`): **"Hello I’m Umair | A Software Quality Assurance Engineer"** (`content.heroSubline`, two parts; wording set by the user 2026-10-12, replacing "Umair Nadeem | Islamabad, Pakistan"). One line with the pipe from `sm`; below `sm` the two parts stack on two lines with no pipe, so 390px breaks at the separator, never mid-phrase. The site's title stays "QA Engineer" elsewhere; this subline spells the role out by the user's choice. It types in after the headline, like the reference's subline (section 7, "Hero subline typing").
 3. CTA row: "Let’s Connect" primary pill + "Download resume" button + copy-email row (`uminadeem06@gmail.com`)
 
 Behind the stack, the warm (light) or cool (dark) corner washes; under the CTA row, the glowing horizon arc (section 2, approved 2026-10-12). No trust strips, no scroll cue, no version labels.
@@ -446,7 +447,7 @@ Not an icon wall (excluded by CLAUDE.md ask-first list). A grouped specimen shee
 A full-width rounded panel (`surface`, 1px `line` border, 24px radius as measured on the reference's large panel, light-mode card shadow, inset from the page edges). No glow, no grain: the gradient accent word is the panel's only color. Centered:
 
 1. Display headline with accent word: "Ship it **tested**."
-2. One mono typewriter line (the machine voice's only speech): `umair@qa: all checks passed. ready when you are.` styled as a terminal prompt, factual-neutral tone (approved as written by the user 2026-10-10)
+2. One mono line (planned as a typewriter; on hold since the hero subline types, see section 7): `umair@qa: all checks passed. ready when you are.` styled as a terminal prompt, factual-neutral tone (approved as written by the user 2026-10-10)
 3. "Let’s Connect" pill (mailto) + copy-email row + LinkedIn / Upwork links
 
 No contact form (nothing to back it), no booking tool (none exists in sources), no phone (locked rule).

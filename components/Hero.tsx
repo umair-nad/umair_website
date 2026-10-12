@@ -26,6 +26,22 @@ const [BEFORE, AFTER] = (() => {
 })()
 const HAS_ACCENT = HEADLINE.includes(ACCENT_WORD)
 
+const [SUB_A, SUB_B] = content.heroSubline
+const SUBLINE = `${SUB_A} | ${SUB_B}`
+// One span per character for the subline's typing reveal.
+const typeChars = (text: string) =>
+  Array.from(text).map((ch, i) => (
+    <span key={i} data-char>
+      {ch}
+    </span>
+  ))
+
+// Typing reveal, measured on the reference (2026-10-12): each character
+// fades in over ~0.26s (power2.out; the reference's curve fits CSS `ease`
+// over ~0.32s), 0.02s after the previous one, with no cursor, blur, or
+// movement. Ours starts once the headline's lines have landed.
+const TYPE = { start: 1.2, fade: 0.26, stagger: 0.02 }
+
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 export default function Hero() {
@@ -71,7 +87,13 @@ export default function Hero() {
           })
         }
 
-        tl.fromTo('[data-hero-sub]', fadeUp.from, fadeUp.to, 0.35)
+        // The subline types in after the headline: only characters that
+        // are displayed at this width (the " | " is hidden below sm). The
+        // fromTo renders opacity 0 immediately, before the first paint.
+        const subChars = gsap.utils
+          .toArray<HTMLElement>('[data-hero-sub] [data-char]', rootRef.current)
+          .filter((c) => c.offsetParent !== null)
+        tl.fromTo(subChars, { opacity: 0 }, { opacity: 1, duration: TYPE.fade, ease: 'power2.out', stagger: TYPE.stagger }, TYPE.start)
         tl.fromTo('[data-hero-cta]', fadeUp.from, fadeUp.to, 0.5)
 
         // The horizon arc rises into place under the CTAs once the claim has
@@ -104,16 +126,20 @@ export default function Hero() {
           {AFTER}
         </h1>
 
-        {/* Two lines below sm (broken at the separator, never mid-phrase),
-            one line with " | " from sm up. The comma is for screen readers,
-            which would otherwise run the two parts together. */}
+        {/* Subline. Screen readers and crawlers get the whole sentence once,
+            from the sr-only span. The visible copy is aria-hidden and split
+            into one span per character for the typing reveal; every
+            character takes its full space from the first paint (only its
+            opacity animates), so nothing below it ever moves. Two lines
+            below sm (broken at the separator, never mid-phrase), one line
+            with " | " from sm up. */}
         <p data-reveal data-hero-sub className="mt-5 font-mono text-[15px] leading-relaxed text-balance text-text-hero md:mt-6 md:text-xl">
-          <span className="block sm:inline">{content.heroSubline[0]}</span>
-          <span className="sr-only">, </span>
-          <span aria-hidden="true" className="hidden sm:inline">
-            {' | '}
+          <span className="sr-only">{SUBLINE}</span>
+          <span aria-hidden="true">
+            <span className="block sm:inline">{typeChars(SUB_A)}</span>
+            <span className="hidden sm:inline">{typeChars(' | ')}</span>
+            <span className="block sm:inline">{typeChars(SUB_B)}</span>
           </span>
-          <span className="block sm:inline">{content.heroSubline[1]}</span>
         </p>
 
         <div
