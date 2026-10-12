@@ -124,7 +124,12 @@ As of 2026-10-12:
   - `90e74cd` portrait card rebuilt after the reference: the user-approved cut-out (rembg 2.0.67 `birefnet-portrait`, run through uvx outside the project; trimmed to `public/umair-nadeem-cutout.webp`, 808x1400, 154 KB; the original jpg is kept but unused), unframed and bottom-anchored with the reference drop shadow and a bottom fade, two `content.portraitWords` rows scrolling behind it at the measured 36 and 44 px/s (verified), caption = bio sentence 3. Details in DESIGN.md 11.2. Screenshots `review/portrait-*`, `review/about-final-*`, reference `review/ref-portrait-*`.
   - Open: bio sentence 2 ("5+ years in QA hunting bugs, ...") no longer appears anywhere on the page; suggested home: the standfirst under the Experience headline (DESIGN.md 11.3). Waiting on the user.
   - Lighthouse mobile, user flow (navigation, then a timespan that scrolls through About so the globe and portrait load), median of 3, production builds: before (`fb46555`) navigation 82 (LCP 3.5 s, TBT 375 ms, CLS 0, 402 KiB), scroll 100 (TBT 0 ms, CLS 0); after (`90e74cd`) navigation 85 (LCP 3.5 s, TBT 257 ms, CLS 0, 437 KiB: +33 KiB is the cut-out, which Chrome fetches early on slow connections), scroll 99 (TBT 103 ms from cobe starting up, CLS 0). Plain navigation-only runs were 83 before and 83 with the globe.
-- Still old: Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt.
+- Hero and navigation fixes (2026-10-12), awaiting the user's review. Screenshots `review/hero-arc-*`, `review/nav-home-*`, `review/mnav-*`, reference `review/ref-mnav-*`.
+  - `b0337ba` hero status badge removed (the current role still shows in the About role card); the stack is h1, subline, CTA row.
+  - `6505a94` hero subline is `content.heroSubline` ("Hello I’m Umair | A Software Quality Assurance Engineer"): one line from sm, two lines (no pipe) below sm.
+  - `df04fac` Home is the first pill tab: the hero is `#home`; Home and the logo scroll to the top (smooth, instant under reduced motion); Home is active while the hero is in view. The pill fits at 768 and 1024.
+  - `0a916c3` floating mobile nav below md, measured on the reference (48px inverse circles, 6px apart; DESIGN.md section 6), replacing the hamburger menu (removed). Verified: aria-expanded, Escape (focus back to the toggle), outside tap, link tap closes and scrolls, active highlight, Tab order, reduced motion, 48px targets. The phone top bar shows the clock capsule (fits down to 320px). CopyEmail hides its "Copied" label below sm so the open stack never overlaps it.
+- Still old: Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt. The old Experience section still shows an em dash in its date ranges; the rebuild fixes it.
 
 ### Decisions
 
@@ -145,7 +150,7 @@ GSAP `matchMedia` only runs a conditions-object callback while at least one cond
 
 ### Next steps, in order
 
-1. The user reviews About round 2 (globe card, portrait card) and decides where bio sentence 2 goes.
+1. The user reviews the hero and navigation fixes and About round 2 (globe card, portrait card), and decides where bio sentence 2 goes.
 2. The user reviews the About bento and the hero feedback round (screenshots in `review/about-*`, `review/hero-arc-*`, `review/stars-*`), and says what the "1 Issue" overlay showed if it comes back.
 3. Phase 4 step 4: Experience timeline (DESIGN.md 11.3).
 4. Then the remaining build steps in DESIGN.md section 13: Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button (`content.resume.href`) and fix the hardcoded "© 2024" year.
