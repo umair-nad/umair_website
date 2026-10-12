@@ -243,13 +243,13 @@ Every animation must answer "what does this communicate" in one sentence:
 | Portrait word rows | Two rows of large EB Garamond words scrolling in opposite directions behind the cut-out portrait (36 and 44 px/s, measured on the reference); paused off screen | Storytelling: the work passes behind the person. **The second and last approved marquee (user decision 2026-10-12)**; no other marquee may be added without asking. |
 | Timeline spine | 1px rule draws downward on scroll | Progress through time |
 | Hero subline typing | Measured on the reference (2026-10-12, ~125 samples per theme, fit RMSE 0.004): a staggered per-character fade, no cursor, blur, scramble, or movement; each character fades in over ~0.32s on CSS `ease` (ours: `power2.out` over 0.26s, the second-best fit), 0.02s apart. It starts together with the headline, as on the reference (user decision 2026-10-12; briefly it waited for the headline), and finishes by about 1.4s. The sentence is in the HTML from the first render (an `sr-only` copy, read once; the per-character copy is `aria-hidden`); every character holds its space from the first paint, so CLS stays 0 (measured). Full text immediately under reduced motion. | The machine voice introduces him once |
-| Typewriter (contact CTA) | Planned: one mono line in the contact CTA. **On hold (2026-10-12):** the hero subline now uses the typing effect, so a second one would repeat it; the user decides whether it stays, becomes a static line, or goes. | The machine voice speaks once |
+| Contact line | None. **User decision 2026-10-12:** the contact CTA's mono line is plain static text, no typing, so the typing effect appears once on the page (the hero subline). | The machine voice speaks once, in the hero |
 | Hovers | Card lift, chip border step, primary CTA color inversion (button stays still), magnetic pull on the nav links only | Feedback |
 | Time zone globe | The dot-matrix globe turns slowly (about one turn per 21s) while the card is on screen; static under reduced motion | Storytelling: where Umair is, and where his current company is |
 | Copy email | A short burst of violet, blue, cyan, and pale stars from the button on a successful copy (canvas-confetti, loaded on click, main thread, skipped under reduced motion; added 2026-10-12). The "Copied" label stays the real feedback | Feedback |
 | Theme switch | None (transitions suppressed for one frame) | A theme change is a state change, not a show |
 
-Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; the hero subline and any typewriter line render their full text at once. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
+Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; the hero subline renders its full text at once. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
 
 Implementation notes (learned in build step 2):
 - **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). The old Contact, Footer, and Skills components still have the bug; it goes away as they are rebuilt.
@@ -456,7 +456,7 @@ Timeline, 4 entries (3 roles + education), reference-pattern split:
 A full-width rounded panel (`surface`, 1px `line` border, 24px radius as measured on the reference's large panel, light-mode card shadow, inset from the page edges). No glow, no grain: the gradient accent word is the panel's only color. Centered:
 
 1. Display headline with accent word: "Ship it **tested**."
-2. One mono line (planned as a typewriter; on hold since the hero subline types, see section 7): `umair@qa: all checks passed. ready when you are.` styled as a terminal prompt, factual-neutral tone (approved as written by the user 2026-10-10)
+2. One mono line, plain static text with no typing (user decision 2026-10-12; the hero subline is the page's only typing effect): `umair@qa: all checks passed. ready when you are.` styled as a terminal prompt, factual-neutral tone (approved as written by the user 2026-10-10)
 3. "Let’s Connect" pill (mailto) + copy-email row + LinkedIn / Upwork links
 
 No contact form (nothing to back it), no booking tool (none exists in sources), no phone (locked rule).
