@@ -69,7 +69,7 @@ Our own CSS in `components/hero/HeroAtmosphere.tsx`, built from playwright-cli m
 
 - **WaveformDivider:** neutral stroke, `fg` at 12% (black/12 in light, white/12 in dark). `aria-hidden` decoration, one place only: before the footer, where it settles toward a flat line as the page ends (11.6). Nothing else on the page draws a waveform.
 
-Grain: none. Glow surfaces: the hero atmosphere above, plus two static section glows, the Skills wall's (11.4) and the contact panel's cyan pools (11.5, awaiting the user's review).
+Grain: none. Glow surfaces: the hero atmosphere above, plus two static section glows, the Skills wall's (11.4) and the contact panel's cyan pools (11.5; open decision: keep or remove).
 
 ---
 
@@ -208,7 +208,7 @@ Em dashes: **zero**, anywhere, including this file and all site strings (locked 
 | `Footer` | **Adapt** | Keep the waveform-settling-to-baseline closing beat (WaveformDivider); rebuild content (dynamic year, links from content.ts, "Download resume"). |
 | `Cursor` | **Drop** | Custom cursors are a banned tell; payoff is near zero. Magnetic hover stays. |
 | `ParticleCanvas` + `lib/three/particle-field.ts` | **Drop** | Removes Three.js and its ~580 KB async chunk (size as recorded in commit `1cce18e`; it never shipped in First Load JS). The hero horizon arc (section 2) now fills that space. |
-| `Hero`, `About`, `Experience`, `Skills`, `Contact` | **Drop / rebuild** | All hardcoded, partly stale or rule-violating (old headshot, "SQA Engineer" title, missing Smart In Media role, published phone number). Rebuilt from `lib/content.ts`. |
+| `Hero`, `About`, `Experience`, `Skills`, `Contact`, `Footer` | **Rebuilt (all done 2026-10-12)** | The originals were hardcoded, partly stale or rule-violating (old headshot, "SQA Engineer" title, missing Smart In Media role, published phone number). Each was replaced, from `lib/content.ts`, in the order of section 13. |
 
 New component: **`ThemeToggle`** (section 2), plus the inline no-flash script in `app/layout.tsx`.
 
@@ -255,7 +255,7 @@ Every animation must answer "what does this communicate" in one sentence:
 Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; the hero subline renders its full text at once. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
 
 Implementation notes (learned in build step 2):
-- **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). The old Contact and Footer components still have the bug; it goes away as they are rebuilt.
+- **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). Every section follows this now.
 - **Entrance reveals without a flash.** The pre-paint script sets `data-motion="ok"` on `<html>` only when reduced motion is off. `globals.css` then hides `[data-reveal]` elements before first paint, with a CSS failsafe that shows them after 2.5s if JS never hydrates. The component calls `gsap.set(..., { autoAlpha: 1 })` immediately and animates with `fromTo` and explicit end values; a plain `from()` would capture the CSS-hidden state as its end value. Measured: the hero headline is visible about 50ms after load.
 - **Focus rings don't animate.** Interactive elements use `transition-[color,background-color,border-color]`, not `transition-colors`, which also transitions `outline-color` and makes the focus ring fade in from `currentColor`.
 
@@ -280,10 +280,10 @@ No scroll cues, no pinned/hijacked sections in v1, no infinite loops outside the
 
 - Semantic landmarks; exactly one `h1` (the hero headline); sections are `h2`.
 - WCAG AA minimum everywhere, in both themes. Every text color pairing is computed in section 3; anything that failed is replaced there. Recompute if any token changes.
-- Focus-visible rings in `accent` (7.07:1 light, 7.09:1 dark) on all interactive elements, including the theme toggle; keep the existing `focusRing` pattern from the old Hero.
+- Focus-visible rings in `accent` (7.07:1 light, 7.09:1 dark) on all interactive elements, including the theme toggle; use the shared `focusRing` pattern (`focus-visible:outline-2 outline-offset-2 outline-accent`).
 - Theme toggle: native button, action-describing `aria-label`, decorative icons `aria-hidden`, 36x36 target (above the 24px WCAG 2.5.8 minimum).
 - Alt text on every image; the headshot alt describes Umair, not "profile picture".
-- Headshot: `public/umair-nadeem.jpg` at its natural color in both themes (no color grading), 10px radius, 1px `line` border.
+- Portrait: the About card uses the cut-out `public/umair-nadeem-cutout.webp` (11.2) with a descriptive alt. The original `public/umair-nadeem.jpg` (2048x2048, 2.1 MB) is no longer displayed; it stays for the JSON-LD `image` and a possible OG image, and re-encoding it is the user's call.
 
 ### SEO
 
@@ -463,7 +463,7 @@ The middle-dot rule from revision 1 no longer applies: the time-zone card now sp
 **Built 2026-10-12** (`components/Contact.tsx`), after the reference's closing panel on its home page, measured in both themes at 1440 and 390 (2026-10-12).
 
 - **Panel (measured):** inside a 1440px-wide container with 8px side margins on phones, 24px from sm, 32px from md, so it is 1376x600 at 1440 and 374x549 at 390, wider than the 1280px sections above, as on the reference. At least 60vh tall (65vh below md), never under 448px; 14px radius; 5% `fg` hairline. Everything centered on it, 80px vertical padding so nothing clips on short screens.
-- **Atmosphere (static; awaiting the user's review):** the reference fills the panel with two blurred cyan blobs that pulse and drift, a frosted layer, grain, and an edge vignette. Ours keeps the look and drops the motion: fill `cta-panel` (light `#f8f9fa`, dark `#000`), two radial cyan pools centered at 30%/30% and 70%/70% (36% x 48% of the panel from md; wider, 70% x 42%, on phones), colors fitted to the sampled peaks (`--cta-glow`), then the reference's edge vignette (transparent center to white/60 light, black/80 dark at 110%). No blur filter, no animation, no grain. If the user prefers the original no-glow plan, remove the glow layer; the vignette alone reads as a plain panel.
+- **Atmosphere (static; open decision: the user decides whether the glow stays):** the reference fills the panel with two blurred cyan blobs that pulse and drift, a frosted layer, grain, and an edge vignette. Ours keeps the look and drops the motion: fill `cta-panel` (light `#f8f9fa`, dark `#000`), two radial cyan pools centered at 30%/30% and 70%/70% (36% x 48% of the panel from md; wider, 70% x 42%, on phones), colors fitted to the sampled peaks (`--cta-glow`), then the reference's edge vignette (transparent center to white/60 light, black/80 dark at 110%). No blur filter, no animation, no grain. If the user prefers the original no-glow plan, remove the glow layer; the vignette alone reads as a plain panel.
 - **Content, from `content.contact`:**
   1. `h2` "Ship it *tested*." (`content.contact.headline`, approved as written 2026-10-10) in EB Garamond, 44px, 60px at md, 72px at lg (the reference's large headline line measures 72px), "tested" in the gradient accent.
   2. The terminal line `umair@qa: all checks passed. ready when you are.` (`content.contact.line`, approved as written 2026-10-10), plain static text (user decision 2026-10-12): Source Code Pro 14/16px in an inset 14px-radius box (`line` border, `surface`/60 light, white/5 dark), the prompt `umair@qa` in `accent`, the colon `muted`, then a static (never blinking) cursor block that stays on the last word's line when the text wraps, left-aligned like a terminal.
@@ -478,8 +478,8 @@ No contact form (nothing to back it), no booking tool (none exists in sources), 
 **Built 2026-10-12** (`components/Footer.tsx`, a server component, with client parts in `components/footer/`), after the reference's footer, measured 2026-10-12. Compact, not the reference's 12-link sitemap. Outside `<main>`, so it is the page's `contentinfo` landmark.
 
 - **Waveform:** the WaveformDivider opens the footer and settles toward a flat line (scaled to 15% height around its centerline) as the page reaches its end, scrubbed from the moment it enters to the maximum scroll (`FooterWaveform`): the sign-off beat. Under reduced motion it shows the settled state.
-- **Top row (measured layout):** left, max 384px: the `Logo` (40px, `role="img"`, named "Umair Nadeem"), one role sentence (`content.seo.description`, the one-sentence role summary in content.ts; Alata 14px, `muted`, as the reference's sentence), and the **"Download resume"** pill (`ResumeButton`, shared with the hero; `content.resume.href`, `download`). Right: two columns under Alata 10.4px uppercase micro-labels (0.2em tracking, `muted`; the reference's black/50 fails AA): "Sections" (a `nav`: Home, About, Skills, Experience, Contact from `lib/nav.ts`, shared with the navbar; real anchors that scroll like the nav, Home to the top) and "Profiles" (LinkedIn, Upwork). Links measured: Source Code Pro 14px semibold, underlined, `muted` (ours brighten to `fg` on hover). Stacks below md (left block, then the two columns side by side).
-- **Bottom:** hairline `line` rule, then centered: `© {year} Umair Nadeem. All rights reserved.` (Source Code Pro 12px, `text`) and the logo credits line moved from the old bottom-of-page `LogoCredits` (11px, `muted`; names and license identifiers never split across lines). The year is never hardcoded: the server renders its build year and the client shows the current year (`CurrentYear`, `useSyncExternalStore`, so hydration always matches).
+- **Top row (measured layout):** left, max 384px: the `Logo` (40px, `role="img"`, named "Umair Nadeem"), one role sentence (`content.seo.description`, the one-sentence role summary in content.ts; Alata 14px, `muted`, as the reference's sentence; **open decision**: keep this three-line sentence or use the short "QA Engineer | Islamabad, Pakistan" from `content.title` and `content.location`), and the **"Download resume"** pill (`ResumeButton`, shared with the hero; `content.resume.href`, `download`). Right: two columns under Alata 10.4px uppercase micro-labels (0.2em tracking, `muted`; the reference's black/50 fails AA): "Sections" (a `nav`: Home, About, Skills, Experience, Contact from `lib/nav.ts`, shared with the navbar; real anchors that scroll like the nav, Home to the top) and "Profiles" (LinkedIn, Upwork). Links measured: Source Code Pro 14px semibold, underlined, `muted` (ours brighten to `fg` on hover). Stacks below md (left block, then the two columns side by side).
+- **Bottom:** hairline `line` rule, then centered: `© {year} Umair Nadeem. All rights reserved.` (Source Code Pro 12px, `text`) and the logo credits line (11px, `muted`; names and license identifiers never split across lines). The year is never hardcoded: the server renders its build year and the client shows the current year (`CurrentYear`, `useSyncExternalStore`, so hydration always matches).
 - **Phones:** 112px of bottom padding below md, so at the end of the page the credits sit 48px above the floating nav's toggle (measured at 390: credits end at 732, toggle starts at 780).
 
 ---
@@ -490,7 +490,9 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
 
 ## 13. Build order (Phase 4+, one step per review stop)
 
-1. **Theme foundation and navbar shell (done 2026-10-10, awaiting review):**
+Steps 1 to 6 are **built and reviewed section by section, 2026-10-10 to 2026-10-12** (step 6 awaits the user's review and two decisions: the contact glow and the footer role sentence). Steps 7 and 8 are **not started**.
+
+1. **Theme foundation and navbar shell (done 2026-10-10):**
    - The framework upgrade (section 10.6).
    - Removal of the dropped chrome (Three.js, `ParticleCanvas`, `lib/three/`, `Cursor`, `AmbientBackground`, `Preloader`) and of the legacy tokens and scrollbar colors.
    - The light (`:root`) and dark (`.dark`) token sets from section 3.
@@ -498,11 +500,11 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
    - The no-flash `ThemeScript` (static, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`.
    - The floating navbar with the `Logo`, the pill, the status capsule, the toggle placement, and the mobile menu.
 2. **Hero (done 2026-10-10; resume button added 2026-10-12):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroAtmosphere.tsx` (washes and arc, which replaced `hero/HeroTrace.tsx` on 2026-10-12), with all copy from `lib/content.ts`. The "Download resume" button sits between the two CTAs (11.1).
-3. **About bento (built 2026-10-12, awaiting review):** `components/About.tsx` plus the cards in `components/about/`, with all copy from `lib/content.ts`.
-4. **Experience timeline (built 2026-10-12, awaiting review):** `components/Experience.tsx` (11.3), replacing the pre-redesign horizontal-pin component.
-5. **Skills (built 2026-10-12, awaiting review):** the Skills & Tools icon wall, `components/Skills.tsx` (11.4).
-6. **Contact CTA + Footer (built 2026-10-12, awaiting review):** `components/Contact.tsx` (11.5) and `components/Footer.tsx` (11.6), replacing the pre-redesign components; `LogoCredits` folded into the footer.
-7. SEO pass: `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, OG image, `sitemap.xml`, `robots.txt`, JSON-LD
-8. **Security hardening (section 10):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
+3. **About bento (done 2026-10-12, with later rounds: globe, cut-out portrait, floating mobile nav):** `components/About.tsx` plus the cards in `components/about/`, with all copy from `lib/content.ts`.
+4. **Experience timeline (done 2026-10-12, approved):** `components/Experience.tsx` (11.3), replacing the pre-redesign horizontal-pin component.
+5. **Skills (done 2026-10-12, approved):** the Skills & Tools icon wall, `components/Skills.tsx` (11.4).
+6. **Contact CTA + Footer (built 2026-10-12, awaiting review; two open decisions):** `components/Contact.tsx` (11.5) and `components/Footer.tsx` (11.6), replacing the pre-redesign components; `LogoCredits` folded into the footer.
+7. **SEO pass (not started; today only the static metadata in `app/layout.tsx` and the icon files exist):** `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, OG image, `sitemap.xml`, `robots.txt`, JSON-LD
+8. **Security hardening (section 10; not started: no `proxy.ts` and no headers in `next.config.js` yet):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
 
 Each step ends with `npm run lint`, `tsc --noEmit`, and playwright-cli checks at 390px and 1440px in both themes, then stops for review.
