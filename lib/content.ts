@@ -71,6 +71,8 @@ export interface SiteContent {
   certifications: Certification[];
   links: SiteLink[];
   contact: { email: string };
+  /** Public resume PDF, served from public/. */
+  resume: { href: string };
   seo: { title: string; description: string };
 }
 
@@ -225,6 +227,12 @@ export const content = {
   // No phone number anywhere on the site (user decision 2026-10-04).
   contact: {
     email: "uminadeem06@gmail.com",
+  },
+
+  // Umair approved publishing this PDF as is, phone number included
+  // (user decision 2026-10-10). Site text still never shows the phone.
+  resume: {
+    href: "/umair-nadeem-qa-engineer-resume.pdf",
   },
 
   seo: {

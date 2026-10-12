@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Download } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, SplitText, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
@@ -164,11 +164,17 @@ export default function Hero() {
             </span>
           </a>
 
-          {/* RESUME BUTTON SLOT (DESIGN.md 11.1): "Download resume" goes here,
-              between the two CTAs, once Umair approves publishing the PDF.
-              Style: rounded-control, Source Code Pro 12px bold, px-3 py-1.5,
-              bg-inverse text-inverse-fg; href="/UmairNadeem_SQA.pdf" download.
-              Not rendered until then. */}
+          {/* Download resume (DESIGN.md 11.1), measured on the reference's
+              CV button: 8px radius, 6px 12px padding, mono 12px/700, inverse
+              fill. min-h-9 keeps a comfortable tap target. */}
+          <a
+            href={content.resume.href}
+            download
+            className={`inline-flex min-h-9 touch-manipulation items-center gap-2 rounded-control bg-inverse px-3 py-1.5 font-mono text-xs font-bold text-inverse-fg transition-opacity hover:opacity-85 active:scale-[0.98] ${focusRing}`}
+          >
+            <Download size={14} strokeWidth={2} aria-hidden="true" />
+            Download resume
+          </a>
 
           <CopyEmail email={content.contact.email} />
         </div>
