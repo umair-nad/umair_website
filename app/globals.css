@@ -134,6 +134,17 @@ html[data-motion='ok'] [data-reveal] {
   }
 }
 
+/* Tools marquee (About bento; DESIGN.md section 7), the only marquee on the
+   page. Each track holds two identical copies of its chips, so moving it by
+   -50% lands exactly on the second copy and the loop is seamless. Under
+   reduced motion the component drops the animation and the copy and wraps
+   the chips instead. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* Set for one frame while the theme switches, so colors snap instead of
    animating (DESIGN.md section 2, switch hygiene). */
 .theme-switching,
