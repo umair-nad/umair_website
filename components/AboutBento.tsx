@@ -4,6 +4,7 @@ import RoleCard from '@/components/about/RoleCard'
 import SpecializationsCard from '@/components/about/SpecializationsCard'
 import PortraitCard from '@/components/about/PortraitCard'
 import ToolsMarqueeCard from '@/components/about/ToolsMarqueeCard'
+import TimeZoneCard from '@/components/about/TimeZoneCard'
 
 // About bento (DESIGN.md 11.2). Six cards, six real content items, filling
 // a 3-column grid exactly (no empty cells):
@@ -23,6 +24,7 @@ const PLACEMENT = {
   specializations: 'lg:col-start-1 lg:row-start-2',
   portrait: 'md:row-span-2 lg:col-start-3 lg:row-start-1',
   tools: 'lg:col-span-2 lg:col-start-2 lg:row-start-3',
+  timeZone: 'lg:col-start-1 lg:row-start-3',
 } as const
 
 export default function AboutBento() {
@@ -36,6 +38,7 @@ export default function AboutBento() {
         <SpecializationsCard className={PLACEMENT.specializations} />
         <PortraitCard className={PLACEMENT.portrait} />
         <ToolsMarqueeCard className={PLACEMENT.tools} />
+        <TimeZoneCard className={PLACEMENT.timeZone} />
       </div>
     </section>
   )
