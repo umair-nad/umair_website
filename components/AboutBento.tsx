@@ -1,11 +1,17 @@
 'use client'
 
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import RoleCard from '@/components/about/RoleCard'
 import SpecializationsCard from '@/components/about/SpecializationsCard'
 import PortraitCard from '@/components/about/PortraitCard'
 import ToolsMarqueeCard from '@/components/about/ToolsMarqueeCard'
 import TimeZoneCard from '@/components/about/TimeZoneCard'
 import ContactCard from '@/components/about/ContactCard'
+
+registerGsap()
 
 // About bento (DESIGN.md 11.2). Six cards, six real content items, filling
 // a 3-column grid exactly (no empty cells):
@@ -30,8 +36,40 @@ const PLACEMENT = {
 } as const
 
 export default function AboutBento() {
+  const rootRef = useRef<HTMLElement>(null)
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+
+      mm.add({ always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY }, (ctx) => {
+        const { reduceMotion } = ctx.conditions as { reduceMotion: boolean }
+        const cards = gsap.utils.toArray<HTMLElement>('[data-reveal]', rootRef.current)
+
+        // Undo the pre-paint hiding right away (globals.css [data-reveal]).
+        gsap.set(cards, { autoAlpha: 1 })
+        if (reduceMotion) return // static final state (lib/motion-preferences.ts contract)
+
+        // Cards rise in reading order as they scroll in, once: the sequence
+        // follows the grid. fromTo with explicit end values (Hero pattern);
+        // a plain from() would capture the CSS-hidden state as its end.
+        const from = { autoAlpha: 0, y: 24 }
+        gsap.set(cards, from)
+        ScrollTrigger.batch(cards, {
+          start: 'top 88%',
+          once: true,
+          onEnter: (batch) =>
+            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08, overwrite: true }),
+        })
+      })
+
+      return () => mm.revert()
+    },
+    { scope: rootRef }
+  )
+
   return (
-    <section id="about" aria-labelledby="about-heading" className="px-4 py-28 md:px-8 md:py-40">
+    <section ref={rootRef} id="about" aria-labelledby="about-heading" className="px-4 py-28 md:px-8 md:py-40">
       <h2 id="about-heading" className="sr-only">
         About
       </h2>

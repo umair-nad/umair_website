@@ -8,6 +8,7 @@ import type { LucideIcon } from 'lucide-react'
 export function BentoCard({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
     <div
+      data-reveal
       className={`relative flex flex-col overflow-hidden rounded-card border border-line-card bg-surface p-6 shadow-lg shadow-black/5 backdrop-blur-sm transition-[translate,border-color] duration-300 hover:-translate-y-0.5 hover:border-line-strong md:p-7 dark:shadow-none ${className}`}
     >
       {children}
