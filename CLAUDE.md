@@ -42,9 +42,13 @@ There is no test framework configured; UI verification is done with the playwrig
 - This is Umair Nadeem's portfolio. Umair is a QA engineer, so the site must present QA and test automation work, not a software developer profile.
 
 ### Git
-- Work directly on `main`; there are no feature branches (user decision 2026-10-12). Commit after each reviewed step.
+- Work directly on `main`; there are no feature branches (user decision 2026-10-12).
+- Work in small commits, one logical change each, and push `main` after every commit (user decision 2026-10-12). Never batch unrelated changes into one commit.
+- Before each push, run `npm run lint` and `npx tsc --noEmit`, plus `npm run build` when components or config change, so `main` is never broken.
 - Never force-push.
-- Once Vercel is connected to `main`, every push deploys, so push only after the user has reviewed the step.
+- Git identity for this repo is Umair Nadeem <uminadeem06@gmail.com>, already configured. Do not change git config.
+- Commits carry no Claude co-author line: attribution is turned off in the local, uncommitted `.claude/settings.local.json` (`"attribution": { "commit": "", "pr": "", "sessionUrl": false }`).
+- Once Vercel is connected to `main`, every push deploys, which is why every commit must build. Still stop for the user's review after each section.
 - The tag `pre-redesign-main` (pushed to origin) marks the old site as it was before the redesign, so it can always be recovered.
 - Never commit anything inside `data/`, `refrence/`, or `review/`. All three are gitignored; `data/` contains personal information.
 
