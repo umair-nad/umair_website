@@ -39,8 +39,9 @@ const typeChars = (text: string) =>
 // Typing reveal, measured on the reference (2026-10-12): each character
 // fades in over ~0.26s (power2.out; the reference's curve fits CSS `ease`
 // over ~0.32s), 0.02s after the previous one, with no cursor, blur, or
-// movement. Ours starts once the headline's lines have landed.
-const TYPE = { start: 1.2, fade: 0.26, stagger: 0.02 }
+// movement. As on the reference, it starts together with the headline
+// (user decision 2026-10-12).
+const TYPE = { start: 0, fade: 0.26, stagger: 0.02 }
 
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
@@ -87,7 +88,7 @@ export default function Hero() {
           })
         }
 
-        // The subline types in after the headline: only characters that
+        // The subline types in alongside the headline: only characters that
         // are displayed at this width (the " | " is hidden below sm). The
         // fromTo renders opacity 0 immediately, before the first paint.
         const subChars = gsap.utils
