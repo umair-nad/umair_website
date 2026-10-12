@@ -68,7 +68,14 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className="bg-bg text-fg antialiased">{children}</body>
+      {/* suppressHydrationWarning: browser extensions and security tools
+          stamp attributes on <body> before React hydrates (seen in dev on
+          2026-10-12: __processed_<uuid>__="true"), which React reports as a
+          hydration mismatch. This only ignores attribute differences on
+          <body> itself; mismatches inside the page are still reported. */}
+      <body className="bg-bg text-fg antialiased" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   )
 }
