@@ -78,6 +78,8 @@ export interface SiteContent {
   featuredTools: string[];
   /** Skills & Tools wall: the subline under its heading. */
   skillsSubline: string;
+  /** Experience headline in three parts: before, the accent word, after. */
+  experienceHeadline: [string, string, string];
   /** Headline QA specializations for the About bento (DESIGN.md 11.2). */
   specializations: string[];
   /** The two scrolling word rows behind the About portrait (decorative). */
@@ -265,6 +267,10 @@ export const content = {
   // Our own line under the Skills & Tools heading (2026-10-12): a plain
   // description of the wall, no claims beyond the confirmed tool list.
   skillsSubline: "The tools I test with, from test management and automation to APIs, CI, and monitoring.",
+
+  // Wording set by the user (2026-10-10; DESIGN.md 11.3). It matches the
+  // bio's "5+ years". The middle part is the italic gradient accent word.
+  experienceHeadline: ["Over five years of", "finding", "bugs before users do."],
 
   // The About bento's tools marquee shows the original 13 tools (frameworks
   // first, then tools), so it still fits its single tile; the Skills & Tools
