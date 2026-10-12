@@ -1,6 +1,7 @@
 'use client'
 
 import RoleCard from '@/components/about/RoleCard'
+import PortraitCard from '@/components/about/PortraitCard'
 
 // About bento (DESIGN.md 11.2). Six cards, six real content items, filling
 // a 3-column grid exactly (no empty cells):
@@ -17,6 +18,7 @@ import RoleCard from '@/components/about/RoleCard'
 // the lg placement is explicit per card below.
 const PLACEMENT = {
   role: 'md:col-span-2 lg:col-start-1 lg:row-start-1',
+  portrait: 'md:row-span-2 lg:col-start-3 lg:row-start-1',
 } as const
 
 export default function AboutBento() {
@@ -25,8 +27,9 @@ export default function AboutBento() {
       <h2 id="about-heading" className="sr-only">
         About
       </h2>
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-4 md:auto-rows-[minmax(20rem,auto)] md:grid-cols-2 lg:auto-rows-[22rem] lg:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 md:auto-rows-[minmax(20rem,auto)] md:grid-cols-2 lg:auto-rows-88 lg:grid-cols-3">
         <RoleCard className={PLACEMENT.role} />
+        <PortraitCard className={PLACEMENT.portrait} />
       </div>
     </section>
   )
