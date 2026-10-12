@@ -1,9 +1,8 @@
-import { ArrowUpRight, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { content } from '@/lib/content'
 import CopyEmail from '@/components/hero/CopyEmail'
+import ProfileLink from '@/components/ProfileLink'
 import { BentoCard, CardLockup, IconChip } from '@/components/about/BentoCard'
-
-const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 // Contact teaser (DESIGN.md 11.2): the copy-email bar in an inset mono
 // panel, plus the LinkedIn and Upwork links. Email is the only direct
@@ -21,21 +20,7 @@ export default function ContactCard({ className = '' }: { className?: string }) 
         <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2 px-1">
           {content.links.map((link) => (
             <li key={link.label}>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group inline-flex min-h-6 items-center gap-1 font-mono text-sm font-semibold text-fg underline-offset-4 hover:underline ${focusRing}`}
-              >
-                <span translate="no">{link.label}</span>
-                <ArrowUpRight
-                  size={14}
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                  className="text-muted transition-[translate] duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                />
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
+              <ProfileLink link={link} className="font-mono text-sm font-semibold text-fg hover:underline" />
             </li>
           ))}
         </ul>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef } from 'react'
-import { Download } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, SplitText, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
@@ -9,6 +8,7 @@ import { scrollToHash } from '@/lib/scroll'
 import { content } from '@/lib/content'
 import CopyEmail from '@/components/hero/CopyEmail'
 import PrimaryCta from '@/components/PrimaryCta'
+import ResumeButton from '@/components/ResumeButton'
 import { HeroArc, HeroWashes } from '@/components/hero/HeroAtmosphere'
 
 registerGsap()
@@ -43,8 +43,6 @@ const typeChars = (text: string) =>
 // movement. As on the reference, it starts together with the headline
 // (user decision 2026-10-12).
 const TYPE = { start: 0, fade: 0.26, stagger: 0.02 }
-
-const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null)
@@ -160,22 +158,7 @@ export default function Hero() {
             {content.contact.cta}
           </PrimaryCta>
 
-          {/* Download resume (DESIGN.md section 6): the secondary pill. Same
-              height, shape, and Alata label as the primary CTA, but outlined
-              instead of filled, so the primary still leads. */}
-          <a
-            href={content.resume.href}
-            download
-            className={`group inline-flex h-12 touch-manipulation items-center gap-2.5 rounded-full border border-line-strong px-6 text-base text-fg transition-[color,background-color,border-color] hover:border-fg/40 hover:bg-fg/5 active:scale-[0.98] ${focusRing}`}
-          >
-            <Download
-              size={18}
-              strokeWidth={1.75}
-              aria-hidden="true"
-              className="transition-transform duration-300 group-hover:translate-y-0.5"
-            />
-            Download resume
-          </a>
+          <ResumeButton />
 
           <CopyEmail email={content.contact.email} />
         </div>
