@@ -1,217 +1,130 @@
 'use client'
 
 import { useRef } from 'react'
-import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
-import { gsap, registerGsap } from '@/lib/gsap'
-import { REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
-import { applyMagneticHover } from '@/lib/magnetic'
+import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
+import { content } from '@/lib/content'
+import PrimaryCta from '@/components/PrimaryCta'
+import CopyEmail from '@/components/hero/CopyEmail'
+import ProfileLink from '@/components/ProfileLink'
 
 registerGsap()
 
-const contactInfo = [
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'umiiawan06@gmail.com',
-    href: 'mailto:umiiawan06@gmail.com'
-  },
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: '+92-342-6649899',
-    href: 'tel:+923426649899'
-  },
-  {
-    icon: MapPin,
-    label: 'Location',
-    value: 'Islamabad, Pakistan',
-    href: null
-  }
-]
+// Contact CTA (DESIGN.md 11.5), after the reference's closing panel,
+// measured 2026-10-12: a wide rounded panel (14px radius, 5% hairline,
+// at least 60vh tall, 65vh on phones) whose fill carries two soft cyan
+// pools and an edge vignette, with everything centered on it. Ours is
+// static (no blurred blobs drifting, no grain). Copy from lib/content.ts;
+// email is the only direct contact method (no phone, CLAUDE.md).
 
-const socialLinks = [
-  {
-    name: 'LinkedIn',
-    url: 'https://www.linkedin.com/in/umair-nadeem-qa/',
-    icon: ExternalLink
-  },
-  {
-    name: 'Upwork',
-    url: 'https://www.upwork.com/freelancers/~01862b323ce960e4b6',
-    icon: ExternalLink
-  }
-]
+const [HEAD_BEFORE, HEAD_ACCENT, HEAD_AFTER] = content.contact.headline
+// "umair@qa: all checks passed. ..." -> the prompt and the message.
+const PROMPT_END = content.contact.line.indexOf(':')
+const PROMPT = content.contact.line.slice(0, PROMPT_END)
+const MESSAGE = content.contact.line.slice(PROMPT_END + 1)
+// The last word keeps the cursor block on its line when the line wraps.
+const LAST_SPACE = MESSAGE.lastIndexOf(' ')
+const MESSAGE_HEAD = MESSAGE.slice(0, LAST_SPACE + 1)
+const MESSAGE_TAIL = MESSAGE.slice(LAST_SPACE + 1)
 
-const focusRing =
-  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
-
-const Contact = () => {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const headingRef = useRef<HTMLHeadingElement>(null)
-  const leftRef = useRef<HTMLDivElement>(null)
-  const rightRef = useRef<HTMLDivElement>(null)
+export default function Contact() {
+  const rootRef = useRef<HTMLElement>(null)
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
 
-      mm.add(
-        { reduceMotion: REDUCED_MOTION_QUERY, coarsePointer: COARSE_POINTER_QUERY },
-        (context) => {
-          const { reduceMotion, coarsePointer } = context.conditions as {
-            reduceMotion: boolean
-            coarsePointer: boolean
-          }
+      mm.add({ always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY }, (ctx) => {
+        const { reduceMotion } = ctx.conditions as { reduceMotion: boolean }
+        const reveal = gsap.utils.toArray<HTMLElement>('[data-reveal]', rootRef.current)
 
-          const infoRows = gsap.utils.toArray<HTMLElement>('[data-contact-row]', leftRef.current)
-          const socialEls = gsap.utils.toArray<HTMLElement>('[data-social-link]', rightRef.current)
+        // Undo the pre-paint hiding (globals.css [data-reveal]).
+        gsap.set(reveal, { autoAlpha: 1 })
+        if (reduceMotion) return // static final state
 
-          if (reduceMotion) {
-            gsap.set(
-              [headingRef.current, leftRef.current, rightRef.current, ...infoRows, ...socialEls],
-              { autoAlpha: 1, x: 0, y: 0 }
-            )
-            return
-          }
-
-          gsap.from(headingRef.current, {
-            autoAlpha: 0,
-            y: 20,
-            duration: 0.7,
-            scrollTrigger: { trigger: headingRef.current, start: 'top 85%' },
-          })
-
-          gsap.from(leftRef.current, {
-            autoAlpha: 0,
-            x: -20,
-            duration: 0.7,
-            scrollTrigger: { trigger: leftRef.current, start: 'top 85%' },
-          })
-
-          gsap.from(infoRows, {
-            autoAlpha: 0,
-            x: -20,
-            stagger: 0.1,
-            duration: 0.6,
-            delay: 0.15,
-            scrollTrigger: { trigger: leftRef.current, start: 'top 80%' },
-          })
-
-          gsap.from(rightRef.current, {
-            autoAlpha: 0,
-            x: 20,
-            duration: 0.7,
-            scrollTrigger: { trigger: rightRef.current, start: 'top 85%' },
-          })
-
-          gsap.from(socialEls, {
-            autoAlpha: 0,
-            y: 10,
-            stagger: 0.1,
-            duration: 0.5,
-            delay: 0.15,
-            scrollTrigger: { trigger: rightRef.current, start: 'top 80%' },
-          })
-
-          const magneticEls = gsap.utils.toArray<HTMLElement>('[data-magnetic]', sectionRef.current)
-          const cleanups = coarsePointer ? [] : magneticEls.map((el) => applyMagneticHover(el))
-          return () => cleanups.forEach((fn) => fn())
-        }
-      )
+        // Headline, terminal line, buttons, and links rise in order, once.
+        const from = { autoAlpha: 0, y: 16 }
+        gsap.set(reveal, from)
+        ScrollTrigger.batch(reveal, {
+          start: 'top 88%',
+          once: true,
+          onEnter: (batch) =>
+            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.1, overwrite: true }),
+        })
+      })
 
       return () => mm.revert()
     },
-    { scope: sectionRef }
+    { scope: rootRef }
   )
 
   return (
-    <section id="contact" className="py-20">
-      <div ref={sectionRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 ref={headingRef} className="text-3xl font-display font-bold text-fg mb-12 text-center">
-          Get In Touch
-        </h2>
+    <section
+      ref={rootRef}
+      id="contact"
+      aria-labelledby="contact-heading"
+      className="mx-auto max-w-360 px-2 pt-28 sm:px-6 md:px-8 md:pt-40"
+    >
+      <div className="relative isolate flex min-h-[max(28rem,65vh)] items-center justify-center overflow-hidden rounded-inset border border-fg/5 bg-cta-panel px-4 py-20 text-center sm:px-8 md:min-h-[max(28rem,60vh)]">
+        {/* Atmosphere, decorative: two cyan pools (upper left, lower right;
+            wider on phones, where the panel is tall and narrow), then the
+            vignette that fades the panel's edges. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(70%_42%_at_28%_30%,var(--cta-glow),transparent),radial-gradient(70%_42%_at_72%_72%,var(--cta-glow),transparent)] md:bg-[radial-gradient(36%_48%_at_30%_30%,var(--cta-glow),transparent),radial-gradient(36%_48%_at_70%_70%,var(--cta-glow),transparent)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--cta-vignette)_110%)]"
+        />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div ref={leftRef}>
-            <h3 className="text-xl font-semibold text-fg mb-6">Let&apos;s Connect</h3>
-            <p className="text-muted mb-8">
-              I&apos;m always interested in new opportunities and exciting projects.
-              Whether you have a question or just want to say hi, feel free to reach out!
-            </p>
-
-            <div className="space-y-4">
-              {contactInfo.map((info, index) => (
-                <div key={index} data-contact-row data-magnetic className="flex items-center gap-4">
-                  <div className="text-accent">
-                    <info.icon size={20} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <p className="text-muted text-sm">{info.label}</p>
-                    {info.href ? (
-                      <a
-                        href={info.href}
-                        className={`text-fg hover:text-accent transition-colors duration-200 ${focusRing}`}
-                      >
-                        {info.value}
-                      </a>
-                    ) : (
-                      <p className="text-fg">{info.value}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div
-            ref={rightRef}
-            className="bg-muted/5 rounded-lg p-8 border border-muted/20"
+        <div className="flex max-w-3xl flex-col items-center">
+          <h2
+            id="contact-heading"
+            data-reveal
+            className="font-display text-[2.75rem] leading-[1.1] text-balance text-fg md:text-6xl lg:text-[72px]"
           >
-            <h3 className="text-xl font-semibold text-fg mb-6">Connect With Me</h3>
-            <div className="space-y-4">
-              {socialLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-social-link
-                  data-magnetic
-                  className={`flex items-center gap-3 text-muted hover:text-accent transition-colors duration-200 p-3 rounded-lg hover:bg-muted/10 ${focusRing}`}
-                >
-                  <link.icon size={20} aria-hidden="true" />
-                  <span>{link.name}</span>
-                </a>
-              ))}
-            </div>
+            {HEAD_BEFORE} <em className="text-gradient-accent pr-[0.06em] italic">{HEAD_ACCENT}</em>
+            {HEAD_AFTER}
+          </h2>
 
-            <div className="mt-8 pt-8 border-t border-muted/20">
-              <h4 className="text-fg font-semibold mb-4">Available for:</h4>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-accent">▹</span>
-                  <span className="text-muted">Full-time opportunities</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-accent">▹</span>
-                  <span className="text-muted">Freelance projects</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-accent">▹</span>
-                  <span className="text-muted">Consulting work</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-accent">▹</span>
-                  <span className="text-muted">Open source contributions</span>
-                </div>
-              </div>
-            </div>
+          {/* Static terminal line (user decision 2026-10-12: no typing; the
+              hero subline is the page's only typing effect). The prompt is
+              in the accent, the cursor block is decorative and never
+              blinks. */}
+          <p
+            data-reveal
+            className="mt-6 max-w-full rounded-inset border border-line bg-surface/60 px-4 py-2.5 text-left font-mono text-sm leading-6 text-text md:mt-8 md:text-base dark:bg-white/5"
+          >
+            <span translate="no" className="text-accent">
+              {PROMPT}
+            </span>
+            <span className="text-muted">:</span>
+            {MESSAGE_HEAD}
+            <span className="whitespace-nowrap">
+              {MESSAGE_TAIL}
+              <span aria-hidden="true" className="ml-1.5 inline-block h-4 w-2 translate-y-0.5 bg-fg/50" />
+            </span>
+          </p>
+
+          <div data-reveal className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-5 md:mt-12">
+            <PrimaryCta href={`mailto:${content.contact.email}`}>
+              {content.contact.cta}
+              <span className="sr-only"> by email</span>
+            </PrimaryCta>
+            <CopyEmail email={content.contact.email} />
           </div>
+
+          <ul data-reveal aria-label="Profiles" className="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-2">
+            {content.links.map((link) => (
+              <li key={link.label}>
+                <ProfileLink link={link} className="font-mono text-sm font-semibold text-fg hover:underline" />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
   )
 }
-
-export default Contact
