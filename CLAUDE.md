@@ -104,6 +104,14 @@ As of 2026-10-12:
   - Deviations from DESIGN.md 11.2, both recorded there: the tools card is 2x1 (not 1x1) so six cards fill the 3x3 grid exactly; the mobile order ends with tools (time zone and contact come before it) so keyboard focus follows the visual order.
   - New content.ts fields: `specializations` (the four DESIGN.md 11.2 labels), `timeZone` (Asia/Karachi, PKT (UTC+5)), `resume`.
   - The headshot is still the 2.1 MB original. next/image serves resized copies, so it only weighs on the repo; re-encoding it remains the user's call.
+- Hero feedback round (2026-10-12), awaiting the user's review. Screenshots in `review/hero-arc-*`, `review/hero-cta-*`, `review/stars-*`; reference captures in `review/ref-*`.
+  - `af4d80e` hero atmosphere: corner washes + horizon arc in `components/hero/HeroAtmosphere.tsx`, built from playwright-cli measurements of the live reference (DESIGN.md section 2 has the numbers). Replaced `HeroTrace` (deleted). No `filter: blur`; all hero text measured AA over the glow at 390 and 1440 in both themes (tightest: the accent word in light, 3.19:1).
+  - `fdfdaa0` copy-email star burst: canvas-confetti 1.9.4 via `lib/star-burst.ts`, loaded on click only (verified on the production build: the library is a separate 10 KB chunk), own main-thread instance (the default export uses a blob-URL worker), skipped under reduced motion.
+  - `a704eec` "Download resume" is now a secondary outlined pill (Alata 16px, 48px, `line-strong` border) beside "Get in touch".
+  - `ecea4f4` text selection off site-wide (user decision); email address, inputs, and editable content stay selectable; copy, context menu, and shortcuts are not blocked.
+  - The "1 Issue" dev indicator could not be reproduced: clean in Playwright Chromium, installed Chrome, and installed Edge at 390 and 1440, both themes, after reloads, scrolling, theme toggle, nav, copy, mobile menu, and `/#about`; an extension-style `<body>` attribute injection didn't trigger it either. No fix was committed. Next 16 logs browser errors to `.next/dev/logs/next-development.log`, so the next occurrence can be read there.
+  - `next dev` now generates an untracked `AGENTS.md` (Next 16 agent rules). Not committed; the user decides whether to commit it, gitignore it, or turn it off with `agentRules: false` in `next.config.js`.
+  - `npm audit` reports 5 high findings, all in the `eslint-config-next` dev chain (braces, micromatch, fast-glob); they predate canvas-confetti and don't ship to the browser.
 - Still old: Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt.
 
 ### Decisions
@@ -125,7 +133,7 @@ GSAP `matchMedia` only runs a conditions-object callback while at least one cond
 
 ### Next steps, in order
 
-1. The user reviews the About bento (screenshots in `review/about-*`).
+1. The user reviews the About bento and the hero feedback round (screenshots in `review/about-*`, `review/hero-arc-*`, `review/stars-*`), and says what the "1 Issue" overlay showed if it comes back.
 2. Phase 4 step 4: Experience timeline (DESIGN.md 11.3).
 3. Then the remaining build steps in DESIGN.md section 13: Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button (`content.resume.href`) and fix the hardcoded "© 2024" year.
 4. The README is stale throughout (Next 14, Three.js, old fonts and colors, a contact form, an old email). Rewrite it in its own commit when the user wants; only the resume path was updated so far.
