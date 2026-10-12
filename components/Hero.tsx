@@ -4,8 +4,7 @@ import { useRef } from 'react'
 import { ArrowRight, Download } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, SplitText, registerGsap } from '@/lib/gsap'
-import { ALWAYS_QUERY, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
-import { applyMagneticHover } from '@/lib/magnetic'
+import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { scrollToHash } from '@/lib/scroll'
 import { content } from '@/lib/content'
 import CopyEmail from '@/components/hero/CopyEmail'
@@ -38,8 +37,8 @@ export default function Hero() {
     () => {
       const mm = gsap.matchMedia()
 
-      mm.add({ always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY, coarsePointer: COARSE_POINTER_QUERY }, (ctx) => {
-        const { reduceMotion, coarsePointer } = ctx.conditions as { reduceMotion: boolean; coarsePointer: boolean }
+      mm.add({ always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY }, (ctx) => {
+        const { reduceMotion } = ctx.conditions as { reduceMotion: boolean }
         const reveal = gsap.utils.toArray<HTMLElement>('[data-reveal]', rootRef.current)
 
         if (reduceMotion) {
@@ -82,15 +81,7 @@ export default function Hero() {
         // landed: the stage is set, then the light comes up.
         tl.fromTo('[data-hero-arc]', { y: 56, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, 0.55)
 
-        // Magnetic pull on fine pointers only.
-        const cleanups = coarsePointer
-          ? []
-          : gsap.utils.toArray<HTMLElement>('[data-magnetic]', rootRef.current).map((el) => applyMagneticHover(el))
-
-        return () => {
-          cleanups.forEach((fn) => fn())
-          split?.revert()
-        }
+        return () => split?.revert()
       })
 
       return () => mm.revert()
@@ -136,17 +127,38 @@ export default function Hero() {
           data-hero-cta
           className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-5 md:mt-12"
         >
+          {/* Primary CTA. Hover matches the reference (measured 2026-10-12):
+              the button itself never moves. A fg-colored fill grows in behind
+              the label (scale 0 > 1 from the arrow side), the label inverts,
+              the chip's circle turns transparent so the arrow sits inline on
+              the fill, and the arrow swaps with a twin sliding in. 300ms,
+              cubic-bezier(0.4, 0, 0.2, 1). Hover-only (Tailwind's hover
+              variant needs a hovering pointer); keyboard focus keeps the ring. */}
           <a
             href="#contact"
-            data-magnetic
             onClick={(e) => {
               if (scrollToHash('#contact')) e.preventDefault()
             }}
-            className={`group inline-flex h-12 touch-manipulation items-center gap-4 rounded-full border border-black/10 bg-black/20 py-1 pr-1 pl-6 text-base text-fg backdrop-blur-xs transition-[color,background-color,border-color] hover:bg-black/25 active:scale-[0.98] dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 ${focusRing}`}
+            className={`group relative isolate inline-flex h-12 touch-manipulation items-center gap-4 overflow-hidden rounded-full border border-black/10 bg-black/20 py-1 pr-1 pl-6 text-base text-fg backdrop-blur-xs dark:border-white/10 dark:bg-white/10 ${focusRing}`}
           >
-            Get in touch
-            <span className="inline-flex size-9.5 items-center justify-center rounded-full bg-inverse text-inverse-fg transition-transform duration-300 group-hover:translate-x-0.5">
-              <ArrowRight size={18} strokeWidth={1.75} aria-hidden="true" />
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 -z-10 translate-x-[45%] scale-0 rounded-full bg-fg opacity-0 transition-[translate,scale,opacity] duration-300 ease-in-out group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100"
+            />
+            <span className="transition-colors duration-300 ease-in-out group-hover:text-bg">Get in touch</span>
+            <span className="relative inline-flex size-9.5 items-center justify-center overflow-hidden rounded-full bg-inverse text-inverse-fg transition-colors duration-300 ease-in-out group-hover:bg-transparent">
+              <ArrowRight
+                size={18}
+                strokeWidth={1.75}
+                aria-hidden="true"
+                className="transition-[translate,opacity] duration-300 ease-in-out group-hover:translate-x-5 group-hover:opacity-0"
+              />
+              <ArrowRight
+                size={18}
+                strokeWidth={1.75}
+                aria-hidden="true"
+                className="absolute -translate-x-5 opacity-0 transition-[translate,opacity] duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100"
+              />
             </span>
           </a>
 
