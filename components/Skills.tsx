@@ -195,10 +195,12 @@ export default function Skills() {
         onKeyDown={onKeyDown}
         // Every tile is the same square, so each max width is an exact
         // number of tiles per row and the 44 tiles always wrap into full
-        // rows with no lone tile last: 5 per row below md (8 rows of 5 and
-        // one of 4; 48px tiles and 12px gaps below sm, 64px and 14px from
-        // sm), 9 at md (9/9/9/9/8), 11 at lg (4 x 11), 15 at xl (15/15/14).
-        className="mx-auto mt-14 flex max-w-72 flex-wrap justify-center gap-3 sm:max-w-94 sm:gap-3.5 md:mt-16 md:max-w-172 lg:max-w-211 xl:max-w-289"
+        // rows with no lone tile last: below sm, 56px tiles with 12px gaps,
+        // 5 per row (8 rows of 5, then 4; 328px), or 4 per row (11 x 4) on
+        // screens under 352px; from sm, 64px tiles with 14px gaps, 5 per row
+        // below md, 9 at md (9/9/9/9/8), 11 at lg (4 x 11), 15 at xl
+        // (15/15/14).
+        className="mx-auto mt-14 flex max-w-82 flex-wrap justify-center gap-3 sm:max-w-94 sm:gap-3.5 md:mt-16 md:max-w-172 lg:max-w-211 xl:max-w-289"
       >
         {TOOLS.map((name, i) => {
           const hasLogo = HAS_LOGO.has(name)
@@ -218,18 +220,18 @@ export default function Skills() {
                 aria-label={name}
                 tabIndex={i === active ? 0 : -1}
                 onFocus={() => setActive(i)}
-                className={`peer flex size-12 items-center justify-center rounded-2xl border border-tile-border bg-tile text-tile-icon shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:scale-110 sm:size-16 ${focusRing}`}
+                className={`peer flex size-14 items-center justify-center rounded-2xl border border-tile-border bg-tile text-tile-icon shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:scale-110 sm:size-16 ${focusRing}`}
               >
                 {hasLogo ? (
                   icon && (
-                    <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6 fill-current sm:size-8">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="size-7 fill-current sm:size-8">
                       <path d={icon.path} />
                     </svg>
                   )
                 ) : (
                   // No usable logo (lib/tool-icons.ts): the name itself, in
                   // small type inside the same square, two lines if needed.
-                  <span aria-hidden="true" className="font-sans text-[8.5px] leading-[1.15] tracking-tight sm:text-[10.5px]">
+                  <span aria-hidden="true" className="font-sans text-[11px] leading-[1.15] tracking-tight">
                     {(TEXT_LINES[name] ?? [name]).map((line) => (
                       <span key={line} className="block">
                         {line}
