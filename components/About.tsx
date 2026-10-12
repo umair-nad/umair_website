@@ -19,13 +19,15 @@ registerGsap()
 //   lg (3 cols, 22rem rows)       md (2 cols)         base (1 col)
 //   [ role 2x1      ][ portr ]    [ role 2x1     ]    role
 //   [ specs ][ contact][ 1x2  ]   [ specs ][ port ]   specializations
-//   [ time  ][ tools 2x1     ]    [ tools ][ 1x2  ]   portrait
-//                                 [ time  ][ cont ]   tools
-//                                                     time zone
+//   [ time  ][ tools 2x1     ]    [ time  ][ 1x2  ]   portrait
+//                                 [ cont  ][ tools]   time zone
 //                                                     contact
+//                                                     tools
 //
-// DOM order is the mobile content-priority order (DESIGN.md section 8);
-// the lg placement is explicit per card below.
+// DOM order is the mobile order (DESIGN.md section 8). Contact comes before
+// tools so keyboard focus (contact links, then the marquee pause button)
+// follows the visual order at every width (WCAG 2.4.3). The lg placement
+// is explicit per card below.
 const PLACEMENT = {
   role: 'md:col-span-2 lg:col-start-1 lg:row-start-1',
   specializations: 'lg:col-start-1 lg:row-start-2',
@@ -77,9 +79,9 @@ export default function About() {
         <RoleCard className={PLACEMENT.role} />
         <SpecializationsCard className={PLACEMENT.specializations} />
         <PortraitCard className={PLACEMENT.portrait} />
-        <ToolsMarqueeCard className={PLACEMENT.tools} />
         <TimeZoneCard className={PLACEMENT.timeZone} />
         <ContactCard className={PLACEMENT.contact} />
+        <ToolsMarqueeCard className={PLACEMENT.tools} />
       </div>
     </section>
   )
