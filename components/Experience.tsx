@@ -20,7 +20,11 @@ registerGsap()
 
 const [HEAD_BEFORE, HEAD_ACCENT, HEAD_AFTER] = content.experienceHeadline
 const INTRO = content.bio.split(/(?<=\.)\s+/)[1] ?? '' // bio sentence 2, verbatim
+// The two non-tool skill groups, shown after the timeline.
 const GROUPS: SkillGroupId[] = ['testing-types', 'practices']
+// Role tags that are tool names stay untranslated (auto-translate would
+// turn "Postman" into a word for mail carrier); skill tags translate.
+const TOOL_NAMES = new Set(content.skills.filter((g) => !GROUPS.includes(g.id)).flatMap((g) => g.items))
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -141,9 +145,11 @@ export default function Experience() {
         <h2 id="experience-heading" data-reveal className="max-w-3xl font-display text-4xl leading-tight text-balance text-fg lg:text-[56px]">
           {HEAD_BEFORE} <em className="text-gradient-accent pr-[0.06em] italic">{HEAD_ACCENT}</em> {HEAD_AFTER}
         </h2>
-        <p data-reveal className="mt-6 max-w-2xl font-mono text-base leading-relaxed text-text md:text-lg">
-          {INTRO}
-        </p>
+        {INTRO && (
+          <p data-reveal className="mt-6 max-w-2xl font-mono text-base leading-relaxed text-text md:text-lg">
+            {INTRO}
+          </p>
+        )}
 
         <ol className="relative mt-16 md:mt-20">
           {/* Spine: centered under the 40px nodes, fading out past the last
@@ -184,7 +190,7 @@ export default function Experience() {
               </div>
               <ul data-reveal aria-label="Skills" className="mt-4 flex flex-wrap gap-2">
                 {role.tags.map((tag) => (
-                  <li key={tag}>
+                  <li key={tag} translate={TOOL_NAMES.has(tag) ? 'no' : undefined}>
                     <Chip>{tag}</Chip>
                   </li>
                 ))}
