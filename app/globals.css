@@ -24,6 +24,10 @@
   --color-inverse-fg: var(--inverse-fg);
   --color-live: var(--live);
   --color-live-fg: var(--live-fg);
+  --color-dock: var(--dock);
+  --color-dock-toggle: var(--dock-toggle);
+  --color-dock-icon: var(--dock-icon);
+  --color-dock-active: var(--dock-active);
 
   --font-display: var(--font-eb-garamond), ui-serif, Georgia, serif;
   --font-sans: var(--font-alata), ui-sans-serif, system-ui, sans-serif;
@@ -74,6 +78,15 @@
   --arc-rim: #6a0dad;
   --arc-halo: rgb(255 105 180 / 0.4);
 
+  /* Floating mobile nav (DESIGN.md section 6), measured on the reference's
+     phone nav: inverse-colored circles. The active icon uses the other
+     theme's accent so it stays readable on the inverse fill.
+     Icon on circle: 7.1:1 (light), 4.5:1 (dark); active: 6.3:1, 7.3:1. */
+  --dock: #171717;
+  --dock-toggle: #262626;
+  --dock-icon: #a3a3a3;
+  --dock-active: #c27aff;
+
   /* Fixed navbar height for CSS consumers (Hero's top padding, etc.). */
   /* Floating bar: 16px top offset + 40px bar + 16px gap (Navbar SCROLL_GAP). */
   --nav-height: 4.5rem;
@@ -111,6 +124,10 @@
   --wash-3-mid: rgb(10 10 194 / 0.02);
   --glow-a: #6a0dad;
   --glow-b: #4169e1;
+  --dock: #fafafa;
+  --dock-toggle: #fafafa;
+  --dock-icon: #737373;
+  --dock-active: #7928ca;
 }
 
 @layer base {

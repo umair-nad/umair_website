@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { BriefcaseBusiness, House, ListChecks, Mail, PanelBottomOpen, UserRound, X, type LucideIcon } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollSmoother, ScrollTrigger, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
@@ -18,29 +18,34 @@ const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 // Home (the hero, #home) comes first; it scrolls to the top like the logo.
-const navItems = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Contact', href: '#contact' },
+// The icons are used by the floating mobile nav only.
+const navItems: { name: string; href: string; icon: LucideIcon }[] = [
+  { name: 'Home', href: '#home', icon: House },
+  { name: 'About', href: '#about', icon: UserRound },
+  { name: 'Experience', href: '#experience', icon: BriefcaseBusiness },
+  { name: 'Skills', href: '#skills', icon: ListChecks },
+  { name: 'Contact', href: '#contact', icon: Mail },
 ]
 
 // Gap kept between the floating bar and a section heading after an anchor
 // jump (the bar sits 16px from the top and is 40px tall).
 const SCROLL_GAP = 16
 
-// Floating pill navbar (DESIGN.md section 6). Three zones on one row: the
-// Logo (home link) on the left, the centered pill with Home and the 4 anchors and
-// the embedded contact CTA (content.contact.cta), and on the right the status capsule
-// (lg and up) then the theme toggle, which sits at the far right at every
-// width, as on the reference. Below md the pill becomes a menu panel.
+// Navigation (DESIGN.md section 6).
+// md and up: the floating pill bar. Three zones on one row: the Logo (home
+// link) on the left, the centered pill with Home and the 4 anchors plus the
+// embedded contact CTA (content.contact.cta), and on the right the status
+// capsule (lg and up) then the theme toggle.
+// Below md: a top bar with the Logo, the status capsule, and the theme
+// toggle, plus a floating round button at the bottom right that opens a
+// vertical stack of round icon links (measured on the reference's phone
+// nav). Both share the active-section highlighting below.
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [dockOpen, setDockOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
-  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const dockRef = useRef<HTMLDivElement>(null)
+  const dockButtonRef = useRef<HTMLButtonElement>(null)
 
   const { contextSafe } = useGSAP({ scope: navRef })
 
@@ -63,11 +68,12 @@ const Navbar = () => {
         }
       )
 
-      // Active-section tint: each section toggles aria-current on its link
-      // when it crosses the viewport center. Written straight to the DOM,
-      // so scroll position never becomes React state (DESIGN.md section 7).
-      // Elements are resolved with document.querySelector because the
-      // sections live in <main>, outside this hook's <nav> scope.
+      // Active-section highlight: each section toggles aria-current on its
+      // links (pill and mobile nav) when it crosses the viewport center.
+      // Written straight to the DOM, so scroll position never becomes React
+      // state (DESIGN.md section 7). Sections are resolved with
+      // document.querySelector because they live in <main>, outside this
+      // hook's <nav> scope.
       const triggers = navItems.flatMap((item) => {
         const section = document.querySelector<HTMLElement>(item.href)
         if (!section) return []
@@ -93,39 +99,6 @@ const Navbar = () => {
     { scope: navRef }
   )
 
-  // The GSAP work below goes through contextSafe at event time, never
-  // during render, so every tween is still reverted on unmount.
-  const closeMenu = () => {
-    setIsOpen(false)
-    contextSafe(() => {
-      // The menu's height is entirely GSAP-managed via inline styles, so
-      // flipping `isOpen` alone wouldn't collapse it.
-      if (!menuRef.current) return
-      if (prefersReducedMotion()) {
-        gsap.set(menuRef.current, { height: 0 })
-      } else {
-        gsap.to(menuRef.current, { height: 0, duration: 0.3, ease: 'power2.in' })
-      }
-    })()
-  }
-
-  const openMenu = () => {
-    setIsOpen(true)
-    contextSafe(() => {
-      if (!menuRef.current) return
-      gsap.set(menuRef.current, { height: 'auto' })
-      if (prefersReducedMotion()) return
-      gsap.from(menuRef.current, { height: 0, duration: 0.35, ease: 'power2.out' })
-      gsap.fromTo(
-        menuRef.current.querySelectorAll('[data-mobile-link]'),
-        { autoAlpha: 0, y: -8 },
-        { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
-      )
-    })()
-  }
-
-  const toggleMenu = () => (isOpen ? closeMenu() : openMenu())
-
   const scrollToSection = (href: string) => {
     contextSafe(() => {
       // Resolve via plain DOM lookup, not a GSAP selector string: inside
@@ -136,9 +109,10 @@ const Navbar = () => {
       // Offset measured from the live bar, so the section lands clear of it.
       scrollToElement(target, (barRef.current?.getBoundingClientRect().bottom ?? 0) + SCROLL_GAP)
     })()
-    if (isOpen) closeMenu()
   }
 
+  // Smooth through ScrollSmoother; instant under reduced motion (the
+  // smoother isn't created then, and window.scrollTo honors the preference).
   const scrollToTop = () => {
     contextSafe(() => {
       const smoother = ScrollSmoother.get()
@@ -148,28 +122,41 @@ const Navbar = () => {
         window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
       }
     })()
-    if (isOpen) closeMenu()
   }
 
-  // Escape closes the open mobile menu and returns focus to its button.
-  useEffect(() => {
-    if (!isOpen) return
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return
-      closeMenu()
-      menuButtonRef.current?.focus()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-    // closeMenu is recreated each render; the listener only needs isOpen.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen])
+  const goTo = (href: string) => (href === '#home' ? scrollToTop() : scrollToSection(href))
 
   const onAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
-    if (href === '#home') scrollToTop()
-    else scrollToSection(href)
+    goTo(href)
   }
+
+  // Mobile nav: a tapped link closes the stack, then scrolls.
+  const onDockLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    setDockOpen(false)
+    goTo(href)
+  }
+
+  // While the stack is open: Escape closes it and returns focus to the
+  // toggle; a tap or click anywhere outside the dock closes it.
+  useEffect(() => {
+    if (!dockOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setDockOpen(false)
+      dockButtonRef.current?.focus()
+    }
+    const onPointerDown = (e: PointerEvent) => {
+      if (!dockRef.current?.contains(e.target as Node)) setDockOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [dockOpen])
 
   return (
     <nav ref={navRef} aria-label="Primary" className="fixed inset-x-0 top-4 z-50">
@@ -177,7 +164,7 @@ const Navbar = () => {
         <div ref={barRef} className="relative flex h-10 items-center justify-between">
           {/* Left: Logo, home link */}
           <a
-            href="#main-content"
+            href="#home"
             onClick={(e) => {
               e.preventDefault()
               scrollToTop()
@@ -216,57 +203,70 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {/* Right: status capsule (lg+), menu button (below md), theme toggle */}
+          {/* Right: status capsule (below md, where the pill is hidden, and
+              lg and up; at md the pill needs the room), then the theme toggle */}
           <div className="flex items-center gap-2">
             {/* Visibility lives on a wrapper: the capsule's own inline-flex
                 would otherwise compete with `hidden`. */}
-            <div className="hidden lg:block">
+            <div className="md:hidden lg:block">
               <StatusCapsule />
             </div>
-            <button
-              ref={menuButtonRef}
-              type="button"
-              onClick={toggleMenu}
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isOpen}
-              aria-controls="mobile-menu"
-              className={`inline-flex size-9 items-center justify-center rounded-control text-fg transition-[color,background-color,border-color] hover:bg-fg/5 md:hidden ${focusRing}`}
-            >
-              {isOpen ? <X size={20} strokeWidth={1.75} aria-hidden="true" /> : <Menu size={20} strokeWidth={1.75} aria-hidden="true" />}
-            </button>
             <ThemeToggle />
           </div>
         </div>
+      </div>
 
-        {/* Mobile menu panel (below md). Inert while closed, so its links
-            can't be reached by keyboard while it is collapsed. */}
-        <div id="mobile-menu" ref={menuRef} inert={!isOpen} className="h-0 overflow-hidden md:hidden">
-          <div className="mt-3 rounded-card border border-line bg-surface/95 p-2 shadow-lg backdrop-blur-md">
-            <ul>
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    data-section={item.href}
-                    data-mobile-link
-                    onClick={(e) => onAnchorClick(e, item.href)}
-                    className={`block rounded-control px-3 py-2.5 text-[15px] text-fg transition-[color,background-color,border-color] hover:bg-fg/5 aria-current:text-accent ${focusRing}`}
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <a
-              href="#contact"
-              data-mobile-link
-              onClick={(e) => onAnchorClick(e, '#contact')}
-              className={`mt-2 flex h-10 items-center justify-center rounded-card border border-line-strong bg-fg/5 text-[15px] text-fg ${focusRing}`}
-            >
-              {content.contact.cta}
-            </a>
-          </div>
-        </div>
+      {/* Floating mobile nav (below md), as on the reference: a 48px round
+          toggle 16px from the bottom-right corner (clear of the safe area),
+          and above it a stack of 48px round icon links, 6px apart and 12px
+          above the toggle. They rise in nearest-first with a short stagger
+          (CSS transitions; the global reduced-motion rule makes them
+          instant). Closed links are inert and ignore pointers, so the empty
+          stack area never blocks the page. The toggle comes first in the DOM
+          (flex-col-reverse draws the stack above it), so Tab moves from the
+          toggle straight into the open stack. */}
+      <div
+        ref={dockRef}
+        className="pointer-events-none fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] flex flex-col-reverse items-end gap-3 md:hidden"
+      >
+        <button
+          ref={dockButtonRef}
+          type="button"
+          onClick={() => setDockOpen((open) => !open)}
+          aria-label="Site navigation"
+          aria-expanded={dockOpen}
+          aria-controls="mobile-nav"
+          className={`pointer-events-auto flex size-12 touch-manipulation items-center justify-center rounded-full bg-dock-toggle text-dock-icon shadow-lg ${focusRing}`}
+        >
+          {dockOpen ? (
+            <X size={20} strokeWidth={1.75} aria-hidden="true" />
+          ) : (
+            <PanelBottomOpen size={20} strokeWidth={1.75} aria-hidden="true" />
+          )}
+        </button>
+        <ul id="mobile-nav" inert={!dockOpen} className="flex flex-col gap-1.5">
+          {navItems.map((item, i) => {
+            const Icon = item.icon
+            return (
+              <li key={item.name}>
+                <a
+                  href={item.href}
+                  aria-label={item.name}
+                  data-section={item.href}
+                  onClick={(e) => onDockLinkClick(e, item.href)}
+                  style={{ '--i': navItems.length - 1 - i } as React.CSSProperties}
+                  className={`flex size-12 touch-manipulation items-center justify-center rounded-full bg-dock text-dock-icon shadow-lg transition-[opacity,translate,scale] duration-300 ease-out aria-current:text-dock-active ${
+                    dockOpen
+                      ? 'pointer-events-auto translate-y-0 scale-100 opacity-100 delay-[calc(var(--i)*40ms)] motion-reduce:delay-0'
+                      : 'translate-y-2 scale-90 opacity-0'
+                  } ${focusRing}`}
+                >
+                  <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+                </a>
+              </li>
+            )
+          })}
+        </ul>
       </div>
     </nav>
   )

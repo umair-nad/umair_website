@@ -52,7 +52,11 @@ export default function CopyEmail({ email, className = '' }: { email: string; cl
         <span translate="no" data-selectable>{email}</span>
         <span
           aria-hidden="true"
-          className={`text-xs text-muted transition-opacity duration-200 ${status === 'idle' ? 'opacity-0' : 'opacity-100'}`}
+          // Below sm the success label is not shown (the icon turns into a
+          // check and the live region announces it), so the button reserves
+          // no extra width and stays clear of the floating mobile nav. The
+          // failure message always shows; the button wraps it underneath.
+          className={`text-xs text-muted transition-opacity duration-200 ${status === 'idle' ? 'opacity-0' : 'opacity-100'} ${status === 'failed' ? '' : 'hidden sm:inline'}`}
         >
           {status === 'failed' ? 'Copy failed, select to copy' : 'Copied'}
         </span>
