@@ -32,7 +32,18 @@ const CORE = ['Jira', 'Postman', 'Playwright', 'Cypress', 'Selenium', 'TestRail'
 const ALL = TOOL_GROUPS.flatMap((id) => content.skills.find((g) => g.id === id)?.items ?? [])
 const TOOLS = [...CORE.filter((t) => ALL.includes(t)), ...ALL.filter((t) => !CORE.includes(t))]
 
-const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+// Line breaks for the text tiles whose names don't fit one line of a
+// 48-64px square (split at the brand's own word boundary).
+const TEXT_LINES: Record<string, string[]> = {
+  'Azure DevOps': ['Azure', 'DevOps'],
+  BrowserStack: ['Browser', 'Stack'],
+  'Chrome DevTools': ['Chrome', 'DevTools'],
+  LambdaTest: ['Lambda', 'Test'],
+  'Microsoft Teams': ['Microsoft', 'Teams'],
+  'Robot Framework': ['Robot', 'Framework'],
+}
+
+const focusRing ='focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 // Keeps a tooltip inside the viewport: near an edge it aligns to the
 // tile's side instead of centering on it.
@@ -154,10 +165,12 @@ export default function Skills() {
         ref={listRef}
         aria-label="Tools"
         onKeyDown={onKeyDown}
-        // Max widths measured so the 44 tiles wrap into even rows: 15/15/14
-        // from 1352px, 4x11 at xl, 9/8/9/9/9 at lg, 8/7/8/7/7/7 at md, and
-        // alternating 4/5 on phones (2026-10-12).
-        className="mx-auto mt-14 flex max-w-[336px] flex-wrap justify-center gap-3 sm:max-w-[564px] sm:gap-3.5 md:mt-16 md:max-w-[664px] lg:max-w-[776px] xl:max-w-[978px] min-[84.5rem]:max-w-[1288px]"
+        // Every tile is the same square, so each max width is an exact
+        // number of tiles per row and the 44 tiles always wrap into full
+        // rows with no lone tile last: 5 per row below md (8 rows of 5 and
+        // one of 4; 48px tiles and 12px gaps below sm, 64px and 14px from
+        // sm), 9 at md (9/9/9/9/8), 11 at lg (4 x 11), 15 at xl (15/15/14).
+        className="mx-auto mt-14 flex max-w-72 flex-wrap justify-center gap-3 sm:max-w-94 sm:gap-3.5 md:mt-16 md:max-w-172 lg:max-w-211 xl:max-w-289"
       >
         {TOOLS.map((name, i) => {
           const icon = TOOL_ICONS[name]
@@ -176,32 +189,33 @@ export default function Skills() {
                 aria-label={name}
                 tabIndex={i === active ? 0 : -1}
                 onFocus={() => setActive(i)}
-                className={`peer flex h-14 items-center justify-center rounded-2xl border border-tile-border bg-tile text-tile-icon shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:scale-110 sm:h-16 ${
-                  icon ? 'w-14 sm:w-16' : 'min-w-14 px-3 sm:min-w-16 sm:px-4'
-                } ${focusRing}`}
+                className={`peer flex size-12 items-center justify-center rounded-2xl border border-tile-border bg-tile text-tile-icon shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:scale-110 sm:size-16 ${focusRing}`}
               >
                 {icon ? (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="size-7 fill-current sm:size-8">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6 fill-current sm:size-8">
                     <path d={icon.path} />
                   </svg>
                 ) : (
-                  // No logo available (lib/tool-icons.ts): the name itself.
-                  <span aria-hidden="true" className="font-sans text-xs whitespace-nowrap sm:text-[13px]">
-                    {name}
+                  // No usable logo (lib/tool-icons.ts): the name itself, in
+                  // small type inside the same square, two lines if needed.
+                  <span aria-hidden="true" className="font-sans text-[8.5px] leading-[1.15] tracking-tight sm:text-[10.5px]">
+                    {(TEXT_LINES[name] ?? [name]).map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
                   </span>
                 )}
               </span>
-              {icon && (
-                // Visible name on hover, keyboard focus, and tap (a tap
-                // focuses the tile). The accessible name is the aria-label.
-                <span
-                  data-tip
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 -translate-x-1/2 rounded-control bg-inverse px-2 py-1 font-sans text-xs whitespace-nowrap text-inverse-fg opacity-0 shadow-lg transition-opacity duration-200 group-data-[align=end]/tile:right-0 group-data-[align=end]/tile:left-auto group-data-[align=end]/tile:translate-x-0 group-data-[align=start]/tile:left-0 group-data-[align=start]/tile:translate-x-0 peer-hover:opacity-100 peer-focus:opacity-100"
-                >
-                  {name}
-                </span>
-              )}
+              {/* Visible name on hover, keyboard focus, and tap (a tap
+                  focuses the tile). The accessible name is the aria-label. */}
+              <span
+                data-tip
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 -translate-x-1/2 rounded-control bg-inverse px-2 py-1 font-sans text-xs whitespace-nowrap text-inverse-fg opacity-0 shadow-lg transition-opacity duration-200 group-data-[align=end]/tile:right-0 group-data-[align=end]/tile:left-auto group-data-[align=end]/tile:translate-x-0 group-data-[align=start]/tile:left-0 group-data-[align=start]/tile:translate-x-0 peer-hover:opacity-100 peer-focus:opacity-100"
+              >
+                {name}
+              </span>
             </li>
           )
         })}
