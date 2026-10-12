@@ -31,7 +31,7 @@ function MarqueeRow({ items, reverse }: { items: string[]; reverse: boolean }) {
     <div
       className={`flex w-max animate-[marquee_60s_linear_infinite] group-hover/marquee:[animation-play-state:paused] group-data-paused/marquee:[animation-play-state:paused] motion-reduce:w-auto motion-reduce:animate-none ${reverse ? '[animation-direction:reverse]' : ''}`}
     >
-      <ul className={`${list} motion-reduce:shrink motion-reduce:flex-wrap motion-reduce:pr-0`}>
+      <ul translate="no" className={`${list} motion-reduce:shrink motion-reduce:flex-wrap motion-reduce:pr-0`}>
         {items.map((item) => (
           <li key={item}>
             <Chip>{item}</Chip>
@@ -39,7 +39,7 @@ function MarqueeRow({ items, reverse }: { items: string[]; reverse: boolean }) {
         ))}
         {repeat('a')}
       </ul>
-      <ul aria-hidden="true" className={`${list} motion-reduce:hidden`}>
+      <ul aria-hidden="true" translate="no" className={`${list} motion-reduce:hidden`}>
         {repeat('b')}
         {repeat('c')}
       </ul>
@@ -81,7 +81,7 @@ export default function ToolsMarqueeCard({ className = '' }: { className?: strin
         ))}
       </div>
 
-      <CardLockup title="Tools and frameworks" />
+      <CardLockup title="Tools and Frameworks" />
     </BentoCard>
   )
 }

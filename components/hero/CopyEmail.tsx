@@ -36,7 +36,7 @@ export default function CopyEmail({ email, className = '' }: { email: string; cl
         type="button"
         onClick={copy}
         aria-label={`Copy email address ${email}`}
-        className="group inline-flex h-12 touch-manipulation items-center gap-2.5 rounded-full px-3 font-mono text-sm text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.98]"
+        className="group inline-flex min-h-12 touch-manipulation flex-wrap items-center justify-center gap-x-2.5 rounded-full px-3 py-1 font-mono text-sm text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.98]"
       >
         <Icon
           size={18}

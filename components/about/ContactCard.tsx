@@ -25,9 +25,9 @@ export default function ContactCard({ className = '' }: { className?: string }) 
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group inline-flex min-h-6 items-center gap-1 rounded-sm font-mono text-sm font-semibold text-fg underline-offset-4 hover:underline ${focusRing}`}
+                className={`group inline-flex min-h-6 items-center gap-1 font-mono text-sm font-semibold text-fg underline-offset-4 hover:underline ${focusRing}`}
               >
-                {link.label}
+                <span translate="no">{link.label}</span>
                 <ArrowUpRight
                   size={14}
                   strokeWidth={1.75}
