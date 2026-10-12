@@ -5,6 +5,7 @@ import Experience from '@/components/Experience'
 import Skills from '@/components/Skills'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
+import LogoCredits from '@/components/LogoCredits'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
           <Experience />
           <Contact />
           <Footer />
+          <LogoCredits />
         </main>
       </SmoothScrollProvider>
     </>

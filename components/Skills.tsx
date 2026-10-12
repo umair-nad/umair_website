@@ -207,10 +207,6 @@ export default function Skills() {
         })}
       </ul>
 
-      <p className="mx-auto mt-12 max-w-2xl font-mono text-[11px] leading-relaxed text-muted">
-        Logos from Simple Icons; each is a trademark of its owner. Git logo by Jason Long, CC BY 3.0. Jenkins logo,
-        CC BY-SA 3.0. Apache JMeter logo, Apache License 2.0.
-      </p>
     </section>
   )
 }

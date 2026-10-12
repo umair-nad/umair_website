@@ -61,7 +61,8 @@ There is no test framework configured; UI verification is done with the playwrig
 - The reference site in `refrence/` belongs to a developer (Dhiraj Bhawsar). Match the reference site's theme (colors, light/dark modes, typography); never reuse its logo, text, images, video, or developer-only sections.
 - Do NOT include a blog page or blog section.
 - Do NOT include GitHub insights, contribution graphs, GitHub stats, or repo activity widgets.
-- Skills & Tools icon wall (user decision 2026-10-12): approved as the Skills section, showing the 44 confirmed tools with Simple Icons logos or text tiles (DESIGN.md 11.4). Never draw or invent a logo.
+- Skills & Tools icon wall (user decision 2026-10-12): approved as the Skills section, showing the 44 confirmed tools with Simple Icons logos or text tiles (DESIGN.md 11.4). Never draw or invent a logo; add a logo only if its license and the brand's guidelines allow it on a portfolio in our monochrome style.
+- Logo credits (user decision 2026-10-12): license-required credits (Git, Jenkins, Apache JMeter, and any future logo that needs one) live in one small, low-key line at the bottom of the page, `components/LogoCredits.tsx`, never under the wall. When the Footer is rebuilt, move that line into the footer.
 - The reference site also contains these developer-specific or novelty sections: code-centric case studies with dev-stack chips, a "From Concept to Code" CTA, a developer-framed experience timeline, a Uses page, a Guest Book, a Bucket List, a Links page, and a Spotify integration. Before adding anything similar, list what is being considered and ask the user first.
 
 ### Design
