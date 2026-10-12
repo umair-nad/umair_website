@@ -5,7 +5,6 @@ import Experience from '@/components/Experience'
 import Skills from '@/components/Skills'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
-import LogoCredits from '@/components/LogoCredits'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 
 export default function Home() {
@@ -29,9 +28,9 @@ export default function Home() {
           <Skills />
           <Experience />
           <Contact />
-          <Footer />
-          <LogoCredits />
         </main>
+        {/* Outside <main>, so it is the page's contentinfo landmark. */}
+        <Footer />
       </SmoothScrollProvider>
     </>
   )

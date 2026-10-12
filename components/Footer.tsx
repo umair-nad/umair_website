@@ -1,111 +1,72 @@
-'use client'
+import { content } from '@/lib/content'
+import Logo from '@/components/brand/Logo'
+import ProfileLink from '@/components/ProfileLink'
+import ResumeButton from '@/components/ResumeButton'
+import CurrentYear from '@/components/footer/CurrentYear'
+import FooterSections from '@/components/footer/FooterSections'
+import FooterWaveform from '@/components/footer/FooterWaveform'
 
-import { useRef } from 'react'
-import { ExternalLink } from 'lucide-react'
-import { useGSAP } from '@gsap/react'
-import { gsap, registerGsap } from '@/lib/gsap'
-import { REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
-import { applyMagneticHover } from '@/lib/magnetic'
-import WaveformDivider from '@/components/WaveformDivider'
+// Footer (DESIGN.md 11.6), after the reference's footer, measured
+// 2026-10-12: same width as the contact panel; the logo, one role sentence,
+// and the resume button on the left; link columns under Alata uppercase
+// micro-labels on the right; a hairline, then the copyright line and the
+// logo credits, centered. Below md the extra bottom padding keeps the last
+// line clear of the floating mobile nav's toggle at the end of the page.
 
-registerGsap()
+// Footer link (measured: Source Code Pro 14px semibold, underlined, 60%
+// ink; ours brightens to fg on hover).
+const link =
+  'inline-flex min-h-6 items-center font-mono text-sm font-semibold text-muted underline decoration-fg/30 underline-offset-4 transition-[color,text-decoration-color] hover:text-fg hover:decoration-fg'
+const label = 'mb-5 font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase'
 
-const focusRing =
-  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs'
-
-const Footer = () => {
-  const footerRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const waveformWrapperRef = useRef<HTMLDivElement>(null)
-
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia()
-
-      mm.add(
-        { reduceMotion: REDUCED_MOTION_QUERY, coarsePointer: COARSE_POINTER_QUERY },
-        (context) => {
-          const { reduceMotion, coarsePointer } = context.conditions as {
-            reduceMotion: boolean
-            coarsePointer: boolean
-          }
-
-          if (reduceMotion) {
-            gsap.set(contentRef.current, { autoAlpha: 1, y: 0 })
-            return
-          }
-
-          gsap.from(contentRef.current, {
-            autoAlpha: 0,
-            y: 20,
-            duration: 0.7,
-            scrollTrigger: { trigger: contentRef.current, start: 'top 90%' },
-          })
-
-          // Closing touch: the waveform flattens toward baseline as the
-          // footer comes fully into view, a visual "signal settling" note
-          // to end on. WaveformDivider itself is used unmodified - the
-          // scaling happens on a wrapper, not inside the component.
-          gsap.to(waveformWrapperRef.current, {
-            scaleY: 0.15,
-            transformOrigin: 'bottom',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: footerRef.current,
-              start: 'top bottom',
-              end: 'top 30%',
-              scrub: true,
-            },
-          })
-
-          const magneticEls = gsap.utils.toArray<HTMLElement>('[data-magnetic]', contentRef.current)
-          const cleanups = coarsePointer ? [] : magneticEls.map((el) => applyMagneticHover(el))
-          return () => cleanups.forEach((fn) => fn())
-        }
-      )
-
-      return () => mm.revert()
-    },
-    { scope: footerRef }
-  )
-
+export default function Footer() {
   return (
-    <footer ref={footerRef} className="pt-4 pb-8 border-t border-muted/20">
-      <div ref={waveformWrapperRef} className="mb-4">
-        <WaveformDivider />
-      </div>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={contentRef} className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-muted text-sm mb-4 md:mb-0">
-            © 2024 Umair Nadeem. All rights reserved.
-          </div>
+    <footer className="mx-auto max-w-360 px-4 pt-12 pb-28 sm:px-6 md:px-8 md:pb-10">
+      <FooterWaveform />
 
-          <div className="flex items-center gap-4">
-            <a
-              href="https://www.linkedin.com/in/umair-nadeem-qa/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              data-magnetic
-              className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
-            >
-              <ExternalLink size={20} aria-hidden="true" />
-            </a>
-            <a
-              href="https://www.upwork.com/freelancers/~01862b323ce960e4b6"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Upwork"
-              data-magnetic
-              className={`text-muted hover:text-accent transition-colors duration-200 ${focusRing}`}
-            >
-              <ExternalLink size={20} aria-hidden="true" />
-            </a>
+      <div className="mt-10 flex flex-col gap-12 border-b border-line pb-12 md:flex-row md:justify-between md:gap-8">
+        <div className="max-w-sm">
+          <Logo className="h-10 w-auto text-fg" label={content.name} />
+          <p className="mt-4 font-sans text-sm leading-relaxed text-muted">{content.seo.description}</p>
+          <div className="mt-6">
+            <ResumeButton />
           </div>
         </div>
+
+        <div className="grid grid-cols-2 gap-x-12 gap-y-10 sm:gap-x-24 md:pr-12">
+          <nav aria-labelledby="footer-sections">
+            <h2 id="footer-sections" className={label}>
+              Sections
+            </h2>
+            <FooterSections linkClassName={link} />
+          </nav>
+          <div>
+            <h2 id="footer-profiles" className={label}>
+              Profiles
+            </h2>
+            <ul aria-labelledby="footer-profiles" className="space-y-4">
+              {content.links.map((profile) => (
+                <li key={profile.label}>
+                  <ProfileLink link={profile} className={link} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 flex flex-col items-center gap-3 text-center">
+        <p className="font-mono text-xs tracking-wide text-text">
+          © <CurrentYear initial={new Date().getFullYear()} /> <span translate="no">{content.name}</span>. All rights
+          reserved.
+        </p>
+        {/* License-required credits for the Skills & Tools logos (Simple
+            Icons marks whose licenses require attribution; CLAUDE.md). */}
+        <p className="max-w-3xl font-mono text-[11px] leading-relaxed text-muted">
+          Tool logos via Simple Icons; all marks belong to their owners. Git logo by Jason Long, CC BY 3.0. Jenkins
+          logo, CC BY-SA 3.0. Apache JMeter logo, Apache License 2.0.
+        </p>
       </div>
     </footer>
   )
 }
-
-export default Footer
