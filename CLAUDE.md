@@ -27,14 +27,14 @@ There is no test framework configured; UI verification is done with the playwrig
 - `app/` - layout.tsx (fonts and all site metadata), page.tsx (composes the sections), globals.css, plus the icon file conventions (favicon.ico, icon.svg, icon1.png, apple-icon.png) and manifest.ts
 - `assets/brand/` - non-public brand sources: `un-monogram.svg` (Umair's "UN" logo, `currentColor`, the source of truth for the Logo component and any regenerated favicons), `un-monogram-original.png` (the original raster, reference only). Never serve files from here directly.
 - `review/` - local review screenshots for the user. Gitignored; never commit.
-- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle) and section parts (hero/CopyEmail, hero/HeroTrace). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
-- `lib/` - support code (gsap.ts, magnetic.ts, motion-preferences.ts, scroll.ts, theme.ts) plus content.ts, the typed content source for all site copy
+- `components/` - one file per section (Navbar, Hero, About, Experience, Skills, Contact, Footer) plus chrome (WaveformDivider, providers/SmoothScrollProvider, brand/Logo, nav/StatusCapsule, theme/ThemeScript, theme/ThemeToggle) and section parts (hero/CopyEmail, hero/HeroTrace, and the About bento cards in about/: BentoCard shell plus Role, Specializations, Portrait, TimeZone, Contact, and ToolsMarquee cards). Preloader, Cursor, AmbientBackground, and the Three.js hero canvas were removed on 2026-10-10 (DESIGN.md section 6).
+- `lib/` - support code (gsap.ts, local-time.ts, magnetic.ts, motion-preferences.ts, scroll.ts, theme.ts) plus content.ts, the typed content source for all site copy
 - `public/` - static assets (headshot, android-chrome icons for the manifest)
 - `data/` - Umair's LinkedIn export (Profile.pdf). Gitignored. Content source only.
 - `refrence/` - spelled without the second "e" on disk; when the user writes "reference/", this folder is what they mean. Screenshots of a developer portfolio (dhirajbhawsar.in) used for design inspiration only. Gitignored.
 - `public/umair-nadeem-qa-engineer-resume.pdf` is the public resume, approved for publishing (Progress, Decisions); its path is `content.resume.href`. Do not confuse it with the private LinkedIn PDF in `data/`.
 
-`lib/content.ts` is the typed content source for all site copy, and every rebuilt section (the Hero so far) reads from it. The old sections still hardcode their copy until they are rebuilt. There is no CMS. The headshot for the About section is `public/umair-nadeem.jpg` (2048x2048); use next/image with descriptive alt text.
+`lib/content.ts` is the typed content source for all site copy, and every rebuilt section (Hero and About so far) reads from it. The old sections still hardcode their copy until they are rebuilt. There is no CMS. The headshot for the About section is `public/umair-nadeem.jpg` (2048x2048); use next/image with descriptive alt text.
 
 ## Project rules
 
@@ -98,7 +98,12 @@ As of 2026-10-12:
 - Phases 0 to 3 complete. Phase 2: `lib/content.ts` (`8798bf9`). Phase 3: DESIGN.md approved (`d67538b`).
 - Phase 4 step 1, theme foundation and navbar: complete and approved. `d37bd0d` (upgrade), `ed41941` (removed old chrome), `f9d3467` (theme system), `3d4876b` (navbar), `519ce51` (docs).
 - Phase 4 step 2, Hero: complete. `4b03407` (favicon tile), `dda3c6e` (Hero), `80eac6e` (badge spacing fix). Screenshots are in `review/hero-*` (gitignored).
-- Still old: About, Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt.
+- Resume (2026-10-12): moved to `public/umair-nadeem-qa-engineer-resume.pdf` (`a4a0d88`), path in `content.resume.href`; "Download resume" button in the Hero CTA row (`7736ea5`); docs updated (`c1c2beb`). Verified: 200 `application/pdf`, click downloads the file.
+- Phase 4 step 3, About bento (2026-10-12): built, awaiting the user's review. Commits `705c841` (grid + role card), `6b6f3ea` (portrait), `422c1c8` (specializations), `0fee8a2` (tools marquee), `d54612c` (shared clock, `lib/local-time.ts`), `6e0eb1f` (time zone), `070796f` (contact), `9941ecc` (reveals), `08315c7` (old About removed; the bento is `components/About.tsx`), `f9ebaac` (web-design-guidelines fixes), `47b248a` (focus order). Screenshots in `review/about-*` (gitignored).
+  - Deviations from DESIGN.md 11.2, both recorded there: the tools card is 2x1 (not 1x1) so six cards fill the 3x3 grid exactly; the mobile order ends with tools (time zone and contact come before it) so keyboard focus follows the visual order.
+  - New content.ts fields: `specializations` (the four DESIGN.md 11.2 labels), `timeZone` (Asia/Karachi, PKT (UTC+5)), `resume`.
+  - The headshot is still the 2.1 MB original. next/image serves resized copies, so it only weighs on the repo; re-encoding it remains the user's call.
+- Still old: Experience, Skills, Contact, and Footer render their pre-redesign copy and layout on the new tokens until rebuilt.
 
 ### Decisions
 
@@ -112,16 +117,17 @@ As of 2026-10-12:
 ### Known issue for the remaining sections
 
 GSAP `matchMedia` only runs a conditions-object callback while at least one condition matches, so `{ reduceMotion, coarsePointer }` alone never runs on a normal desktop.
-- Every rebuilt section must include `always: ALWAYS_QUERY` from `lib/motion-preferences.ts`, exactly as `components/Hero.tsx` does. The old About, Contact, Footer, and Skills still have the bug.
-- For entrance reveals, reuse the Hero's `[data-reveal]` pattern (DESIGN.md section 7 notes): `gsap.set` first, then `fromTo` with explicit end values.
+- Every rebuilt section must include `always: ALWAYS_QUERY` from `lib/motion-preferences.ts`, exactly as `components/Hero.tsx` and `components/About.tsx` do. The old Contact, Footer, and Skills still have the bug.
+- For entrance reveals, reuse the `[data-reveal]` pattern (DESIGN.md section 7 notes): `gsap.set` first, then `fromTo` with explicit end values. For grids of cards, `components/About.tsx` shows the `ScrollTrigger.batch` version.
+- Hover lifts use Tailwind's `translate` utilities (the CSS `translate` property), which compose with the `transform` GSAP writes, so reveals and hovers never fight.
+- Screenshots: ScrollSmoother distorts Playwright element screenshots. Scroll natively to the section's summed `offsetTop`, wait about 2.5s, and take a viewport screenshot (tall viewports for whole sections).
 
 ### Next steps, in order
 
-1. Move the resume into `public/` with an SEO-friendly name: `git mv UmairNadeem_SQA.pdf public/umair-nadeem-qa-engineer-resume.pdf`.
-   - Add the "Download resume" button in the marked slot in `components/Hero.tsx`. The style notes are in the slot comment; use the `download` attribute.
-   - Update the README and DESIGN.md 11.1 to the new path.
-2. Phase 4 step 3: About bento (DESIGN.md 11.2).
-3. Then the remaining build steps in DESIGN.md section 13: Experience, Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button and fix the hardcoded "© 2024" year.
+1. The user reviews the About bento (screenshots in `review/about-*`).
+2. Phase 4 step 4: Experience timeline (DESIGN.md 11.3).
+3. Then the remaining build steps in DESIGN.md section 13: Skills, Contact CTA and Footer, the SEO pass, and security hardening. In the Footer step, also add the footer "Download resume" button (`content.resume.href`) and fix the hardcoded "© 2024" year.
+4. The README is stale throughout (Next 14, Three.js, old fonts and colors, a contact form, an old email). Rewrite it in its own commit when the user wants; only the resume path was updated so far.
 
 ### Open items waiting on Umair
 

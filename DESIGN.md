@@ -234,7 +234,7 @@ Every animation must answer "what does this communicate" in one sentence:
 Reduced motion (`prefers-reduced-motion`): every animated component ships a `gsap.set` final-state fallback; ScrollSmoother is not created; marquee rows render static; typewriter renders full text. This is the existing `lib/motion-preferences.ts` contract, followed verbatim. Known limitation to document in code: the preference is sampled at mount, not live-watched.
 
 Implementation notes (learned in build step 2):
-- **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). The old About, Contact, Footer, and Skills components still have the bug; it goes away as they are rebuilt.
+- **matchMedia gotcha.** GSAP's `matchMedia` only runs a conditions-object callback while at least one condition matches. `{ reduceMotion, coarsePointer }` alone therefore never runs on a plain desktop. Every conditions object whose conditions can all be false includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`). The old Contact, Footer, and Skills components still have the bug; it goes away as they are rebuilt.
 - **Entrance reveals without a flash.** The pre-paint script sets `data-motion="ok"` on `<html>` only when reduced motion is off. `globals.css` then hides `[data-reveal]` elements before first paint, with a CSS failsafe that shows them after 2.5s if JS never hydrates. The component calls `gsap.set(..., { autoAlpha: 1 })` immediately and animates with `fromTo` and explicit end values; a plain `from()` would capture the CSS-hidden state as its end value. Measured: the hero headline is visible about 50ms after load.
 - **Focus rings don't animate.** Interactive elements use `transition-[color,background-color,border-color]`, not `transition-colors`, which also transitions `outline-color` and makes the focus ring fade in from `currentColor`.
 
@@ -245,7 +245,7 @@ No scroll cues, no pinned/hijacked sections in v1, no infinite loops outside the
 ## 8. Responsive behavior
 
 - Breakpoints: Tailwind defaults. Mobile-first; every multi-column section declares its collapse in the same component.
-- Bento collapses to a single column in content-priority order (role card, specializations, portrait, tools, time zone, contact).
+- Bento collapses to a single column in content-priority order (role card, specializations, portrait, time zone, contact, tools). Contact comes before tools so keyboard focus follows the visual order at every width (changed 2026-10-12, WCAG 2.4.3); at `md` the grid is 2 columns.
 - Timeline collapses to a single column: metadata block above its evidence card, spine hidden.
 - Nav: pill collapses to the `Logo` left, hamburger + theme toggle right (toggle at the far right, as on the reference); status capsule hidden below `lg`.
 - Hero type scale: `text-4xl md:text-5xl lg:text-[60px]` (the headline is 9 words; no 7xl vanity scale). Headline max 2 lines at desktop.
@@ -405,7 +405,7 @@ Asymmetric grid, 6 cards for 6 real content items (exact cell count, 3 or more c
 | Current role | Wide 2x1 | Title "Senior QA Engineer"; company line **"Smart In Media (Cologne, Germany)"** (the company's location, so it doesn't read as Umair's); `experience[0].highlights[0]` rendered verbatim: "Tested digital pathology software across multiple PathoZoom projects"; tags Digital Pathology / Healthcare Software / Test Automation | The three tags as chips; caption lockup. No waveform (signature limited to divider + hero). |
 | Portrait / bio | Tall 1x2 | `public/umair-nadeem.jpg` (next/image, priority false), sentences 2-3 of `content.bio` verbatim in mono (sentence 1 is the hero `h1`) | Natural-color photo; giant cropped "QA" in EB Garamond behind it as texture, in `line` color, `aria-hidden` |
 | QA specializations | 1x1 | 4 headline items: Manual and Exploratory, Test Automation, API Testing, Regression Testing | Check-glyph list. "AI & LLM Testing" stays an ordinary chip in Skills until Umair confirms it (open item in CLAUDE.md). |
-| Tools marquee | 1x1 | Text-only chips (no icons) from `skills.tools` + `skills.automation-frameworks` (Cypress, Postman, Apache JMeter, Jira, TestRail...) | Two counter-scrolling chip rows, clipped at card edges |
+| Tools marquee | Wide 2x1 (built 2026-10-12; 1x1 would leave an empty cell in the 3x3 grid) | Text-only chips (no icons) from `skills.tools` + `skills.automation-frameworks` (Cypress, Postman, Apache JMeter, Jira, TestRail...) | Two counter-scrolling chip rows, clipped at card edges; pause button (WCAG 2.2.2) and hover pause; static wrapped list under reduced motion |
 | Time zone | 1x1 | Pinned copy, sourced facts only: title "Islamabad, Pakistan" (`content.location`), caption `PKT (UTC+5)` (Islamabad's standard time zone, derived from the location, not a claim about Umair's work), plus a live local clock. No copy about remote work (not in any source). | Typographic clock in EB Garamond, `fg` |
 | Contact teaser | 1x1 | Copy-email bar + LinkedIn and Upwork links | Inset mono email bar (`surface-2`) |
 
@@ -455,7 +455,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
    - The no-flash `ThemeScript` (static, nonce-ready per 10.1), `ThemeToggle`, and per-scheme `themeColor`.
    - The floating navbar with the `Logo`, the pill, the status capsule, the toggle placement, and the mobile menu.
 2. **Hero (done 2026-10-10; resume button added 2026-10-12):** `components/Hero.tsx` plus `hero/CopyEmail.tsx` and `hero/HeroTrace.tsx`, with all copy from `lib/content.ts`. The "Download resume" button sits between the two CTAs (11.1).
-3. About bento
+3. **About bento (built 2026-10-12, awaiting review):** `components/About.tsx` plus the cards in `components/about/`, with all copy from `lib/content.ts`.
 4. Experience timeline
 5. Skills
 6. Contact CTA + Footer
