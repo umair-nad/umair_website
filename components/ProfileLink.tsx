@@ -13,7 +13,7 @@ export default function ProfileLink({ link, className = '' }: { link: SiteLink; 
       href={link.href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group inline-flex min-h-6 items-center gap-1 underline-offset-4 ${focusRing} ${className}`}
+      className={`group inline-flex min-h-6 touch-manipulation items-center gap-1 underline-offset-4 ${focusRing} ${className}`}
     >
       <span translate="no">{link.label}</span>
       <ArrowUpRight

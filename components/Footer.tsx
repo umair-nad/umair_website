@@ -16,8 +16,20 @@ import FooterWaveform from '@/components/footer/FooterWaveform'
 // Footer link (measured: Source Code Pro 14px semibold, underlined, 60%
 // ink; ours brightens to fg on hover).
 const link =
-  'inline-flex min-h-6 items-center font-mono text-sm font-semibold text-muted underline decoration-fg/30 underline-offset-4 transition-[color,text-decoration-color] hover:text-fg hover:decoration-fg'
+  'inline-flex min-h-6 touch-manipulation items-center font-mono text-sm font-semibold text-muted underline decoration-fg/30 underline-offset-4 transition-[color,text-decoration-color] hover:text-fg hover:decoration-fg'
 const label = 'mb-5 font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase'
+
+// License-required credits for the Skills & Tools logos (Simple Icons marks
+// whose licenses require attribution; CLAUDE.md). Multi-word names and
+// license identifiers never split across lines (hyphen included).
+const keep = (s: string) => <span className="whitespace-nowrap">{s}</span>
+const CREDITS = (
+  <>
+    Tool logos via {keep('Simple Icons')}; all marks belong to their owners. Git logo by {keep('Jason Long')},{' '}
+    {keep('CC BY 3.0')}. Jenkins logo, {keep('CC BY-SA 3.0')}. {keep('Apache JMeter')} logo,{' '}
+    {keep('Apache License 2.0')}.
+  </>
+)
 
 export default function Footer() {
   return (
@@ -60,12 +72,7 @@ export default function Footer() {
           © <CurrentYear initial={new Date().getFullYear()} /> <span translate="no">{content.name}</span>. All rights
           reserved.
         </p>
-        {/* License-required credits for the Skills & Tools logos (Simple
-            Icons marks whose licenses require attribution; CLAUDE.md). */}
-        <p className="max-w-3xl font-mono text-[11px] leading-relaxed text-muted">
-          Tool logos via Simple Icons; all marks belong to their owners. Git logo by Jason Long, CC BY 3.0. Jenkins
-          logo, CC BY-SA 3.0. Apache JMeter logo, Apache License 2.0.
-        </p>
+        <p className="max-w-3xl font-mono text-[11px] leading-relaxed text-muted">{CREDITS}</p>
       </div>
     </footer>
   )
