@@ -2,14 +2,13 @@
 
 import { useState } from 'react'
 import { Pause, Play, Wrench } from 'lucide-react'
-import { content, type SkillGroupId } from '@/lib/content'
+import { content } from '@/lib/content'
 import { BentoCard, CardLockup, Chip, IconChip } from '@/components/about/BentoCard'
 
-const group = (id: SkillGroupId) => content.skills.find((g) => g.id === id)?.items ?? []
 
-// Automation frameworks first, then the tools (DESIGN.md 11.2), split into
-// two counter-scrolling rows.
-const ITEMS = [...group('automation-frameworks'), ...group('tools')]
+// content.featuredTools (the original 13, frameworks first; the Skills &
+// Tools wall shows all 44), split into two counter-scrolling rows.
+const ITEMS = content.featuredTools
 const HALF = Math.ceil(ITEMS.length / 2)
 const ROWS = [ITEMS.slice(0, HALF), ITEMS.slice(HALF)]
 

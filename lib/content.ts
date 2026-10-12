@@ -42,10 +42,14 @@ export interface Certification {
 export type SkillGroupId =
   | "testing-types"
   | "automation-frameworks"
-  | "tools"
+  | "test-management"
+  | "api-performance"
+  | "ci-cd"
+  | "cloud-testing"
+  | "monitoring"
+  | "collaboration"
   | "languages"
-  | "practices"
-  | "ci-cd";
+  | "practices";
 
 export interface SkillGroup {
   id: SkillGroupId;
@@ -70,6 +74,8 @@ export interface SiteContent {
   education: EducationEntry[];
   projects: Project[];
   skills: SkillGroup[];
+  /** The tools shown by the About bento's marquee (a subset of the tool groups). */
+  featuredTools: string[];
   /** Headline QA specializations for the About bento (DESIGN.md 11.2). */
   specializations: string[];
   /** The two scrolling word rows behind the About portrait (decorative). */
@@ -196,26 +202,48 @@ export const content = {
         "Black-Box Testing",
       ],
     },
+    // Tool groups. The first 13 tools come from the approved sources; the
+    // other 31 were confirmed by the user in chat on 2026-10-12 (the full
+    // list is recorded in CLAUDE.md). Add no tool beyond these 44.
     {
       id: "automation-frameworks",
-      label: "Automation Frameworks",
-      items: ["Cypress", "Cucumber", "Robot Framework"],
+      label: "Test Automation",
+      items: ["Playwright", "Cypress", "Selenium", "Appium", "WebdriverIO", "Pytest", "Cucumber", "Robot Framework"],
     },
     {
-      id: "tools",
-      label: "Tools",
-      items: [
-        "Jira",
-        "Linear",
-        "Trello",
-        "TestRail",
-        "Zephyr",
-        "Postman",
-        "Swagger",
-        "Apache JMeter",
-        "Chrome DevTools",
-        "Confluence",
-      ],
+      id: "test-management",
+      label: "Test Management & Tracking",
+      items: ["Jira", "TestRail", "Zephyr", "Xray", "qTest", "Azure DevOps", "Linear", "Trello", "Confluence"],
+    },
+    {
+      id: "api-performance",
+      label: "API, Performance & Debugging",
+      items: ["Postman", "Swagger", "Insomnia", "Apache JMeter", "k6", "Charles Proxy", "Fiddler", "Chrome DevTools"],
+    },
+    {
+      id: "ci-cd",
+      label: "CI/CD & Version Control",
+      items: ["Git", "GitHub", "GitLab", "Bitbucket", "Jenkins", "GitHub Actions", "Docker"],
+    },
+    {
+      id: "cloud-testing",
+      label: "Cross-Browser & Device Clouds",
+      items: ["BrowserStack", "LambdaTest", "Sauce Labs"],
+    },
+    {
+      id: "monitoring",
+      label: "Monitoring & Analytics",
+      items: ["Sentry", "Datadog", "PostHog", "Google Analytics"],
+    },
+    {
+      id: "collaboration",
+      label: "Collaboration & Design",
+      items: ["Slack", "Microsoft Teams", "Notion", "Figma"],
+    },
+    {
+      id: "languages",
+      label: "Languages",
+      items: ["SQL"],
     },
     {
       id: "practices",
@@ -230,7 +258,25 @@ export const content = {
         "Communication Skills",
       ],
     },
-    // No "ci-cd" group yet: no CI/CD tool appears in any approved source.
+  ],
+
+  // The About bento's tools marquee shows the original 13 tools (frameworks
+  // first, then tools), so it still fits its single tile; the Skills & Tools
+  // wall shows all 44.
+  featuredTools: [
+    "Cypress",
+    "Cucumber",
+    "Robot Framework",
+    "Jira",
+    "Linear",
+    "Trello",
+    "TestRail",
+    "Zephyr",
+    "Postman",
+    "Swagger",
+    "Apache JMeter",
+    "Chrome DevTools",
+    "Confluence",
   ],
 
   // Four headline items, approved in DESIGN.md 11.2 (2026-10-10). Each one
