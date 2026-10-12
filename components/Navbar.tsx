@@ -17,13 +17,14 @@ registerGsap()
 const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
-// Home (the hero, #home) comes first; it scrolls to the top like the logo.
+// Tabs follow the page order: Home (the hero, #home; it scrolls to the top
+// like the logo), About, Skills, Experience, Contact.
 // The icons are used by the floating mobile nav only.
 const navItems: { name: string; href: string; icon: LucideIcon }[] = [
   { name: 'Home', href: '#home', icon: House },
   { name: 'About', href: '#about', icon: UserRound },
-  { name: 'Experience', href: '#experience', icon: BriefcaseBusiness },
   { name: 'Skills', href: '#skills', icon: ListChecks },
+  { name: 'Experience', href: '#experience', icon: BriefcaseBusiness },
   { name: 'Contact', href: '#contact', icon: Mail },
 ]
 

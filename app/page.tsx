@@ -24,8 +24,9 @@ export default function Home() {
         <main id="main-content" className="min-h-screen">
           <Hero />
           <About />
-          <Experience />
+          {/* The Skills & Tools wall belongs to the About area (user decision 2026-10-12). */}
           <Skills />
+          <Experience />
           <Contact />
           <Footer />
         </main>
