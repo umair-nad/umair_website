@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { BriefcaseBusiness, House, ListChecks, Mail, PanelBottomOpen, UserRound, X, type LucideIcon } from 'lucide-react'
+import { PanelBottomOpen, X } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
-import { gsap, ScrollSmoother, ScrollTrigger, registerGsap } from '@/lib/gsap'
-import { ALWAYS_QUERY, prefersReducedMotion, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
+import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { ALWAYS_QUERY, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
-import { scrollToElement } from '@/lib/scroll'
+import { scrollToElement, scrollToTop } from '@/lib/scroll'
+import { NAV_ITEMS as navItems } from '@/lib/nav'
 import { content } from '@/lib/content'
 import Logo from '@/components/brand/Logo'
 import StatusCapsule from '@/components/nav/StatusCapsule'
@@ -16,17 +17,6 @@ registerGsap()
 
 const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
-
-// Tabs follow the page order: Home (the hero, #home; it scrolls to the top
-// like the logo), About, Skills, Experience, Contact.
-// The icons are used by the floating mobile nav only.
-const navItems: { name: string; href: string; icon: LucideIcon }[] = [
-  { name: 'Home', href: '#home', icon: House },
-  { name: 'About', href: '#about', icon: UserRound },
-  { name: 'Skills', href: '#skills', icon: ListChecks },
-  { name: 'Experience', href: '#experience', icon: BriefcaseBusiness },
-  { name: 'Contact', href: '#contact', icon: Mail },
-]
 
 // Gap kept between the floating bar and a section heading after an anchor
 // jump (the bar sits 16px from the top and is 40px tall).
@@ -112,19 +102,8 @@ const Navbar = () => {
     })()
   }
 
-  // Smooth through ScrollSmoother; instant under reduced motion (the
-  // smoother isn't created then, and window.scrollTo honors the preference).
-  const scrollToTop = () => {
-    contextSafe(() => {
-      const smoother = ScrollSmoother.get()
-      if (smoother) {
-        smoother.scrollTo(0, true)
-      } else {
-        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
-      }
-    })()
-  }
-
+  // Tabs follow the page order (lib/nav.ts). Home scrolls to the top like
+  // the logo: smooth through ScrollSmoother, instant under reduced motion.
   const goTo = (href: string) => (href === '#home' ? scrollToTop() : scrollToSection(href))
 
   const onAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {

@@ -33,3 +33,14 @@ export function scrollToHash(hash: string, offset?: number): boolean {
   scrollToElement(target, offset)
   return true
 }
+
+/** Back to the top: smooth through ScrollSmoother, otherwise window.scrollTo
+ *  honoring reduced motion (the smoother isn't created then). */
+export function scrollToTop() {
+  const smoother = ScrollSmoother.get()
+  if (smoother) {
+    smoother.scrollTo(0, true)
+    return
+  }
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+}
