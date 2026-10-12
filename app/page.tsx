@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
-import AboutBento from '@/components/AboutBento'
+import About from '@/components/About'
 import Experience from '@/components/Experience'
 import Skills from '@/components/Skills'
 import Contact from '@/components/Contact'
@@ -23,7 +23,7 @@ export default function Home() {
       <SmoothScrollProvider>
         <main id="main-content" className="min-h-screen">
           <Hero />
-          <AboutBento />
+          <About />
           <Experience />
           <Skills />
           <Contact />

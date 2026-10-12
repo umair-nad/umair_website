@@ -2,164 +2,85 @@
 
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
-import { gsap, SplitText, registerGsap } from '@/lib/gsap'
-import { REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
+import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
+import RoleCard from '@/components/about/RoleCard'
+import SpecializationsCard from '@/components/about/SpecializationsCard'
+import PortraitCard from '@/components/about/PortraitCard'
+import ToolsMarqueeCard from '@/components/about/ToolsMarqueeCard'
+import TimeZoneCard from '@/components/about/TimeZoneCard'
+import ContactCard from '@/components/about/ContactCard'
 
 registerGsap()
 
-const About = () => {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const headingRef = useRef<HTMLHeadingElement>(null)
-  const paragraphsRef = useRef<HTMLDivElement>(null)
-  const factsRef = useRef<HTMLDivElement>(null)
+// About bento (DESIGN.md 11.2). Six cards, six real content items, filling
+// a 3-column grid exactly (no empty cells):
+//
+//   lg (3 cols, 22rem rows)       md (2 cols)         base (1 col)
+//   [ role 2x1      ][ portr ]    [ role 2x1     ]    role
+//   [ specs ][ contact][ 1x2  ]   [ specs ][ port ]   specializations
+//   [ time  ][ tools 2x1     ]    [ tools ][ 1x2  ]   portrait
+//                                 [ time  ][ cont ]   tools
+//                                                     time zone
+//                                                     contact
+//
+// DOM order is the mobile content-priority order (DESIGN.md section 8);
+// the lg placement is explicit per card below.
+const PLACEMENT = {
+  role: 'md:col-span-2 lg:col-start-1 lg:row-start-1',
+  specializations: 'lg:col-start-1 lg:row-start-2',
+  portrait: 'md:row-span-2 lg:col-start-3 lg:row-start-1',
+  tools: 'lg:col-span-2 lg:col-start-2 lg:row-start-3',
+  timeZone: 'lg:col-start-1 lg:row-start-3',
+  contact: 'lg:col-start-2 lg:row-start-2',
+} as const
+
+export default function About() {
+  const rootRef = useRef<HTMLElement>(null)
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
 
-      mm.add({ reduceMotion: REDUCED_MOTION_QUERY }, (context) => {
-        const { reduceMotion } = context.conditions as { reduceMotion: boolean }
+      mm.add({ always: ALWAYS_QUERY, reduceMotion: REDUCED_MOTION_QUERY }, (ctx) => {
+        const { reduceMotion } = ctx.conditions as { reduceMotion: boolean }
+        const cards = gsap.utils.toArray<HTMLElement>('[data-reveal]', rootRef.current)
 
-        const paragraphs = gsap.utils.toArray<HTMLElement>('p', paragraphsRef.current)
-        const factRows = gsap.utils.toArray<HTMLElement>('[data-fact-row]', factsRef.current)
+        // Undo the pre-paint hiding right away (globals.css [data-reveal]).
+        gsap.set(cards, { autoAlpha: 1 })
+        if (reduceMotion) return // static final state (lib/motion-preferences.ts contract)
 
-        if (reduceMotion) {
-          gsap.set([headingRef.current, ...paragraphs, factsRef.current, ...factRows], {
-            autoAlpha: 1,
-            x: 0,
-            y: 0,
-          })
-          return
-        }
-
-        gsap.from(paragraphs, {
-          autoAlpha: 0,
-          y: 24,
-          stagger: 0.15,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: paragraphsRef.current,
-            start: 'top 90%',
-            end: 'top 55%',
-            scrub: true,
-          },
-        })
-
-        gsap.from(factsRef.current, {
-          autoAlpha: 0,
-          x: 20,
-          duration: 0.7,
-          scrollTrigger: { trigger: factsRef.current, start: 'top 85%' },
-        })
-
-        gsap.from(factRows, {
-          autoAlpha: 0,
-          y: 12,
-          stagger: 0.08,
-          duration: 0.5,
-          delay: 0.2,
-          scrollTrigger: { trigger: factsRef.current, start: 'top 85%' },
-        })
-
-        // SplitText needs final font metrics for accurate word measurement,
-        // so the heading reveal waits for fonts.ready. Wrapped in
-        // context.add() because gsap.matchMedia()'s automatic tracking only
-        // covers work created synchronously in this callback - anything
-        // created later (here, after a promise resolves) needs to be
-        // registered into the context explicitly so mm.revert() still
-        // cleans it up.
-        document.fonts.ready.then(() => {
-          if (context.isReverted || !headingRef.current) return
-          context.add(() => {
-            const split = SplitText.create(headingRef.current, {
-              type: 'words',
-              aria: 'auto', // default: aria-label on the heading (full text), aria-hidden on each word span
-            })
-            gsap.from(split.words, {
-              autoAlpha: 0,
-              y: 16,
-              stagger: 0.04,
-              duration: 0.5,
-              ease: 'power2.out',
-              scrollTrigger: { trigger: headingRef.current, start: 'top 90%' },
-            })
-            return () => split.revert()
-          })
+        // Cards rise in reading order as they scroll in, once: the sequence
+        // follows the grid. fromTo with explicit end values (Hero pattern);
+        // a plain from() would capture the CSS-hidden state as its end.
+        const from = { autoAlpha: 0, y: 24 }
+        gsap.set(cards, from)
+        ScrollTrigger.batch(cards, {
+          start: 'top 88%',
+          once: true,
+          onEnter: (batch) =>
+            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08, overwrite: true }),
         })
       })
 
       return () => mm.revert()
     },
-    { scope: sectionRef }
+    { scope: rootRef }
   )
 
   return (
-    <section id="about" className="py-20">
-      <div ref={sectionRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 ref={headingRef} className="text-3xl font-display font-bold text-fg mb-8">
-              About Me
-            </h2>
-
-            <div ref={paragraphsRef} className="space-y-4 text-muted">
-              <p>
-                I&apos;m a passionate Software Quality Assurance Engineer with over 3 years of experience
-                in ensuring the delivery of high-quality software solutions. My expertise lies in
-                creating comprehensive test cases, performing cross-browser compatibility checks,
-                and validating APIs using tools like Postman.
-              </p>
-
-              <p>
-                I specialize in manual testing, test planning, and bug tracking across web and
-                mobile applications. I&apos;m adept at collaborating with cross-functional teams in
-                Agile environments to meet tight deadlines and deliver defect-free products.
-              </p>
-
-              <p>
-                My passion lies in enhancing user experiences and continuously improving testing
-                processes to align with project goals and client expectations. I believe in
-                creating robust, scalable testing strategies that ensure software quality
-                while maintaining efficiency.
-              </p>
-
-              <p>
-                Currently based in Islamabad, Pakistan, I&apos;m always eager to take on new
-                challenges and contribute to innovative projects that push the boundaries
-                of software quality assurance.
-              </p>
-            </div>
-          </div>
-
-          <div ref={factsRef} className="bg-muted/10 rounded-lg p-8 border border-muted/20">
-            <h3 className="text-xl font-semibold text-fg mb-6">Quick Facts</h3>
-            <div className="space-y-4">
-              <div data-fact-row className="flex justify-between">
-                <span className="text-muted">Experience:</span>
-                <span className="text-accent font-mono">3+ Years</span>
-              </div>
-              <div data-fact-row className="flex justify-between">
-                <span className="text-muted">Location:</span>
-                <span className="text-accent font-mono">Islamabad, Pakistan</span>
-              </div>
-              <div data-fact-row className="flex justify-between">
-                <span className="text-muted">Education:</span>
-                <span className="text-accent font-mono">BS, Islamia College University</span>
-              </div>
-              <div data-fact-row className="flex justify-between">
-                <span className="text-muted">Languages:</span>
-                <span className="text-accent font-mono">English, Urdu</span>
-              </div>
-              <div data-fact-row className="flex justify-between">
-                <span className="text-muted">Interests:</span>
-                <span className="text-accent font-mono">Cricket, Technology</span>
-              </div>
-            </div>
-          </div>
-        </div>
+    <section ref={rootRef} id="about" aria-labelledby="about-heading" className="px-4 py-28 md:px-8 md:py-40">
+      <h2 id="about-heading" className="sr-only">
+        About
+      </h2>
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 md:auto-rows-[minmax(20rem,auto)] md:grid-cols-2 lg:auto-rows-88 lg:grid-cols-3">
+        <RoleCard className={PLACEMENT.role} />
+        <SpecializationsCard className={PLACEMENT.specializations} />
+        <PortraitCard className={PLACEMENT.portrait} />
+        <ToolsMarqueeCard className={PLACEMENT.tools} />
+        <TimeZoneCard className={PLACEMENT.timeZone} />
+        <ContactCard className={PLACEMENT.contact} />
       </div>
     </section>
   )
 }
-
-export default About
