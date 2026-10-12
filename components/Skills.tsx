@@ -1,11 +1,12 @@
 'use client'
 
-import { useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import type { SimpleIcon } from 'simple-icons'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { content, type SkillGroupId } from '@/lib/content'
-import { TOOL_ICONS } from '@/lib/tool-icons'
+import { TOOL_LOGO_NAMES } from '@/lib/tool-logo-names'
 
 registerGsap()
 
@@ -43,7 +44,9 @@ const TEXT_LINES: Record<string, string[]> = {
   'Robot Framework': ['Robot', 'Framework'],
 }
 
-const focusRing ='focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+const HAS_LOGO = new Set<string>(TOOL_LOGO_NAMES)
+
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 // Keeps a tooltip inside the viewport: near an edge it aligns to the
 // tile's side instead of centering on it.
@@ -64,6 +67,31 @@ export default function Skills() {
   // tiles (left/right in reading order, up/down to the nearest tile in the
   // row above or below), Home and End jump to the ends.
   const [active, setActive] = useState(0)
+
+  // Logo paths (~20 KB gzip) load once the section is within 1000px of the
+  // viewport, so the first page load doesn't carry them. Until then logo
+  // tiles are empty squares of the same size: nothing moves when they land.
+  const [icons, setIcons] = useState<Record<string, SimpleIcon> | null>(null)
+  useEffect(() => {
+    const section = rootRef.current
+    if (!section) return
+    let cancelled = false
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        io.disconnect()
+        void import('@/lib/tool-icons').then((m) => {
+          if (!cancelled) setIcons(m.TOOL_ICONS)
+        })
+      },
+      { rootMargin: '1000px 0px' }
+    )
+    io.observe(section)
+    return () => {
+      cancelled = true
+      io.disconnect()
+    }
+  }, [])
 
   const focusTile = (i: number) => {
     const tiles = listRef.current?.querySelectorAll<HTMLElement>('[data-tile]')
@@ -173,7 +201,8 @@ export default function Skills() {
         className="mx-auto mt-14 flex max-w-72 flex-wrap justify-center gap-3 sm:max-w-94 sm:gap-3.5 md:mt-16 md:max-w-172 lg:max-w-211 xl:max-w-289"
       >
         {TOOLS.map((name, i) => {
-          const icon = TOOL_ICONS[name]
+          const hasLogo = HAS_LOGO.has(name)
+          const icon = hasLogo ? icons?.[name] : undefined
           return (
             <li
               key={name}
@@ -191,10 +220,12 @@ export default function Skills() {
                 onFocus={() => setActive(i)}
                 className={`peer flex size-12 items-center justify-center rounded-2xl border border-tile-border bg-tile text-tile-icon shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:scale-110 sm:size-16 ${focusRing}`}
               >
-                {icon ? (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6 fill-current sm:size-8">
-                    <path d={icon.path} />
-                  </svg>
+                {hasLogo ? (
+                  icon && (
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="size-6 fill-current sm:size-8">
+                      <path d={icon.path} />
+                    </svg>
+                  )
                 ) : (
                   // No usable logo (lib/tool-icons.ts): the name itself, in
                   // small type inside the same square, two lines if needed.
