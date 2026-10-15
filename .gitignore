@@ -2,8 +2,16 @@ node_modules
 .next/
 *.log
 .env*
-# Playwright CLI output (may contain credentials)
+# Playwright CLI output (may contain credentials) and Playwright's own
+# local folders and test output
 .playwright-cli/
+.playwright/
+test-results/
+playwright-report/
+blob-report/
+
+# Vercel CLI project link (project and org IDs)
+.vercel/
 
 # Personal data (LinkedIn PDF etc.) - never commit
 data/
