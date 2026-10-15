@@ -283,7 +283,7 @@ No scroll cues, no pinned/hijacked sections in v1, no infinite loops outside the
 - Focus-visible rings in `accent` (7.07:1 light, 7.09:1 dark) on all interactive elements, including the theme toggle; use the shared `focusRing` pattern (`focus-visible:outline-2 outline-offset-2 outline-accent`).
 - Theme toggle: native button, action-describing `aria-label`, decorative icons `aria-hidden`, 36x36 target (above the 24px WCAG 2.5.8 minimum).
 - Alt text on every image; the headshot alt describes Umair, not "profile picture".
-- Portrait: the About card uses the cut-out `public/umair-nadeem-cutout.webp` (11.2) with a descriptive alt. The original `public/umair-nadeem.jpg` (2048x2048, 2.1 MB) is no longer displayed; it stays for the JSON-LD `image` and a possible OG image, and re-encoding it is the user's call.
+- Portrait: the About card uses the cut-out `public/umair-nadeem-cutout.webp` (11.2) with a descriptive alt. The original headshot `public/umair-nadeem.jpg` is not displayed; it serves only as the JSON-LD `image` (`content.seo.image`), re-encoded on 2026-10-15 from 2048x2048 (2.1 MB) to 800x800 (32 KB, mozjpeg quality 80, no metadata). The full-size file stays in git history.
 
 ### SEO
 
@@ -296,16 +296,16 @@ All metadata stays in `app/layout.tsx` (static export) plus Next.js file convent
 - **OG image (built 2026-10-15):** 1200x630, generated at build time by `app/opengraph-image.tsx` (`next/og`) in the light theme (the default; an OG image can't follow the viewer's theme): white background with the hero's warm corner washes and a soft pink and sky horizon glow, the monogram (path exported from `Logo.tsx`) top left and `content.location` top right, the hero headline (`lib/hero-headline.ts`, shared with the hero) in EB Garamond with "break" in the light accent gradient, and "Umair Nadeem | QA Engineer" in Source Code Pro below a hairline. `alt` export: name, role, and the headline. `app/twitter-image.tsx` re-exports it for the `twitter:image` tags. Fonts: static TTFs in `assets/fonts/` (EB Garamond regular and italic, Source Code Pro regular and semibold, with their OFL license files), since `next/og` can't read the `next/font` files.
 - **`sitemap.xml`:** `app/sitemap.ts`, one entry for `/` (hash anchors are not separate URLs), `lastModified` at build time.
 - **`robots.txt`:** `app/robots.ts`, allow all, `sitemap: ${SITE_URL}/sitemap.xml`.
-- **JSON-LD `Person`:** one `<script type="application/ld+json">` in the page, every field from `lib/content.ts`:
+- **JSON-LD `Person` (built 2026-10-15, `components/PersonJsonLd.tsx`, rendered first in `app/page.tsx`):** one `<script type="application/ld+json">` in the page, every field from `lib/content.ts`, serialized with `JSON.stringify` and every `<` escaped to `<`; `@id` is `${SITE_URL}/#person`:
   - `name` (`content.name`), `jobTitle` (`content.title`, "QA Engineer"), `description` (`content.seo.description`)
   - `email`: `mailto:` + `content.contact.email`
-  - `address`: `PostalAddress` with `addressLocality` "Islamabad", `addressCountry` "PK" (from `content.location`)
+  - `address`: `PostalAddress` with `addressLocality` "Islamabad", `addressCountry` "Pakistan" (both split from `content.location`; the country name rather than "PK", so the value stays in content.ts)
   - `worksFor`: `Organization` "Smart In Media" (`experience[0]`, the role with end "Present")
   - `alumniOf`: `CollegeOrUniversity` "Islamia College Peshawar" (`education[0]`)
   - `knowsLanguage`: `content.spokenLanguages`
   - `knowsAbout`: the items of the `testing-types` skill group
   - `sameAs`: the `content.links` hrefs (LinkedIn, Upwork)
-  - `url`: `SITE_URL`; `image`: `${SITE_URL}/umair-nadeem.jpg`
+  - `url`: `SITE_URL`; `image`: `${SITE_URL}` + `content.seo.image` (`/umair-nadeem.jpg`)
   - Never a `telephone` (locked rule).
 - **`themeColor`:** per scheme, via the `viewport` export (section 2).
 - **Icons and manifest (in place since 2026-10-10, Next.js file conventions):**

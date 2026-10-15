@@ -95,7 +95,8 @@ export interface SiteContent {
   contact: { email: string; cta: string; headline: [string, string, string]; line: string };
   /** Public resume PDF, served from public/. */
   resume: { href: string };
-  seo: { title: string; description: string };
+  /** image: the headshot for the JSON-LD Person (a path under public/). */
+  seo: { title: string; description: string; image: string };
 }
 
 export const content = {
@@ -341,5 +342,8 @@ export const content = {
     title: "Umair Nadeem | QA Engineer",
     description:
       "Software Quality Assurance Engineer with 5+ years of experience in manual, API, and automated testing across web and mobile applications.",
+    // Umair's original headshot, re-encoded to 800x800 (2026-10-15). Not
+    // displayed on the page (the About card uses the cut-out).
+    image: "/umair-nadeem.jpg",
   },
 } satisfies SiteContent;
