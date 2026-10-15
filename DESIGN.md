@@ -499,7 +499,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
 
 ## 13. Build order (Phase 4+, one step per review stop)
 
-Steps 1 to 6 are **built and approved section by section, 2026-10-10 to 2026-10-15**. Step 7 is **built 2026-10-15, awaiting review**. Step 8 is **not started**.
+Steps 1 to 6 are **built and approved section by section, 2026-10-10 to 2026-10-15**. Steps 7 and 8 are **built 2026-10-15** (SEO approved; security hardening with the static CSP, plus the final QA, awaiting the user's review).
 
 1. **Theme foundation and navbar shell (done 2026-10-10):**
    - The framework upgrade (section 10.6).
@@ -514,6 +514,6 @@ Steps 1 to 6 are **built and approved section by section, 2026-10-10 to 2026-10-
 5. **Skills (done 2026-10-12, approved):** the Skills & Tools icon wall, `components/Skills.tsx` (11.4).
 6. **Contact CTA + Footer (built 2026-10-12, approved 2026-10-15 with the glow kept and the short footer role line):** `components/Contact.tsx` (11.5) and `components/Footer.tsx` (11.6), replacing the pre-redesign components; `LogoCredits` folded into the footer.
 7. **SEO pass (built 2026-10-15, awaiting review; section 9):** `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, Open Graph and Twitter tags, OG image, `sitemap.xml`, `robots.txt`, JSON-LD, the 800px headshot. Lighthouse SEO 100 on mobile and desktop.
-8. **Security hardening (section 10; not started: no `proxy.ts` and no headers in `next.config.js` yet):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
+8. **Security hardening (section 10; built 2026-10-15: static headers and the static CSP in `next.config.js`, no `proxy.ts`; the plan below was written for the nonce CSP, see 10.1 for the decision):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
 
 Each step ends with `npm run lint`, `tsc --noEmit`, and playwright-cli checks at 390px and 1440px in both themes, then stops for review.
