@@ -207,6 +207,7 @@ export const content = {
         "UAT & Exploratory Testing",
         "API Testing",
         "E2E Testing",
+        // Confirmed by the user (2026-10-15): Umair has done AI and LLM testing.
         "AI & LLM Testing",
         "Performance Testing",
         "Cross-browser & Cross-device Testing",
@@ -301,14 +302,13 @@ export const content = {
   // Four headline items, approved in DESIGN.md 11.2 (2026-10-10). Each one
   // maps to the skills above or a role tag: Manual Testing + UAT &
   // Exploratory Testing, Test Automation (Smart In Media tag), API Testing,
-  // Regression Testing. "AI & LLM Testing" stays out until Umair confirms it.
+  // Regression Testing.
   specializations: ["Manual and Exploratory", "Test Automation", "API Testing", "Regression Testing"],
 
   // Words for the two scrolling rows behind the About portrait (user
   // decision 2026-10-12). Verbatim strings only: row 1 is the title plus
   // three specializations, row 2 four items from skills["testing-types"].
-  // Tools stay out (the tools marquee shows them); "AI & LLM Testing" stays
-  // out until Umair confirms it.
+  // Tools stay out (the tools marquee shows them).
   portraitWords: [
     ["QA Engineer", "Test Automation", "API Testing", "Regression Testing"],
     ["Manual Testing", "E2E Testing", "Smoke Testing", "UAT & Exploratory Testing"],

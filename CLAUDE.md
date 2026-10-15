@@ -91,8 +91,8 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 ## Open decisions (ask the user first next session)
 
 1. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
-2. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; whether he tested AI modules (the "AI & LLM Testing" chip rests on his LinkedIn headline alone, and it also appears in the JSON-LD `knowsAbout`); which automation tools he uses at Smart In Media.
-3. **Mobile performance:** Lighthouse mobile Performance 83 (desktop 100). LCP 3.8 s, 88% of it render delay: the LCP element is the hero h1, hidden until the SplitText line reveal runs. Look at it in the final QA step; ask before changing the approved hero motion.
+2. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
+3. **Mobile performance (direction set by the user 2026-10-15, do it in the final QA step):** Lighthouse mobile Performance 83 (desktop 100). LCP 3.8 s, 88% of it render delay: the LCP element is the hero h1, hidden until the SplitText line reveal runs. Fix: make the h1 visible at first paint and animate only its movement (no opacity from 0), keeping the reveal's feel.
 4. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
 
 ## Next steps, in order
