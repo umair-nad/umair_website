@@ -62,6 +62,11 @@ const nextConfig = {
   poweredByHeader: false,
   // Next's default, stated so it can't be flipped on by accident (10.4).
   productionBrowserSourceMaps: false,
+  // Next's default device sizes plus 384. The About portrait's `sizes`
+  // includes 85vw for phones, which makes Next drop every width under
+  // 0.85 x the smallest device size; without 384 its 312px desktop slot
+  // downloaded the 640px file.
+  images: { deviceSizes: [384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840] },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }]
   },
