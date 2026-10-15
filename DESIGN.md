@@ -359,12 +359,15 @@ Keep the defaults: Next sends no `Access-Control-Allow-Origin` on pages or asset
 ### 10.4 Source maps and external links
 
 - **Production browser source maps:** off. `productionBrowserSourceMaps` is not set in `next.config.js` (Next's default is `false`), verified 2026-10-10. The hardening step confirms no `.map` files are served from `/_next/static`.
-- **External links:** every `target="_blank"` link carries `rel="noopener noreferrer"`. All 5 existing ones already do (Contact, Footer x2, Hero x2, verified 2026-10-10); the rebuilt sections keep the rule.
+- **External links:** every `target="_blank"` link carries `rel="noopener noreferrer"`. Re-verified 2026-10-15: the only `target="_blank"` in source is `ProfileLink`, and all 6 rendered external links (LinkedIn and Upwork in About, Contact, and the Footer) carry the rel.
+- **Verified 2026-10-15:** no `.map` files in `.next/static`, no `sourceMappingURL` comments in client JS, and a `.map` request for a served chunk returns 404. `productionBrowserSourceMaps: false` is now explicit in `next.config.js`.
+- **`dangerouslySetInnerHTML` (re-verified 2026-10-15):** exactly the two allowed uses. `ThemeScript` emits `THEME_INIT_SCRIPT`, which interpolates only module constants (the storage key and the dark query); the stored theme value is only compared, never written into markup. `PersonJsonLd` is built from `lib/content.ts` with `<` escaped.
 
 ### 10.5 Sensitive data (baseline, 2026-10-10)
 
 - **Secrets:** a scan of every added line in the full history of all branches for API keys, tokens, passwords, private keys, and common key formats found none. The 3 pattern hits were false positives inside `.next` build output.
 - **`.env` files:** none ever committed; `.gitignore` covers `.env*`.
+- **Re-scan 2026-10-15:** the history of all branches (added lines, excluding `.next/` and the lockfile) and the client bundle in `.next/static` were searched for AWS, GitHub, OpenAI-style, Slack, and Google keys, private keys, and `api_key`/`secret`/`password` assignments. History: none (only the variable name `NEXT_PUBLIC_SITE_URL` in code and docs). Bundle: only URL-parser field names (`s.password=r.password`) in a polyfill. No `.env` file exists. The only env reads are in `lib/site-url.ts`, imported solely by server code (layout, sitemap, robots, `PersonJsonLd`); its one value is a public URL by design.
 - **`data/` and `refrence/`:** never committed on any branch (`git log --all -- data refrence` is empty, and nothing is tracked under them).
 - **Personal data already in history:**
   - **Phone number:** in `components/Contact.tsx` from the first commit (`e074d83`) up to the current tree, in `.next` build output committed in `e074d83` (untracked in `f75e7a1`), and in `UmairNadeem_SQA.pdf`, tracked since `e074d83`. The rebuilt Contact section removes it from the tree. History keeps it on `main` and `redesign`.
@@ -383,15 +386,15 @@ Keep the defaults: Next sends no `Access-Control-Allow-Origin` on pages or asset
 - **Hardening re-check (2026-10-15):** `npm audit` still shows only the same 5 high findings in the dev-only `braces` lint chain (no patched `braces` exists; the forced fix is still the rejected downgrade to `eslint-config-next` 14). Nothing for `next`, `react`, or any runtime package. Patch and minor updates applied: `next` and `eslint-config-next` 16.4.1, `react` and `react-dom` 19.3.1, `lucide-react` 1.57.0, `postcss` 8.5.30 (lint, tsc, build, and a browser smoke test clean). Majors available but not applied (user's call): TypeScript 7, ESLint 10 (still blocked by the `eslint-config-next` plugins' peer ranges), `@types/node` 26 (stays on 22 to match the Node 22 runtime).
 - Any further major upgrade needs the user's approval (CLAUDE.md).
 
-### 10.7 Not applicable (verified 2026-10-10)
+### 10.7 Not applicable (verified 2026-10-10, re-verified 2026-10-15)
 
-| Threat | Why it doesn't apply | Evidence |
+| Threat | Why it doesn't apply | Evidence (2026-10-15 grep of `app/`, `components/`, `lib/`, `next.config.js`) |
 |---|---|---|
-| SQL injection | No database, no queries | No DB client in `package.json`; the only "SQL" in code is a skill label in the old `Skills.tsx` |
-| CSRF | No forms, no server actions, no API routes, no cookies or sessions | No `<form>`, `<input>`, `'use server'`, or `app/api` |
-| File uploads | No upload inputs or handlers | No `type="file"`, no route handlers |
-| SSRF | No server-side fetches, no external rewrites, no image `remotePatterns`; the OG image renders from bundled fonts | No `fetch(` or `axios` in `app/`, `components/`, `lib/` |
-| Webhook signatures | No webhook endpoints | No route handlers or `proxy.ts` yet (the CSP proxy will only set headers) |
+| SQL injection | No database, no queries | No DB client in `package.json` (runtime deps: next, react, react-dom, gsap, @gsap/react, cobe, canvas-confetti, lucide-react, simple-icons); the only "SQL" is the skill label and a comment in `lib/tool-icons.ts` |
+| CSRF | No forms, no server actions, no API routes, no cookies or sessions | No `<form>`, `<input>`, `<textarea>`, `'use server'`, `app/api`, `cookies()`, or `document.cookie` |
+| File uploads | No upload inputs or handlers | No `type="file"`, no `route.ts` handlers |
+| SSRF | No server-side fetches, no rewrites, no image `remotePatterns`; the OG image reads only the bundled fonts from `assets/fonts/` and takes no request input | No `fetch(`, `axios`, `XMLHttpRequest`, `rewrites`, or `searchParams` |
+| Webhook signatures | No webhook endpoints | No route handlers; the only generated routes are the static metadata files (OG and Twitter images, sitemap, robots, manifest, icons) |
 
 If a contact form, API route, server action, or any server-side fetch is ever added, CSRF protection, server-side input validation, and rate limiting become required, and this table must be redone.
 
