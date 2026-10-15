@@ -347,10 +347,10 @@ The site is static: no database, no forms, no file uploads, no API routes or ser
 | `X-Frame-Options` | `DENY` (legacy partner of CSP `frame-ancestors 'none'`) |
 | `X-Content-Type-Options` | `nosniff` |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
-| `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), browsing-topics=()`. `clipboard-write` is left alone because the copy-email button uses `navigator.clipboard.writeText`. |
-| `Strict-Transport-Security` | Check what Vercel sends after the first deploy; add `max-age=63072000; includeSubDomains` only if it's missing. No `preload` until a custom domain is owned. |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), hid=(), midi=(), display-capture=(), accelerometer=(), gyroscope=(), magnetometer=(), browsing-topics=()`. `clipboard-write` is left alone because the copy-email button uses `navigator.clipboard.writeText`. Chromium logs no unrecognized-feature warnings for this list. |
+| `Strict-Transport-Security` | **Not set by us (2026-10-15).** Vercel's docs (Encryption and TLS, "Support for HSTS") say every deployment already gets it: `max-age=63072000; includeSubDomains; preload` on `*.vercel.app`, `max-age=63072000` on custom domains, and a project header replaces that default. Setting our own would add nothing on `vercel.app`. Confirm with `curl -I` after the first deploy; revisit `includeSubDomains` only if a custom domain is added. |
 
-Also `poweredByHeader: false` (drops `X-Powered-By: Next.js`).
+Also `poweredByHeader: false` (drops `X-Powered-By: Next.js`) and an explicit `productionBrowserSourceMaps: false`. **Built 2026-10-15**; verified with `curl -I` on `next start`: all four headers on the page, the OG image, the resume PDF, and `/_next/static` chunks; no `X-Powered-By`, no `Access-Control-Allow-Origin`.
 
 ### 10.3 CORS
 
