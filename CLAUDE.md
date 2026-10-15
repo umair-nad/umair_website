@@ -82,7 +82,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - **The site is live on Vercel.** Official address: https://umair-nadeem.vercel.app. The old auto address `umair-website-pink.vercel.app` still serves the same deployment (the redirect is not working yet). Every push to `main` deploys to production automatically, so push only reviewed work.
 - Built and approved by the user: every section (Home, About, Skills, Experience, Contact, Footer, floating mobile nav), the SEO pass, security hardening with the static CSP, final QA, keyboard-reachable reveals, the Node 22.x pin. Commits, measurements, and reasoning: `docs/PROGRESS-LOG.md`.
 - Live results: Lighthouse mobile 92 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100 (Performance, Accessibility, Best Practices, SEO). Headers, HSTS (from Vercel), and the CSP verified live; zero console and CSP errors at 390, 768, 1024, and 1440 in both themes.
-- **Blocking issue:** `NEXT_PUBLIC_SITE_URL` has not taken effect, so canonical, Open Graph and Twitter URLs, JSON-LD, sitemap, and robots still say `http://localhost:3000`. Likely cause: the Vercel variable lacks `https://`, so the build failed with `Invalid URL` (reproduced locally) and Vercel kept the previous deployment. Fix: set it exactly to `https://umair-nadeem.vercel.app` (Production) and redeploy, then re-verify the live page source.
+- `NEXT_PUBLIC_SITE_URL` fixed (2026-10-15): the variable had never been added in Vercel. It is now `https://umair-nadeem.vercel.app` (Production), redeployed, and the user confirmed the live page source shows no `localhost`. No blocking issues.
 
 ## Open decisions (ask the user first)
 
@@ -98,6 +98,7 @@ Later, no rush: major upgrades TypeScript 7 and ESLint 10 (blocked by `eslint-co
 
 ## Next steps, in order
 
-1. The user's new portfolio changes: discuss before building.
-2. The open decisions above (first confirm the blocking `NEXT_PUBLIC_SITE_URL` fix is live).
-3. Google Search Console (needs the correct live URLs), then linking the site from LinkedIn, GitHub, and Upwork.
+1. Quick first check: re-verify canonical, OG, JSON-LD, sitemap, and robots on the live site (all `https://umair-nadeem.vercel.app`, no `localhost`).
+2. The user's new portfolio changes: discuss before building.
+3. The open decisions above.
+4. Google Search Console, then linking the site from LinkedIn, GitHub, and Upwork.
