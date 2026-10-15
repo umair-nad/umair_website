@@ -104,9 +104,11 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
   - JS size: both experiments measured and reverted, nothing committed. A modern `browserslist` changes nothing (Next 16 already targets Chrome/Edge 111, Firefox 111, Safari 16.4, and its framework polyfills ship regardless). Lazy-loading the four sections with `next/dynamic` made mobile worse (89 to 86, LCP 3.72 to 3.87 s, JS 215 to 229 KiB).
   - Cleanup: nothing private or local is tracked; every tracked file is used. Only `.gitignore` changed (`134c634`: Playwright folders, `.vercel/`). Then, by the user's decision, the 1.48 MB original logo raster moved out of the repo into the gitignored `data/` (kept locally only; earlier commits still contain it): tracked size 3.24 MB to about 1.77 MB.
   - `4cf308f` Node pinned to `22.x` in `engines`. Build, serve, and the full feature and CSP check pass on Node 22.23.3, also with `NEXT_PUBLIC_SITE_URL` set (every absolute URL follows it, trailing slash trimmed, no localhost left).
-- No Vercel deploy yet.
+- **First Vercel deploy (2026-10-15): https://umair-website-pink.vercel.app/** (by the user). Live checks: Vercel's HSTS (`max-age=63072000; includeSubDomains; preload`), the CSP, and the four static headers are served; every route returns 200 with the right type; the full feature and CSP check passes on the live site (zero violations, zero console messages). Still pending: `NEXT_PUBLIC_SITE_URL` is not set yet, so canonical, `og:url`, OG and Twitter image URLs, JSON-LD, robots, and sitemap all say `http://localhost:3000`.
 
 ## Open decisions (ask the user first next session)
+
+0. **Vercel adds `Access-Control-Allow-Origin: *`** to every live response (page, assets, chunks, OG image); `next start` sends none, so it comes from Vercel's CDN, not our config. It conflicts with the "no wildcard ACAO" rule. Real risk is minimal (public, cookie-less static content; `*` never allows credentialed reads). Options: accept it and reword the rule to "never add one ourselves", or try overriding it with the site's own origin in `next.config.js` headers and check after a deploy. Ask first.
 
 1. **Mobile Lighthouse LCP (simulated) stays about 3.7s (score 88 to 89):** the real paint is fixed (observed LCP equals FCP). The rest is JS that the page genuinely needs (React and Next runtime, GSAP for the hero); both cheap fixes were tried and measured (no gain or worse). Accept it unless the user wants a bigger change (for example dropping ScrollSmoother).
 2. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
@@ -116,5 +118,5 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Next steps, in order
 
-1. The user reviews this round and creates the Vercel project. Stop there; ask before building.
-2. First free Vercel deploy (Node 22.x comes from `engines`; set the dashboard to 22.x too so it matches), then set `NEXT_PUBLIC_SITE_URL` and redeploy; re-check canonical, `og:url`, sitemap, robots, and JSON-LD URLs on the live site, and the live headers with `curl -I` (HSTS from Vercel, the four static headers, the CSP).
+1. The user sets `NEXT_PUBLIC_SITE_URL` = `https://umair-website-pink.vercel.app` (Production) in Vercel and redeploys; the user decides open decision 0.
+2. After the redeploy, re-check on the live site: canonical, `og:url`, OG and Twitter image URLs, sitemap, robots, and JSON-LD all use the Vercel URL (no `localhost`), and the headers with `curl -I`. Node 22.x comes from `engines`; the dashboard can be set to 22.x too so it matches.
