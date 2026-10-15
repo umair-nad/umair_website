@@ -13,7 +13,7 @@ Contents: 1 Timeline, 2 Section build records, 3 Decisions and reasoning, 4 Sour
 | 10-04 | Phase 2: `lib/content.ts` (`8798bf9`), strings fact-traced against all sources. Decisions: LinkedIn wins source conflicts; title "QA Engineer"; email only, no phone in site text. |
 | 10-10 | Phase 3: DESIGN.md approved (`d67538b`). Phase 4 step 1: framework upgrade `d37bd0d`, old chrome removed `ed41941`, theme system `f9d3467`, navbar `3d4876b`, docs `519ce51`. Step 2 Hero: `4b03407` (favicon tile), `dda3c6e` (Hero), `80eac6e` (badge spacing). Resume approved for publishing as is. |
 | 10-12 | Workflow change: `redesign` fast-forward merged into `main` and deleted (local and remote), tag `pre-redesign-main` (`261e550`) pushed; `origin/addition-by-ammar` deleted. Then, in one long session: resume move and button, About bento and two later rounds, hero feedback, navigation, Skills wall, Experience, Contact, Footer. |
-| 10-15 | Contact and Footer approved: glow kept (`d4c673d`), footer role line `content.footerRole` (`09fc658`, separator break `3a32be6`); resume stays until Umair sends a new one. SEO pass (step 7): `6ee0017` site URL and metadata, `a2d4d29` sitemap and robots, `b7b5226` OG image, `557ecf4` headshot, `0ddd42b` JSON-LD. `e177e63` README rewrite. |
+| 10-15 | Contact and Footer approved: glow kept (`d4c673d`), footer role line `content.footerRole` (`09fc658`, separator break `3a32be6`); resume stays until Umair sends a new one. SEO pass (step 7): `6ee0017` site URL and metadata, `a2d4d29` sitemap and robots, `b7b5226` OG image, `557ecf4` headshot, `0ddd42b` JSON-LD. `e177e63` README rewrite. Later the same day: SEO approved; "AI & LLM Testing" confirmed by the user (`8dbb78a`); security hardening step 8 except the CSP: `ca32bbb` static headers, `6400757` patch updates, `55e6e4a` verification records; CSP options measured and presented, awaiting the user's choice. |
 
 ---
 
@@ -61,7 +61,25 @@ Contents: 1 Timeline, 2 Section build records, 3 Decisions and reasoning, 4 Sour
 - `557ecf4` headshot 2048px 2.1 MB to 800px 32 KB (sharp, mozjpeg q80; the original had no EXIF, ICC, or XMP). `public/.gitkeep` removed. Every remaining public file is referenced.
 - `0ddd42b` JSON-LD `Person`: one block, parses, no raw `<`, no telephone; `addressCountry` "Pakistan" (split from `content.location`, so not "PK"); `image` from `content.seo.image`. `knowsAbout` includes "AI & LLM Testing" (the testing-types group, as shown on the page; still unconfirmed by Umair).
 - Verified on the production build (`next start -p 3100`): `/`, `/sitemap.xml`, `/robots.txt`, `/opengraph-image`, `/twitter-image`, `/umair-nadeem.jpg`, `/manifest.webmanifest` all 200 with the right types; `lang="en"`; one h1; headings h1, h2 per section, h3 inside, no skipped levels; the one `<img>` has alt, the logo SVG is named, every other SVG is aria-hidden; all link names descriptive; external links `noopener noreferrer`; no unnamed buttons; repeated head tags are only the 5 font preloads, 3 icon formats, and the 2 per-scheme theme-colors.
+- Approved by the user 2026-10-15.
 - Lighthouse 12 (npx, Playwright's Chromium via `CHROME_PATH`): mobile Performance 83, Accessibility 100, Best Practices 100, SEO 100; desktop 100 / 100 / 100 / 100. Mobile LCP 3.8 s: the element is the hero h1, 88% render delay (hidden until the SplitText reveal). Other flags on both: unused JS 74 KiB, legacy JS 13 KiB, DOM 925 elements, cut-out image 37 KiB savings.
+
+### Security hardening (`next.config.js`; DESIGN.md section 10)
+- `ca32bbb` static headers on `/(.*)` and `poweredByHeader: false`, explicit `productionBrowserSourceMaps: false`. `curl -I` on `next start`: the four headers on `/`, `/opengraph-image`, the resume PDF, and a `/_next/static` chunk; no `X-Powered-By`, no `Access-Control-Allow-Origin`. Chromium logs no unrecognized Permissions-Policy features.
+- HSTS: Vercel docs (Encryption and TLS, "Support for HSTS", updated 2026-09-15): `*.vercel.app` gets `max-age=63072000; includeSubDomains; preload`, custom domains `max-age=63072000`, and a project header modifies (replaces) it. So none is set here.
+- `6400757` patch updates (see DESIGN.md 10.6); browser smoke test after: no console messages, globe canvas, 44 skill tiles (31 logos).
+- `55e6e4a` records: source maps (none, `.map` 404), secrets re-scan (history and bundle; only polyfill URL fields), links (6, all `ProfileLink`), `dangerouslySetInnerHTML` (2, static), not-applicable table re-grep.
+- **CSP options, measured 2026-10-15** on `next start` (localhost, Next 16.4.1). Each option was built temporarily in the working tree and reverted; nothing committed. TTFB: 30 requests after 5 warm-ups. Lighthouse 12 mobile performance: median of 3.
+
+  | Build | `/` render | `Cache-Control` | TTFB median / p90 | LH mobile perf | LCP | Works |
+  |---|---|---|---|---|---|---|
+  | Baseline (no CSP) | static (○) | `s-maxage=31536000` | 4.1 / 4.7 ms | 88 | 3.74 s | yes |
+  | A: nonce `proxy.ts`, async layout passes the nonce to `ThemeScript` | dynamic (ƒ) | `private, no-cache, no-store` | 14.0 / 17.4 ms | 88 | 3.72 s | yes: every script nonced, no violations (scroll, globe, copy-email burst, theme toggle) |
+  | B strict: static CSP, `script-src 'self'` | static | cacheable | n/a | n/a | n/a | **no**: 4 inline scripts blocked (theme script plus 3 `self.__next_f` flight scripts), React never hydrates |
+  | B: static CSP, `script-src 'self' 'unsafe-inline'` | static | `s-maxage=31536000` | 3.9 / 4.7 ms | 89 | 3.73 s | yes, no violations |
+  | C: `experimental.sri` + static `script-src 'self'` | static | cacheable | n/a | n/a | n/a | **no**: integrity on 5 of 8 external chunks only; the same 4 inline scripts blocked, no hydration |
+
+  Locally A costs about 10 ms of server time and no Lighthouse points, because the server is on the same machine. On Vercel the difference is structural: B serves `/` from the CDN cache in the visitor's nearest region; A sends every visit to a function in the project's single region (Hobby: one region, default `iad1`, Washington, D.C., per Vercel's region docs), uncached, so a visitor in Islamabad or Cologne pays the transatlantic round trip plus render time (and occasional cold starts) on every load. That was not measured (no deploy yet); it is the expected cost.
 
 ---
 

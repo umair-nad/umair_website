@@ -76,7 +76,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Status (2026-10-15, end of session)
 
-- Last commit before this docs commit: `e177e63`.
+- Last commit before this docs commit: `55e6e4a`.
 - **Every section is rebuilt on the redesign; nothing pre-redesign remains.** Single-page site, nav order Home, About, Skills, Experience, Contact, with a floating mobile nav on phones.
   - Hero: serif headline with the gradient accent word, typing subline, horizon arc and washes, "Let’s Connect", resume download, copy-email with star burst.
   - About bento: role, specializations, cut-out portrait with scrolling words, rotating time zone globe, contact, tools marquee.
@@ -84,20 +84,26 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
   - Experience timeline: three roles and education, scroll-drawn spine, testing types and practices.
   - Contact panel and Footer with the logo credits and the settling waveform.
 - Reviewed and approved by the user: every section (Contact and Footer on 2026-10-15, with the contact glow kept and the footer role line "Software Quality Assurance Engineer | Islamabad, Pakistan" in `content.footerRole`).
-- **SEO pass built (2026-10-15), awaiting the user's review of the results:** `lib/site-url.ts`, title "Umair Nadeem | QA Engineer", canonical, Open Graph (`profile`) and Twitter tags, generated OG and Twitter image (1200x630, light theme), `sitemap.xml`, `robots.txt`, JSON-LD `Person` from content.ts, headshot re-encoded to 800px (32 KB). Audit clean: one h1, no skipped heading levels, alt on every image, descriptive link names, `lang="en"`, no duplicate head tags. Lighthouse SEO 100 on mobile and desktop (details in the log).
+- **SEO pass built and approved (2026-10-15):** `lib/site-url.ts`, title "Umair Nadeem | QA Engineer", canonical, Open Graph (`profile`) and Twitter tags, generated OG and Twitter image (1200x630, light theme), `sitemap.xml`, `robots.txt`, JSON-LD `Person` from content.ts, headshot re-encoded to 800px (32 KB). Audit clean: one h1, no skipped heading levels, alt on every image, descriptive link names, `lang="en"`, no duplicate head tags. Lighthouse SEO 100 on mobile and desktop (details in the log).
 - README rewritten for the current site.
-- Not built yet: security hardening (`proxy.ts` CSP, headers, audit). No Vercel deploy yet. `npm audit` shows 5 high findings in the `eslint-config-next` dev chain only.
+- **Security hardening, everything but the CSP done (2026-10-15):**
+  - Static headers in `next.config.js` on every route: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, a `Permissions-Policy` disabling 13 unused features (clipboard-write left allowed for copy-email); `poweredByHeader: false`; explicit `productionBrowserSourceMaps: false`. Verified with `curl -I` on `next start`.
+  - HSTS deliberately not set: Vercel sends it on every deployment (`max-age=63072000; includeSubDomains; preload` on `*.vercel.app`) and a project header would replace it. Check with `curl -I` after the first deploy.
+  - Verified: no source maps served, no secrets or `.env` in history or the client bundle, all 6 external links `noopener noreferrer`, both `dangerouslySetInnerHTML` uses static and escaped, the not-applicable table (SQLi, CSRF, uploads, SSRF, webhooks) re-checked.
+  - Patch updates: Next 16.4.1, React 19.3.1, lucide-react 1.57.0, eslint-config-next 16.4.1, postcss 8.5.30. `npm audit`: still only the 5 high findings in the dev-only `braces` lint chain. Majors not applied: TypeScript 7, ESLint 10, `@types/node` 26.
+  - **CSP not implemented: three options measured, waiting for the user's choice** (open decision 1; numbers in the log).
+- No Vercel deploy yet.
 
 ## Open decisions (ask the user first next session)
 
-1. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
-2. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
-3. **Mobile performance (direction set by the user 2026-10-15, do it in the final QA step):** Lighthouse mobile Performance 83 (desktop 100). LCP 3.8 s, 88% of it render delay: the LCP element is the hero h1, hidden until the SplitText line reveal runs. Fix: make the h1 visible at first paint and animate only its movement (no opacity from 0), keeping the reveal's feel.
-4. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
+1. **CSP option (the user decides; presented 2026-10-15, measurements in the log section "Security hardening"):** A, a nonce CSP in `proxy.ts` (strictest; makes `/` dynamic and uncacheable, so on Vercel every visit runs a function in `iad1`); B, a static CSP in `next.config.js` (keeps the page static, but `script-src` needs `'unsafe-inline'`, which the CSP rule above forbids, so choosing B means changing that rule); C, experimental SRI (tested: it still needs `'unsafe-inline'` for the inline scripts, so it adds nothing over B). Implement only after the choice.
+2. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
+3. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
+4. **Mobile performance (direction set by the user 2026-10-15, do it in the final QA step):** Lighthouse mobile Performance 83 to 89 across runs (desktop 100). LCP 3.8 s, 88% of it render delay: the LCP element is the hero h1, hidden until the SplitText line reveal runs. Fix: make the h1 visible at first paint and animate only its movement (no opacity from 0), keeping the reveal's feel.
+5. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
 
 ## Next steps, in order
 
-1. The user reviews the SEO results. Stop there; ask before building.
-2. Security hardening (DESIGN.md section 10 and build step 8): CSP with nonce in `proxy.ts`, static headers, dependency audit, source maps off, `rel` audit. The JSON-LD block is a data script (not executed), already escaped.
-3. Final full-page QA at 390, 768, 1024, 1440 in both themes; Lighthouse on mobile and desktop (open decision 3).
-4. First free Vercel deploy, then set `NEXT_PUBLIC_SITE_URL` and redeploy; re-check canonical, `og:url`, sitemap, robots, and JSON-LD URLs on the live site.
+1. The user picks a CSP option (open decision 1). Stop there; implement only the chosen option, then check the console for CSP violations in both themes (scroll, globe, copy-email burst, theme toggle).
+2. Final full-page QA at 390, 768, 1024, 1440 in both themes, including the hero LCP fix (open decision 4); Lighthouse on mobile and desktop.
+3. First free Vercel deploy, then set `NEXT_PUBLIC_SITE_URL` and redeploy; re-check canonical, `og:url`, sitemap, robots, and JSON-LD URLs on the live site, and the live headers with `curl -I` (HSTS from Vercel, the four static headers, the CSP).
