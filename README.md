@@ -1,149 +1,61 @@
-# Umair Nadeem - Portfolio Website
+# Umair Nadeem | QA Engineer
 
-A modern, responsive portfolio website built with Next.js, TypeScript, and Tailwind CSS. Inspired by Brittany Chiang's design, this website showcases Umair Nadeem's experience as a Software Quality Assurance Engineer.
+Personal portfolio of Umair Nadeem, a Software Quality Assurance Engineer. It's a single page (Home, About, Skills, Experience, Contact) with hash-anchor navigation, light and dark themes, and GSAP motion that falls back to a static layout under reduced motion.
 
-## Features
+## Stack
 
-- 🎨 Modern, clean design with smooth animations
-- 📱 Fully responsive across all devices
-- ⚡ Fast performance with Next.js
-- 🎯 SEO optimized
-- 🌙 Dark theme with custom color scheme
-- ✨ Smooth scrolling navigation
-- 📧 Contact form and social links
+- [Next.js 16](https://nextjs.org/) (App Router, Turbopack), React 19, TypeScript 5.9
+- Tailwind CSS 4, CSS-first: design tokens live in `@theme` in `app/globals.css` (no `tailwind.config.js`)
+- GSAP 3 with `@gsap/react` (ScrollTrigger, ScrollSmoother, SplitText)
+- cobe (the About time zone globe), canvas-confetti (the copy-email star burst)
+- lucide-react icons, Simple Icons logos on the Skills & Tools wall
+- Fonts via `next/font`: EB Garamond, Alata, Source Code Pro
 
-## Tech Stack
+## Getting started
 
-- **Framework**: Next.js 14 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: GSAP, with ScrollTrigger, ScrollSmoother, and SplitText
-- **3D**: Three.js (lazy-loaded, isolated to the Hero section)
-- **Icons**: Lucide React
-- **Fonts**: Bricolage Grotesque, Satoshi, and JetBrains Mono
+Requires Node.js 20.9 or newer (22.x recommended) and npm.
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd umair-nadeem-portfolio
-```
-
-2. Install dependencies:
 ```bash
 npm install
-# or
-yarn install
+npm run dev        # http://localhost:3000
 ```
 
-3. Run the development server:
-```bash
-npm run dev
-# or
-yarn dev
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm start` | Serve the production build |
+| `npm run lint` | ESLint (`next build` does not lint) |
+| `npx tsc --noEmit` | Type check |
+
+## Environment
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | The site's absolute origin, e.g. `https://example.vercel.app`. Every absolute URL (canonical, Open Graph, sitemap, robots, JSON-LD) is built from it in `lib/site-url.ts`. Falls back to `http://localhost:3000` for development; a production build without it logs a warning. It is inlined at build time, so changing it needs a redeploy. |
+
+## Project layout
+
+```
+app/          layout (fonts, metadata), page, globals.css, icons, manifest,
+              opengraph-image, twitter-image, sitemap, robots
+components/   one file per section (Navbar, Hero, About, Skills, Experience,
+              Contact, Footer), shared controls, and their parts in subfolders
+lib/          content.ts (all site copy), site-url.ts, theme, scroll, motion,
+              and GSAP helpers
+public/       portrait cut-out, headshot (JSON-LD), resume PDF, Android icons
+assets/       non-public sources: the monogram (brand/) and the Open Graph
+              image fonts (fonts/, with their OFL licenses)
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+All copy comes from `lib/content.ts`; edit it there, not in the components. Design decisions are recorded in `DESIGN.md`.
 
-## Project Structure
+## Notes
 
-```
-├── app/
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── Navbar.tsx
-│   ├── Hero.tsx
-│   ├── About.tsx
-│   ├── Experience.tsx
-│   ├── Skills.tsx
-│   ├── Contact.tsx
-│   └── Footer.tsx
-├── public/
-│   └── umair-nadeem-qa-engineer-resume.pdf   # public resume ("Download resume")
-├── package.json
-├── tailwind.config.js
-├── next.config.js
-└── README.md
-```
+- The site is static: no forms, API routes, server actions, or cookies. Email is the only direct contact method, and there is no contact form.
+- SEO: per-page title and description, canonical URL, Open Graph and Twitter cards with a generated 1200x630 image, `sitemap.xml`, `robots.txt`, and a JSON-LD `Person`.
+- Deployment target: Vercel. After the first deploy, set `NEXT_PUBLIC_SITE_URL` for Production and redeploy.
 
-## Customization
+## Credits
 
-### Colors
-The color scheme can be customized in `tailwind.config.js`:
-- Primary: `#64ffda` (Cyan)
-- Dark: `#0a192f` (Navy)
-- Light: `#ccd6f6` (Light Blue)
-- Slate: `#8892b0` (Gray)
-
-### Content
-Update the content in each component file to match your information:
-- Personal details in `Hero.tsx`
-- About section in `About.tsx`
-- Work experience in `Experience.tsx`
-- Skills in `Skills.tsx`
-- Contact information in `Contact.tsx`
-
-## Deployment
-
-### Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically
-
-### Other Platforms
-The app can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-
-## Build Commands
-
-```bash
-# Development
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Lint code
-npm run lint
-```
-
-## Performance
-
-- Core Web Vitals: Optimized
-- Bundle Size: Optimized with Next.js
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## Contact
-
-- **Email**: umiiawan06@gmail.com
-- **LinkedIn**: [Umair Nadeem](https://www.linkedin.com/in/umair-nadeem-qa/)
-- **Upwork**: [Umair Nadeem](https://www.upwork.com/freelancers/~01862b323ce960e4b6)
-
----
-
-Built with ❤️ by Umair Nadeem 
+Tool logos via [Simple Icons](https://simpleicons.org/); all marks belong to their owners. Git logo by Jason Long, CC BY 3.0. Jenkins logo, CC BY-SA 3.0. Apache JMeter logo, Apache License 2.0. EB Garamond and Source Code Pro are licensed under the SIL Open Font License 1.1.
