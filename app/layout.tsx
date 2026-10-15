@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Alata, EB_Garamond, Source_Code_Pro } from 'next/font/google'
 import ThemeScript from '@/components/theme/ThemeScript'
 import { THEME_COLOR } from '@/lib/theme'
+import { content } from '@/lib/content'
+import { SITE_URL } from '@/lib/site-url'
 import './globals.css'
 
 // The three faces from DESIGN.md section 4, all self-hosted by next/font.
@@ -27,17 +29,29 @@ const sourceCodePro = Source_Code_Pro({
   display: 'swap',
 })
 
-const title = 'Umair Nadeem - SQA Engineer'
-const description =
-  'Software Quality Assurance Engineer with over 3 years of experience in ensuring high-quality software solutions.'
+// All metadata lives here plus the Next.js file conventions (DESIGN.md
+// section 9): copy from content.seo, absolute URLs from SITE_URL.
+const { title, description } = content.seo
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title,
   description,
+  applicationName: content.name,
+  authors: [{ name: content.name, url: SITE_URL }],
+  creator: content.name,
+  alternates: { canonical: '/' },
   openGraph: {
+    type: 'profile',
+    url: '/',
+    siteName: content.name,
     title,
     description,
-    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description,
   },
 }
 

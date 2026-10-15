@@ -338,7 +338,7 @@ export const content = {
   },
 
   seo: {
-    title: "Umair Nadeem - QA Engineer",
+    title: "Umair Nadeem | QA Engineer",
     description:
       "Software Quality Assurance Engineer with 5+ years of experience in manual, API, and automated testing across web and mobile applications.",
   },
