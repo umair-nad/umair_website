@@ -6,6 +6,7 @@ import { gsap, SplitText, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { scrollToHash } from '@/lib/scroll'
 import { content } from '@/lib/content'
+import { ACCENT_WORD, AFTER, BEFORE, HAS_ACCENT } from '@/lib/hero-headline'
 import CopyEmail from '@/components/hero/CopyEmail'
 import PrimaryCta from '@/components/PrimaryCta'
 import ResumeButton from '@/components/ResumeButton'
@@ -13,19 +14,8 @@ import { HeroArc, HeroWashes } from '@/components/hero/HeroAtmosphere'
 
 registerGsap()
 
-// Every string comes from lib/content.ts (DESIGN.md 11.1).
-// The headline is the bio's first sentence, shown with a typographic
-// apostrophe (the content.ts string itself stays verbatim).
-const HEADLINE = content.bio.slice(0, content.bio.indexOf('.') + 1).replace(/'/g, '’')
-const ACCENT_WORD = 'break'
-
-// Splits the headline around the one accent word (rendered as plain text if
-// the bio ever stops containing it, rather than breaking the hero).
-const [BEFORE, AFTER] = (() => {
-  const i = HEADLINE.indexOf(ACCENT_WORD)
-  return i === -1 ? [HEADLINE, ''] : [HEADLINE.slice(0, i), HEADLINE.slice(i + ACCENT_WORD.length)]
-})()
-const HAS_ACCENT = HEADLINE.includes(ACCENT_WORD)
+// Every string comes from lib/content.ts (DESIGN.md 11.1); the headline is
+// derived in lib/hero-headline.ts (shared with the Open Graph image).
 
 const [SUB_A, SUB_B] = content.heroSubline
 const SUBLINE = `${SUB_A} | ${SUB_B}`
