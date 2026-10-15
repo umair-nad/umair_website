@@ -76,7 +76,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Status (2026-10-15, end of session)
 
-- Last commit before this docs commit: `76218ce`.
+- Last commit before this docs commit: `4cf308f`.
 - **Every section is rebuilt on the redesign; nothing pre-redesign remains.** Single-page site, nav order Home, About, Skills, Experience, Contact, with a floating mobile nav on phones.
   - Hero: serif headline with the gradient accent word, typing subline, horizon arc and washes, "Let’s Connect", resume download, copy-email with star burst.
   - About bento: role, specializations, cut-out portrait with scrolling words, rotating time zone globe, contact, tools marquee.
@@ -98,12 +98,18 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
   - Keyboard: visible ring on every stop, no traps, skip link works, order hero, About, Skills, Contact, footer (Experience has no focusables).
   - Portrait now loads a 384px file on 1x desktops (`76218ce`; 16 KB instead of 50 KB).
   - Lighthouse (median of 3): mobile 88 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100 (Performance, Accessibility, Best Practices, SEO); CLS 0.01 or less.
+  - Final QA approved by the user (2026-10-15).
+- **Pre-deploy round (2026-10-15):**
+  - `809cc0e` unrevealed sections are keyboard reachable: `lib/reveal.ts` (opacity 0 + pointer-events none until revealed; keyboard focus reveals the section at once); the hero CTAs follow the same rule and keyboard focus finishes the hero intro. Tabbing right after the load event reaches every section at 390 and 1440; mouse timing unchanged (sampled per frame).
+  - JS size: both experiments measured and reverted, nothing committed. A modern `browserslist` changes nothing (Next 16 already targets Chrome/Edge 111, Firefox 111, Safari 16.4, and its framework polyfills ship regardless). Lazy-loading the four sections with `next/dynamic` made mobile worse (89 to 86, LCP 3.72 to 3.87 s, JS 215 to 229 KiB).
+  - Cleanup: nothing private or local is tracked; every tracked file is used. Only `.gitignore` changed (`134c634`: Playwright folders, `.vercel/`). Tracked size 3.24 MB, unchanged; the 1.48 MB `assets/brand/un-monogram-original.png` is kept (open decision 2).
+  - `4cf308f` Node pinned to `22.x` in `engines`. Build, serve, and the full feature and CSP check pass on Node 22.23.3, also with `NEXT_PUBLIC_SITE_URL` set (every absolute URL follows it, trailing slash trimmed, no localhost left).
 - No Vercel deploy yet.
 
 ## Open decisions (ask the user first next session)
 
-1. **Early Tab skips sections (found in final QA, not changed):** for the first ~2.5s after load (until the CSS failsafe, or until each section's scroll reveal), `[data-reveal]` elements are `visibility: hidden`, so a keyboard user who tabs right away jumps from the hero to the footer. After that, everything is reachable. Recommended fix: hide reveals with opacity only (keep them focusable) and reveal a section instantly on `focusin`; it touches the reveal pattern in every section, so ask first.
-2. **Mobile Lighthouse LCP (simulated) still 3.7s:** the real paint is fixed (observed LCP equals FCP); the simulated number is the async JS download on slow 4G (Lighthouse flags 74 KiB unused JS and 13 KiB legacy polyfills). Options: accept it, or try a `browserslist` that drops the legacy polyfills and lazy-load below-the-fold code. Ask before changing.
+1. **Mobile Lighthouse LCP (simulated) stays about 3.7s (score 88 to 89):** the real paint is fixed (observed LCP equals FCP). The rest is JS that the page genuinely needs (React and Next runtime, GSAP for the hero); both cheap fixes were tried and measured (no gain or worse). Accept it unless the user wants a bigger change (for example dropping ScrollSmoother).
+2. **`assets/brand/un-monogram-original.png` (1.48 MB, 46% of tracked bytes):** Umair's original raster logo, kept for reference per DESIGN.md section 6; used by nothing. Removing it from the tree is the user's call (it stays in history either way).
 3. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
 4. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
 5. **Major upgrades available (not applied):** TypeScript 7, ESLint 10 (blocked by `eslint-config-next` plugin peer ranges), `@types/node` 26 (stay on 22 to match Node 22).
@@ -111,5 +117,5 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Next steps, in order
 
-1. The user reviews the final QA results and decides open decisions 1 and 2. Stop there; ask before building.
-2. First free Vercel deploy (Node 22.x in the project settings), then set `NEXT_PUBLIC_SITE_URL` and redeploy; re-check canonical, `og:url`, sitemap, robots, and JSON-LD URLs on the live site, and the live headers with `curl -I` (HSTS from Vercel, the four static headers, the CSP).
+1. The user reviews this round and creates the Vercel project. Stop there; ask before building.
+2. First free Vercel deploy (Node 22.x comes from `engines`; set the dashboard to 22.x too so it matches), then set `NEXT_PUBLIC_SITE_URL` and redeploy; re-check canonical, `og:url`, sitemap, robots, and JSON-LD URLs on the live site, and the live headers with `curl -I` (HSTS from Vercel, the four static headers, the CSP).
