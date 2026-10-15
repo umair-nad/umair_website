@@ -39,7 +39,7 @@ export default function Footer() {
       <div className="mt-10 flex flex-col gap-12 border-b border-line pb-12 md:flex-row md:justify-between md:gap-8">
         <div className="max-w-sm">
           <Logo className="h-10 w-auto text-fg" label={content.name} />
-          <p className="mt-4 font-sans text-sm leading-relaxed text-muted">{content.seo.description}</p>
+          <p className="mt-4 font-sans text-sm leading-relaxed text-muted">{content.footerRole}</p>
           <div className="mt-6">
             <ResumeButton />
           </div>

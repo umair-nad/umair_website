@@ -88,6 +88,8 @@ export interface SiteContent {
   links: SiteLink[];
   /** Hero subline, in two parts joined by " | " (one line from sm, two below). */
   heroSubline: [string, string];
+  /** The footer's one role line, under the logo. */
+  footerRole: string;
   /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA.
    *  headline: the contact panel's h2 (before, accent word, after). line: its static terminal line. */
   contact: { email: string; cta: string; headline: [string, string, string]; line: string };
@@ -105,6 +107,9 @@ export const content = {
   // Wording set by the user (2026-10-12), typographic apostrophe included.
   // Reads "Hello I’m Umair | A Software Quality Assurance Engineer".
   heroSubline: ["Hello I’m Umair", "A Software Quality Assurance Engineer"],
+  // Wording set by the user (2026-10-15), replacing content.seo.description
+  // in the footer.
+  footerRole: "Software Quality Assurance Engineer | Islamabad, Pakistan",
   // Derived from the location, not a claim about Umair's working hours
   // (DESIGN.md 11.2). Pakistan observes no daylight saving time.
   timeZone: { iana: "Asia/Karachi", abbr: "PKT", label: "PKT (UTC+5)" },

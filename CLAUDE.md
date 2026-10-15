@@ -90,7 +90,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 ## Open decisions (ask the user first next session)
 
 1. **Contact panel cyan glow:** approved by the user (2026-10-15); it stays.
-2. **Footer role sentence:** keep the long `content.seo.description` sentence (three lines on desktop) or use "QA Engineer | Islamabad, Pakistan" (`content.title` and `content.location`).
+2. **Footer role sentence:** settled (2026-10-15): "Software Quality Assurance Engineer | Islamabad, Pakistan" (`content.footerRole`).
 3. **Updated resume:** the current PDF has the old email and the phone number; replace `public/umair-nadeem-qa-engineer-resume.pdf` when Umair sends a new one.
 4. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; whether he tested AI modules (the "AI & LLM Testing" chip rests on his LinkedIn headline alone); which automation tools he uses at Smart In Media.
 5. Smaller: re-encode the 2.1 MB `umair-nadeem.jpg` (about quality 80; it is no longer displayed, only needed for JSON-LD or OG), and what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
