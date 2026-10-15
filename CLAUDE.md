@@ -20,7 +20,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - `lib/` `content.ts` is the typed source of ALL site copy (no CMS); also site-url.ts (`SITE_URL`), hero-headline.ts (shared by the hero and the OG image), nav.ts (section list), scroll.ts, motion-preferences.ts, theme.ts, local-time.ts, tool-icons.ts, star-burst.ts, gsap.ts
 - `public/` includes `umair-nadeem-cutout.webp` (About portrait), `umair-nadeem-qa-engineer-resume.pdf` (public resume, path `content.resume.href`), `umair-nadeem.jpg` (800px headshot, used only as the JSON-LD image, `content.seo.image`)
 - `assets/` non-public, never serve from it: `brand/` logo sources (`un-monogram.svg` is the logo source of truth), `fonts/` static TTFs for the OG image with their OFL licenses
-- `data/` Umair's LinkedIn export (private; do not confuse with the resume PDF). `refrence/` (sic, one "e" missing; "reference/" means this folder) holds screenshots of dhirajbhawsar.in for inspiration. `review/` holds local review screenshots. All three are gitignored.
+- `data/` Umair's LinkedIn export (private; do not confuse with the resume PDF) and, since 2026-10-15, the original logo raster `un-monogram-original.png` (kept locally only, not in the repo). `refrence/` (sic, one "e" missing; "reference/" means this folder) holds screenshots of dhirajbhawsar.in for inspiration. `review/` holds local review screenshots. All three are gitignored.
 
 ## Standing rules
 
@@ -102,18 +102,17 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - **Pre-deploy round (2026-10-15):**
   - `809cc0e` unrevealed sections are keyboard reachable: `lib/reveal.ts` (opacity 0 + pointer-events none until revealed; keyboard focus reveals the section at once); the hero CTAs follow the same rule and keyboard focus finishes the hero intro. Tabbing right after the load event reaches every section at 390 and 1440; mouse timing unchanged (sampled per frame).
   - JS size: both experiments measured and reverted, nothing committed. A modern `browserslist` changes nothing (Next 16 already targets Chrome/Edge 111, Firefox 111, Safari 16.4, and its framework polyfills ship regardless). Lazy-loading the four sections with `next/dynamic` made mobile worse (89 to 86, LCP 3.72 to 3.87 s, JS 215 to 229 KiB).
-  - Cleanup: nothing private or local is tracked; every tracked file is used. Only `.gitignore` changed (`134c634`: Playwright folders, `.vercel/`). Tracked size 3.24 MB, unchanged; the 1.48 MB `assets/brand/un-monogram-original.png` is kept (open decision 2).
+  - Cleanup: nothing private or local is tracked; every tracked file is used. Only `.gitignore` changed (`134c634`: Playwright folders, `.vercel/`). Then, by the user's decision, the 1.48 MB original logo raster moved out of the repo into the gitignored `data/` (kept locally only; earlier commits still contain it): tracked size 3.24 MB to about 1.77 MB.
   - `4cf308f` Node pinned to `22.x` in `engines`. Build, serve, and the full feature and CSP check pass on Node 22.23.3, also with `NEXT_PUBLIC_SITE_URL` set (every absolute URL follows it, trailing slash trimmed, no localhost left).
 - No Vercel deploy yet.
 
 ## Open decisions (ask the user first next session)
 
 1. **Mobile Lighthouse LCP (simulated) stays about 3.7s (score 88 to 89):** the real paint is fixed (observed LCP equals FCP). The rest is JS that the page genuinely needs (React and Next runtime, GSAP for the hero); both cheap fixes were tried and measured (no gain or worse). Accept it unless the user wants a bigger change (for example dropping ScrollSmoother).
-2. **`assets/brand/un-monogram-original.png` (1.48 MB, 46% of tracked bytes):** Umair's original raster logo, kept for reference per DESIGN.md section 6; used by nothing. Removing it from the tree is the user's call (it stays in history either way).
-3. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
-4. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
-5. **Major upgrades available (not applied):** TypeScript 7, ESLint 10 (blocked by `eslint-config-next` plugin peer ranges), `@types/node` 26 (stay on 22 to match Node 22).
-6. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
+2. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
+3. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
+4. **Major upgrades available (not applied):** TypeScript 7, ESLint 10 (blocked by `eslint-config-next` plugin peer ranges), `@types/node` 26 (stay on 22 to match Node 22).
+5. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
 
 ## Next steps, in order
 
