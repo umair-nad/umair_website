@@ -31,6 +31,8 @@ const CREDITS = (
   </>
 )
 
+const [ROLE_A, ROLE_B] = content.footerRole.split(' | ')
+
 export default function Footer() {
   return (
     <footer className="mx-auto max-w-360 px-4 pt-12 pb-28 sm:px-6 md:px-8 md:pb-10">
@@ -39,7 +41,10 @@ export default function Footer() {
       <div className="mt-10 flex flex-col gap-12 border-b border-line pb-12 md:flex-row md:justify-between md:gap-8">
         <div className="max-w-sm">
           <Logo className="h-10 w-auto text-fg" label={content.name} />
-          <p className="mt-4 font-sans text-sm leading-relaxed text-muted">{content.footerRole}</p>
+          {/* Each part stays whole, so narrow screens break at the separator. */}
+          <p className="mt-4 font-sans text-sm leading-relaxed text-muted">
+            {keep(ROLE_A)} | {keep(ROLE_B)}
+          </p>
           <div className="mt-6">
             <ResumeButton />
           </div>
