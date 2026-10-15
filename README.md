@@ -13,7 +13,7 @@ Personal portfolio of Umair Nadeem, a Software Quality Assurance Engineer. It's 
 
 ## Getting started
 
-Requires Node.js 20.9 or newer (22.x recommended) and npm.
+Requires Node.js 22.x (pinned in `package.json` `engines`, which is also what Vercel deploys with) and npm. Newer Node versions build fine but npm prints an `EBADENGINE` warning.
 
 ```bash
 npm install

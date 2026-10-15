@@ -61,7 +61,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - Every absolute URL (metadataBase, canonical, sitemap, robots, JSON-LD, OG) comes from `SITE_URL` in `lib/site-url.ts` (reads `NEXT_PUBLIC_SITE_URL`, fallback `http://localhost:3000`). Never hard-code or invent a domain.
 
 ### Deployment
-- Vercel free tier first, no domain yet. Node 20.9+ (`engines` set; use 22.x). After the first deploy set `NEXT_PUBLIC_SITE_URL` (Production) to the deployment URL and redeploy (inlined at build time); update it again if a custom domain is added.
+- Vercel free tier first, no domain yet. Node 22.x, pinned by `engines` `"22.x"` (2026-10-15): Vercel lets `engines` override the dashboard and maps a range like `>=20.9.0` to its newest major (24.x), so the pin is what keeps deploys on 22. Local Node 25 builds fine with an `EBADENGINE` warning. After the first deploy set `NEXT_PUBLIC_SITE_URL` (Production) to the deployment URL and redeploy (inlined at build time); update it again if a custom domain is added.
 
 ### Workflow
 - Work directly in the session; no workflows or multi-agent runs unless the user explicitly asks (saves usage).
