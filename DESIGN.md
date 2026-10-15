@@ -23,7 +23,7 @@ Dials: `DESIGN_VARIANCE: 7`, `MOTION_INTENSITY: 6`, `VISUAL_DENSITY: 4`.
 
 ### What we deliberately do differently
 
-- **Hero atmosphere only (approved by the user 2026-10-12).** The reference's hero has warm corner light washes and a glowing horizon arc in both modes; we rebuild those two from our own measurements (section 2). Every other cosmic or ambient element of the reference stays excluded: animated glow pulses and drifts, the spotlight motion, glow blobs in other sections, grain, and page-wide washes. Two static exceptions match a section's own glow on the reference, with no motion, blur filter, or grain: the Skills wall's glow (approved with the wall, 2026-10-12; 11.4) and the contact panel's two cyan pools (built 2026-10-12, awaiting the user's review; 11.5).
+- **Hero atmosphere only (approved by the user 2026-10-12).** The reference's hero has warm corner light washes and a glowing horizon arc in both modes; we rebuild those two from our own measurements (section 2). Every other cosmic or ambient element of the reference stays excluded: animated glow pulses and drifts, the spotlight motion, glow blobs in other sections, grain, and page-wide washes. Two static exceptions match a section's own glow on the reference, with no motion, blur filter, or grain: the Skills wall's glow (approved with the wall, 2026-10-12; 11.4) and the contact panel's two cyan pools (approved by the user 2026-10-15; 11.5).
 - **QA signature:** the waveform survives in one place, the WaveformDivider before the footer (section 2, 11.6). The hero trace was replaced by the horizon arc on 2026-10-12.
 - **Correct system-preference mapping.** The reference uses next-themes with inverted styling: its `dark` class renders the white page, so a visitor whose OS prefers dark gets the white page. We map OS dark to our dark theme.
 - **Contrast fixes.** Several reference colors fail WCAG AA for the way we use them (section 3). Where that happens we keep the closest passing value from the reference's own palette and say so in the table.
@@ -69,7 +69,7 @@ Our own CSS in `components/hero/HeroAtmosphere.tsx`, built from playwright-cli m
 
 - **WaveformDivider:** neutral stroke, `fg` at 12% (black/12 in light, white/12 in dark). `aria-hidden` decoration, one place only: before the footer, where it settles toward a flat line as the page ends (11.6). Nothing else on the page draws a waveform.
 
-Grain: none. Glow surfaces: the hero atmosphere above, plus two static section glows, the Skills wall's (11.4) and the contact panel's cyan pools (11.5; open decision: keep or remove).
+Grain: none. Glow surfaces: the hero atmosphere above, plus two static section glows, the Skills wall's (11.4) and the contact panel's cyan pools (11.5; approved 2026-10-15).
 
 ---
 
@@ -463,7 +463,7 @@ The middle-dot rule from revision 1 no longer applies: the time-zone card now sp
 **Built 2026-10-12** (`components/Contact.tsx`), after the reference's closing panel on its home page, measured in both themes at 1440 and 390 (2026-10-12).
 
 - **Panel (measured):** inside a 1440px-wide container with 8px side margins on phones, 24px from sm, 32px from md, so it is 1376x600 at 1440 and 374x549 at 390, wider than the 1280px sections above, as on the reference. At least 60vh tall (65vh below md), never under 448px; 14px radius; 5% `fg` hairline. Everything centered on it, 80px vertical padding so nothing clips on short screens.
-- **Atmosphere (static; open decision: the user decides whether the glow stays):** the reference fills the panel with two blurred cyan blobs that pulse and drift, a frosted layer, grain, and an edge vignette. Ours keeps the look and drops the motion: fill `cta-panel` (light `#f8f9fa`, dark `#000`), two radial cyan pools centered at 30%/30% and 70%/70% (36% x 48% of the panel from md; wider, 70% x 42%, on phones), colors fitted to the sampled peaks (`--cta-glow`), then the reference's edge vignette (transparent center to white/60 light, black/80 dark at 110%). No blur filter, no animation, no grain. If the user prefers the original no-glow plan, remove the glow layer; the vignette alone reads as a plain panel.
+- **Atmosphere (static; the glow is approved by the user, 2026-10-15):** the reference fills the panel with two blurred cyan blobs that pulse and drift, a frosted layer, grain, and an edge vignette. Ours keeps the look and drops the motion: fill `cta-panel` (light `#f8f9fa`, dark `#000`), two radial cyan pools centered at 30%/30% and 70%/70% (36% x 48% of the panel from md; wider, 70% x 42%, on phones), colors fitted to the sampled peaks (`--cta-glow`), then the reference's edge vignette (transparent center to white/60 light, black/80 dark at 110%). No blur filter, no animation, no grain.
 - **Content, from `content.contact`:**
   1. `h2` "Ship it *tested*." (`content.contact.headline`, approved as written 2026-10-10) in EB Garamond, 44px, 60px at md, 72px at lg (the reference's large headline line measures 72px), "tested" in the gradient accent.
   2. The terminal line `umair@qa: all checks passed. ready when you are.` (`content.contact.line`, approved as written 2026-10-10), plain static text (user decision 2026-10-12): Source Code Pro 14/16px in an inset 14px-radius box (`line` border, `surface`/60 light, white/5 dark), the prompt `umair@qa` in `accent`, the colon `muted`, then a static (never blinking) cursor block that stays on the last word's line when the text wraps, left-aligned like a terminal.
@@ -486,7 +486,7 @@ No contact form (nothing to back it), no booking tool (none exists in sources), 
 
 ## 12. Explicitly out of scope
 
-Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Spotify, command palette / ⌘K (can be proposed later as its own item), visitor counter, weather widget, greeting text, the reference's cosmic and ambient effects beyond the approved hero washes and horizon arc and the two static section glows (Skills, approved; contact panel, awaiting review) (animated glow pulses and drifts, spotlight motion, other glow blobs, grain), its novelty fonts (Shadows Into Light, Henny Penny), projects section (`content.projects` is empty), certifications section (empty), phone number anywhere, any metric/tool/claim not present in `lib/content.ts`.
+Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Spotify, command palette / ⌘K (can be proposed later as its own item), visitor counter, weather widget, greeting text, the reference's cosmic and ambient effects beyond the approved hero washes and horizon arc and the two static section glows (Skills and the contact panel, both approved) (animated glow pulses and drifts, spotlight motion, other glow blobs, grain), its novelty fonts (Shadows Into Light, Henny Penny), projects section (`content.projects` is empty), certifications section (empty), phone number anywhere, any metric/tool/claim not present in `lib/content.ts`.
 
 ## 13. Build order (Phase 4+, one step per review stop)
 

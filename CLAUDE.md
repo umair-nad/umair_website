@@ -44,7 +44,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - The site is a QA engineer's: present QA and test automation, not a developer profile.
 - No em dashes anywhere in site text (or docs). Typographic apostrophes.
 - Exactly two marquees are approved (About tools, portrait word rows); ask before any other. The About time zone card has the dot-matrix globe with Islamabad and Cologne markers and no remote-work claim.
-- Glow: hero washes and arc are approved for the hero only. Hero glows are rebuilt from our own measurements, no reference code or assets. Static section glows (no motion, blur filter, or grain) exist on the Skills wall and the contact panel (the latter is an open decision). Every other cosmic or ambient effect stays excluded.
+- Glow: hero washes and arc are approved for the hero only. Hero glows are rebuilt from our own measurements, no reference code or assets. Static section glows (no motion, blur filter, or grain) exist on the Skills wall and the contact panel (both approved). Every other cosmic or ambient effect stays excluded.
 - Text selection is disabled site-wide by the user's decision (email, inputs, `data-selectable` stay selectable). Never block copy, cut, the context menu, or shortcuts.
 - One contact label site-wide: "Let’s Connect" (`content.contact.cta`).
 
@@ -89,7 +89,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Open decisions (ask the user first next session)
 
-1. **Contact panel cyan glow:** keep or remove (one `aria-hidden` layer in `components/Contact.tsx`; DESIGN.md 11.5).
+1. **Contact panel cyan glow:** approved by the user (2026-10-15); it stays.
 2. **Footer role sentence:** keep the long `content.seo.description` sentence (three lines on desktop) or use "QA Engineer | Islamabad, Pakistan" (`content.title` and `content.location`).
 3. **Updated resume:** the current PDF has the old email and the phone number; replace `public/umair-nadeem-qa-engineer-resume.pdf` when Umair sends a new one.
 4. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; whether he tested AI modules (the "AI & LLM Testing" chip rests on his LinkedIn headline alone); which automation tools he uses at Smart In Media.
