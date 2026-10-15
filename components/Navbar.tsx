@@ -160,8 +160,10 @@ const Navbar = () => {
             <Logo className="h-8 w-auto" />
           </a>
 
-          {/* Center: the pill (md and up), centered on the row */}
-          <ul className="absolute left-1/2 top-0 hidden h-10 -translate-x-1/2 items-center gap-0.5 rounded-card border border-line bg-black/10 px-1.25 backdrop-blur-md md:flex dark:bg-white/5">
+          {/* Center: the pill (md and up), centered on the row. w-max: as an
+              absolute box at left-1/2 it would otherwise shrink to half the
+              row, which wrapped "Let’s Connect" from 768 to 1023px. */}
+          <ul className="absolute left-1/2 top-0 hidden h-10 w-max -translate-x-1/2 items-center gap-0.5 rounded-card border border-line bg-black/10 px-1.25 backdrop-blur-md md:flex dark:bg-white/5">
             {navItems.map((item) => (
               <li key={item.name}>
                 <a
