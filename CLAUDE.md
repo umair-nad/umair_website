@@ -4,7 +4,7 @@ Guidance for Claude Code in this repository. Design source of truth: `DESIGN.md`
 
 ## Project
 
-Personal portfolio of Umair Nadeem, a QA engineer (Software Quality Assurance). Single-page site, all sections on one route with hash-anchor navigation, on `main`. Hosting plan: Vercel free tier.
+Personal portfolio of Umair Nadeem, a QA engineer (Software Quality Assurance). Single-page site, all sections on one route with hash-anchor navigation, on `main`. Live on Vercel (free tier): https://umair-nadeem.vercel.app.
 
 - Stack: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9, Tailwind CSS 4 (CSS-first: tokens in `@theme` in `app/globals.css`, no `tailwind.config.js`), npm
 - Motion: GSAP 3 + @gsap/react (ScrollTrigger, ScrollSmoother, SplitText via `lib/gsap.ts`); cobe 2 for the About globe only; canvas-confetti for the copy-email star burst only (dynamic imports)
@@ -29,7 +29,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - Before each push run `npm run lint` and `npx tsc --noEmit`, plus `npm run build` when components or config change. Never force-push.
 - Git identity is Umair Nadeem <uminadeem06@gmail.com>, already set: do not change git config. Commits carry no Claude co-author line (attribution is off in the uncommitted `.claude/settings.local.json`).
 - Never commit anything inside `data/`, `refrence/`, or `review/`. Tag `pre-redesign-main` preserves the old site; leave tag `0.001` alone.
-- Once Vercel deploys `main`, every push deploys, so every commit must build. Stop for the user's review after each section.
+- **Every push to `main` deploys to production automatically**, so push only reviewed work and every commit must build. Stop for the user's review after each section.
 
 ### Content
 - Sources: `data/` (LinkedIn PDF), the public resume, existing site content, and facts the user states in chat. LinkedIn wins conflicts. Never invent projects, metrics, dates, tools, or achievements; if something is missing, stop and ask.
@@ -51,7 +51,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 ### Security (details in DESIGN.md section 10)
 - CSP (user decision 2026-10-15, option B): a static policy in `next.config.js` so the page stays prerendered. `script-src 'self' 'unsafe-inline'` (Next's inline flight scripts and the theme script need it without nonces); `'unsafe-eval'` is never allowed in production (development only). Everything else same-origin, no wildcards. **If a form, login, or anything sensitive is ever added, switch to the nonce CSP in `proxy.ts` (option A, DESIGN.md 10.1) first.** No new third-party script, style, font, image, or connect origins without updating the CSP and asking.
 - `dangerouslySetInnerHTML` only for the static theme script and the JSON-LD block (`JSON.stringify` with `<` escaped to `<`, built only from `lib/content.ts`).
-- Every `target="_blank"` link has `rel="noopener noreferrer"`. Production source maps off. No wildcard `Access-Control-Allow-Origin`.
+- Every `target="_blank"` link has `rel="noopener noreferrer"`. Production source maps off. Never add a wildcard `Access-Control-Allow-Origin` ourselves (Vercel's CDN currently adds one; open decision).
 - No secrets in the repo; `.env*` gitignored; only safe `NEXT_PUBLIC_*` in client code.
 - No forms, API routes, server actions, uploads, webhooks, or server-side fetches. If any is added, CSRF protection, server-side validation, and rate limiting become required and DESIGN.md 10.7 must be redone first.
 - Ask before any major dependency upgrade.
@@ -61,7 +61,9 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - Every absolute URL (metadataBase, canonical, sitemap, robots, JSON-LD, OG) comes from `SITE_URL` in `lib/site-url.ts` (reads `NEXT_PUBLIC_SITE_URL`, fallback `http://localhost:3000`). Never hard-code or invent a domain.
 
 ### Deployment
-- Vercel free tier first, no domain yet. Node 22.x, pinned by `engines` `"22.x"` (2026-10-15): Vercel lets `engines` override the dashboard and maps a range like `>=20.9.0` to its newest major (24.x), so the pin is what keeps deploys on 22. Local Node 25 builds fine with an `EBADENGINE` warning. After the first deploy set `NEXT_PUBLIC_SITE_URL` (Production) to the deployment URL and redeploy (inlined at build time); update it again if a custom domain is added.
+- Vercel free tier, project linked to the GitHub repo; production branch `main`; no custom domain. Official address https://umair-nadeem.vercel.app.
+- Node 22.x, pinned by `engines` `"22.x"`: Vercel lets `engines` override the dashboard and maps a range like `>=20.9.0` to its newest major (24.x). Local Node 25 builds fine with an `EBADENGINE` warning.
+- `NEXT_PUBLIC_SITE_URL` (Production) must be the full origin with `https://` (a value without the scheme fails the build with `Invalid URL`). It is inlined at build time: change it, then redeploy. Update it if a custom domain is added.
 
 ### Workflow
 - Work directly in the session; no workflows or multi-agent runs unless the user explicitly asks (saves usage).
@@ -76,51 +78,26 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Status (2026-10-15, end of session)
 
-- Last commit before this docs commit: `4cf308f`.
-- **Every section is rebuilt on the redesign; nothing pre-redesign remains.** Single-page site, nav order Home, About, Skills, Experience, Contact, with a floating mobile nav on phones.
-  - Hero: serif headline with the gradient accent word, typing subline, horizon arc and washes, "Let’s Connect", resume download, copy-email with star burst.
-  - About bento: role, specializations, cut-out portrait with scrolling words, rotating time zone globe, contact, tools marquee.
-  - Skills & Tools wall: 44 confirmed tools, Simple Icons logos or text tiles where no licensed logo exists.
-  - Experience timeline: three roles and education, scroll-drawn spine, testing types and practices.
-  - Contact panel and Footer with the logo credits and the settling waveform.
-- Reviewed and approved by the user: every section (Contact and Footer on 2026-10-15, with the contact glow kept and the footer role line "Software Quality Assurance Engineer | Islamabad, Pakistan" in `content.footerRole`).
-- **SEO pass built and approved (2026-10-15):** `lib/site-url.ts`, title "Umair Nadeem | QA Engineer", canonical, Open Graph (`profile`) and Twitter tags, generated OG and Twitter image (1200x630, light theme), `sitemap.xml`, `robots.txt`, JSON-LD `Person` from content.ts, headshot re-encoded to 800px (32 KB). Audit clean: one h1, no skipped heading levels, alt on every image, descriptive link names, `lang="en"`, no duplicate head tags. Lighthouse SEO 100 on mobile and desktop (details in the log).
-- README rewritten for the current site.
-- **Security hardening done (2026-10-15), including the CSP:**
-  - Static headers in `next.config.js` on every route: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, a `Permissions-Policy` disabling 13 unused features (clipboard-write left allowed for copy-email); `poweredByHeader: false`; explicit `productionBrowserSourceMaps: false`. Verified with `curl -I` on `next start`.
-  - HSTS deliberately not set: Vercel sends it on every deployment (`max-age=63072000; includeSubDomains; preload` on `*.vercel.app`) and a project header would replace it. Check with `curl -I` after the first deploy.
-  - Verified: no source maps served, no secrets or `.env` in history or the client bundle, all 6 external links `noopener noreferrer`, both `dangerouslySetInnerHTML` uses static and escaped, the not-applicable table (SQLi, CSRF, uploads, SSRF, webhooks) re-checked.
-  - Patch updates: Next 16.4.1, React 19.3.1, lucide-react 1.57.0, eslint-config-next 16.4.1, postcss 8.5.30. `npm audit`: still only the 5 high findings in the dev-only `braces` lint chain. Majors not applied: TypeScript 7, ESLint 10, `@types/node` 26.
-  - Static CSP (option B, user decision) in `next.config.js` (`bb49f6e`): same-origin everything, `script-src 'self' 'unsafe-inline'`, `img-src 'self' data:` (cobe map), no `blob:`, no third-party origins. Zero violations and zero console messages across every feature (DESIGN.md 10.1). The page stays prerendered.
-- **Final QA done (2026-10-15):**
-  - Hero LCP fix (`afeefa0`): the h1 paints at first paint 0.3em low and its lines rise (no fade). Observed LCP now equals FCP. Lighthouse mobile, simulated: 87 / LCP 3.73 s before, 88 / 3.65 s after (Lighthouse's simulation still counts the async JS downloads); applied DevTools throttling: 48 / LCP 5.95 s before, 67 / 2.41 s after.
-  - Layout at 390, 768, 1024, 1440 in both themes: no horizontal overflow, nothing escaping the viewport, no console errors, no CSP violations, contrast clean. One bug fixed: the nav pill wrapped "Let’s Connect" from 768 to 1023px (`692e356`).
-  - Keyboard: visible ring on every stop, no traps, skip link works, order hero, About, Skills, Contact, footer (Experience has no focusables).
-  - Portrait now loads a 384px file on 1x desktops (`76218ce`; 16 KB instead of 50 KB).
-  - Lighthouse (median of 3): mobile 88 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100 (Performance, Accessibility, Best Practices, SEO); CLS 0.01 or less.
-  - Final QA approved by the user (2026-10-15).
-- **Pre-deploy round (2026-10-15):**
-  - `809cc0e` unrevealed sections are keyboard reachable: `lib/reveal.ts` (opacity 0 + pointer-events none until revealed; keyboard focus reveals the section at once); the hero CTAs follow the same rule and keyboard focus finishes the hero intro. Tabbing right after the load event reaches every section at 390 and 1440; mouse timing unchanged (sampled per frame).
-  - JS size: both experiments measured and reverted, nothing committed. A modern `browserslist` changes nothing (Next 16 already targets Chrome/Edge 111, Firefox 111, Safari 16.4, and its framework polyfills ship regardless). Lazy-loading the four sections with `next/dynamic` made mobile worse (89 to 86, LCP 3.72 to 3.87 s, JS 215 to 229 KiB).
-  - Cleanup: nothing private or local is tracked; every tracked file is used. Only `.gitignore` changed (`134c634`: Playwright folders, `.vercel/`). Then, by the user's decision, the 1.48 MB original logo raster moved out of the repo into the gitignored `data/` (kept locally only; earlier commits still contain it): tracked size 3.24 MB to about 1.77 MB.
-  - `4cf308f` Node pinned to `22.x` in `engines`. Build, serve, and the full feature and CSP check pass on Node 22.23.3, also with `NEXT_PUBLIC_SITE_URL` set (every absolute URL follows it, trailing slash trimmed, no localhost left).
-- **Live (2026-10-15): https://umair-nadeem.vercel.app** (project domain renamed by the user; `umair-website-pink.vercel.app` serves the same deployment, a 200 alias, not a redirect).
-  - Verified live (17:12 to 17:25 UTC): HSTS from Vercel (`max-age=63072000; includeSubDomains; preload`), the CSP, and the four static headers, each exactly once, on the page, a JS chunk (`/_next/static/immutable/chunks/`, `immutable` cache), the OG image, and the resume. `/sitemap.xml`, `/robots.txt`, `/opengraph-image`, `/twitter-image`, the resume, headshot, and manifest return 200. Browser at 390, 768, 1024, 1440, both themes: no overflow, zero console messages, zero CSP violations; every feature works. Lighthouse live (median of 3): mobile 92 / 100 / 100 / 100 (LCP 2.98 s, TTFB 71 ms), desktop 100 / 100 / 100 / 100.
-  - **Not fixed yet: every absolute URL still says `http://localhost:3000`.** The served build (sitemap `lastmod` 17:11:21 UTC) came from the `b7f7c7b` push; no build with `NEXT_PUBLIC_SITE_URL` has gone live through 17:25 UTC. Tested locally: a value without the scheme (`umair-nadeem.vercel.app`) fails the build with `TypeError: Invalid URL` and Vercel keeps the previous deployment, which matches. The user checks the variable's value (`https://umair-nadeem.vercel.app`), its scope (Production), and the failed deployment's build log, then redeploys.
-  - Failed preview deployment: GitHub has only `main` (plus tags `0.001`, `pre-redesign-main`), so it did not come from another branch; `gh` is not installed and the repo is private, so its source needs the Vercel dashboard (a redeploy of a non-production deployment, or the env-var build failure above).
-  - Vercel still adds `Access-Control-Allow-Origin: *` (open decision 0).
+- Last commit before this docs commit: `d9c2869`.
+- **The site is live on Vercel.** Official address: https://umair-nadeem.vercel.app. The old auto address `umair-website-pink.vercel.app` still serves the same deployment (the redirect is not working yet). Every push to `main` deploys to production automatically, so push only reviewed work.
+- Built and approved by the user: every section (Home, About, Skills, Experience, Contact, Footer, floating mobile nav), the SEO pass, security hardening with the static CSP, final QA, keyboard-reachable reveals, the Node 22.x pin. Commits, measurements, and reasoning: `docs/PROGRESS-LOG.md`.
+- Live results: Lighthouse mobile 92 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100 (Performance, Accessibility, Best Practices, SEO). Headers, HSTS (from Vercel), and the CSP verified live; zero console and CSP errors at 390, 768, 1024, and 1440 in both themes.
+- **Blocking issue:** `NEXT_PUBLIC_SITE_URL` has not taken effect, so canonical, Open Graph and Twitter URLs, JSON-LD, sitemap, and robots still say `http://localhost:3000`. Likely cause: the Vercel variable lacks `https://`, so the build failed with `Invalid URL` (reproduced locally) and Vercel kept the previous deployment. Fix: set it exactly to `https://umair-nadeem.vercel.app` (Production) and redeploy, then re-verify the live page source.
 
-## Open decisions (ask the user first next session)
+## Open decisions (ask the user first)
 
-0. **Vercel adds `Access-Control-Allow-Origin: *`** to every live response (page, assets, chunks, OG image); `next start` sends none, so it comes from Vercel's CDN, not our config. It conflicts with the "no wildcard ACAO" rule. Real risk is minimal (public, cookie-less static content; `*` never allows credentialed reads). Options: accept it and reword the rule to "never add one ourselves", or try overriding it with the site's own origin in `next.config.js` headers and check after a deploy. Ask first.
+1. **`lib/site-url.ts`:** whether to add a missing `https://` automatically and fail with a clear message on an invalid value.
+2. **Vercel's `Access-Control-Allow-Origin: *`** on every response (from Vercel's CDN, not our config): accept it, or try overriding it with the site's own origin.
+3. **Failed Vercel preview deployment:** check its source and build log in Vercel (it did not come from a branch: GitHub has only `main`).
+4. **Redirect** `umair-website-pink.vercel.app` to `umair-nadeem.vercel.app`.
+5. **Old deployments from before the Contact rebuild** still contain the phone number at their unique URLs: delete them or enable deployment protection.
+6. **Updated resume** from Umair (the current PDF has the old email and the phone number).
+7. **Waiting on Umair:** projects or case studies; certifications; details of his AI/LLM testing work for a possible Smart In Media highlight.
 
-1. **Mobile Lighthouse LCP (simulated) stays about 3.7s (score 88 to 89):** the real paint is fixed (observed LCP equals FCP). The rest is JS that the page genuinely needs (React and Next runtime, GSAP for the hero); both cheap fixes were tried and measured (no gain or worse). Accept it unless the user wants a bigger change (for example dropping ScrollSmoother).
-2. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
-3. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; which automation tools he uses at Smart In Media. (Settled 2026-10-15: the user confirmed Umair has done AI and LLM testing, so the "AI & LLM Testing" skill is confirmed.)
-4. **Major upgrades available (not applied):** TypeScript 7, ESLint 10 (blocked by `eslint-config-next` plugin peer ranges), `@types/node` 26 (stay on 22 to match Node 22).
-5. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
+Later, no rush: major upgrades TypeScript 7 and ESLint 10 (blocked by `eslint-config-next` peers); `@types/node` stays on 22.
 
 ## Next steps, in order
 
-1. The user fixes `NEXT_PUBLIC_SITE_URL` = `https://umair-nadeem.vercel.app` (with `https://`, Production scope) and redeploys; decides open decision 0; optional: harden `lib/site-url.ts` to add a missing `https://` and fail with a clear message (ask first).
-2. After the redeploy, re-check on the live site: canonical, `og:url`, OG and Twitter image URLs, sitemap, robots, and JSON-LD all use the Vercel URL (no `localhost`), and the headers with `curl -I`. Node 22.x comes from `engines`; the dashboard can be set to 22.x too so it matches.
+1. The user's new portfolio changes: discuss before building.
+2. The open decisions above (first confirm the blocking `NEXT_PUBLIC_SITE_URL` fix is live).
+3. Google Search Console (needs the correct live URLs), then linking the site from LinkedIn, GitHub, and Upwork.
