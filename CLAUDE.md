@@ -49,7 +49,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - One contact label site-wide: "Let’s Connect" (`content.contact.cta`).
 
 ### Security (details in DESIGN.md section 10)
-- CSP: production `script-src` never has `'unsafe-inline'` or `'unsafe-eval'`; every inline script (including the no-flash theme script, a static string) carries the per-request nonce from `proxy.ts`. No new third-party script, style, font, image, or connect origins without updating the CSP and asking.
+- CSP (user decision 2026-10-15, option B): a static policy in `next.config.js` so the page stays prerendered. `script-src 'self' 'unsafe-inline'` (Next's inline flight scripts and the theme script need it without nonces); `'unsafe-eval'` is never allowed in production (development only). Everything else same-origin, no wildcards. **If a form, login, or anything sensitive is ever added, switch to the nonce CSP in `proxy.ts` (option A, DESIGN.md 10.1) first.** No new third-party script, style, font, image, or connect origins without updating the CSP and asking.
 - `dangerouslySetInnerHTML` only for the static theme script and the JSON-LD block (`JSON.stringify` with `<` escaped to `<`, built only from `lib/content.ts`).
 - Every `target="_blank"` link has `rel="noopener noreferrer"`. Production source maps off. No wildcard `Access-Control-Allow-Origin`.
 - No secrets in the repo; `.env*` gitignored; only safe `NEXT_PUBLIC_*` in client code.
