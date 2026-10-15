@@ -2,7 +2,8 @@
 
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
-import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { gsap, registerGsap } from '@/lib/gsap'
+import { scrollReveal } from '@/lib/reveal'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { content } from '@/lib/content'
 import PrimaryCta from '@/components/PrimaryCta'
@@ -43,15 +44,9 @@ export default function Contact() {
         gsap.set(reveal, { autoAlpha: 1 })
         if (reduceMotion) return // static final state
 
-        // Headline, terminal line, buttons, and links rise in order, once.
-        const from = { autoAlpha: 0, y: 16 }
-        gsap.set(reveal, from)
-        ScrollTrigger.batch(reveal, {
-          start: 'top 88%',
-          once: true,
-          onEnter: (batch) =>
-            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.1, overwrite: true }),
-        })
+        // Headline, terminal line, buttons, and links rise in order, once
+        // (lib/reveal.ts; keyboard focus reveals at once).
+        if (rootRef.current) return scrollReveal(rootRef.current, reveal, { y: 16, start: 'top 88%', duration: 0.8, stagger: 0.1 })
       })
 
       return () => mm.revert()

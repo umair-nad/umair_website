@@ -62,7 +62,7 @@ export default function Hero() {
         // the CSS-hidden state as its end value.
         gsap.set(reveal, { autoAlpha: 1 })
         const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
-        const fadeUp = { from: { y: 12, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.8 } }
+        const fadeUp = { from: { y: 12, opacity: 0 }, to: { y: 0, opacity: 1, duration: 0.8 } }
 
         // The claim lands line by line first (hierarchy), then the rest.
         // The h1 is the LCP element, so it is already painted (never hidden):
@@ -93,13 +93,33 @@ export default function Hero() {
           .toArray<HTMLElement>('[data-hero-sub] [data-char]', rootRef.current)
           .filter((c) => c.offsetParent !== null)
         tl.fromTo(subChars, { opacity: 0 }, { opacity: 1, duration: TYPE.fade, ease: 'power2.out', stagger: TYPE.stagger }, TYPE.start)
-        tl.fromTo('[data-hero-cta]', fadeUp.from, fadeUp.to, 0.5)
+
+        // The CTAs fade with opacity only (never visibility), so they stay
+        // in the tab order; pointers pass through them until their fade
+        // starts, as before (the lib/reveal.ts pattern).
+        const ctas = '[data-hero-cta]'
+        gsap.set(ctas, { pointerEvents: 'none' })
+        tl.fromTo(ctas, fadeUp.from, { ...fadeUp.to, onStart: () => gsap.set(ctas, { clearProps: 'pointerEvents' }) }, 0.5)
 
         // The horizon arc rises into place under the CTAs once the claim has
         // landed: the stage is set, then the light comes up.
         tl.fromTo('[data-hero-arc]', { y: 56, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1.8, ease: 'expo.out' }, 0.45)
 
-        return () => split?.revert()
+        // Keyboard focus in the hero before the intro has finished (a Tab
+        // right after load) completes it at once.
+        const root = rootRef.current
+        const onFocusIn = (event: FocusEvent) => {
+          if (tl.progress() < 1 && event.target instanceof Element && event.target.matches(':focus-visible')) {
+            tl.progress(1)
+            gsap.set(ctas, { clearProps: 'pointerEvents' })
+          }
+        }
+        root?.addEventListener('focusin', onFocusIn)
+
+        return () => {
+          root?.removeEventListener('focusin', onFocusIn)
+          split?.revert()
+        }
       })
 
       return () => mm.revert()

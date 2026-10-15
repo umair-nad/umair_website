@@ -3,7 +3,8 @@
 import { useRef, type ReactNode } from 'react'
 import { BriefcaseBusiness, Check, GraduationCap, type LucideIcon } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
-import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { gsap, registerGsap } from '@/lib/gsap'
+import { scrollReveal } from '@/lib/reveal'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { content, type SkillGroupId } from '@/lib/content'
 import { Chip } from '@/components/about/BentoCard'
@@ -121,17 +122,9 @@ export default function Experience() {
         }
 
         // Heading, intro, then each entry's node, meta, card, and chips rise
-        // in reading order as they scroll in, once. fromTo with explicit end
-        // values (Hero pattern).
+        // in reading order as they scroll in, once (lib/reveal.ts).
         const items = all.filter((el) => el !== spine)
-        const from = { autoAlpha: 0, y: 16 }
-        gsap.set(items, from)
-        ScrollTrigger.batch(items, {
-          start: 'top 85%',
-          once: true,
-          onEnter: (batch) =>
-            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.08, overwrite: true }),
-        })
+        if (rootRef.current) return scrollReveal(rootRef.current, items, { y: 16, start: 'top 85%', duration: 0.8, stagger: 0.08 })
       })
 
       return () => mm.revert()

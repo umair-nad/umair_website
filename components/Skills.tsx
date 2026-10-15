@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import type { SimpleIcon } from 'simple-icons'
 import { useGSAP } from '@gsap/react'
-import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { gsap, registerGsap } from '@/lib/gsap'
+import { scrollReveal } from '@/lib/reveal'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { content, type SkillGroupId } from '@/lib/content'
 import { TOOL_LOGO_NAMES } from '@/lib/tool-logo-names'
@@ -150,15 +151,9 @@ export default function Skills() {
         if (reduceMotion) return // static final state
 
         // Heading and subline rise in, then the tiles follow in reading
-        // order, once (hierarchy: the wall assembles under its title).
-        const from = { autoAlpha: 0, y: 16 }
-        gsap.set(reveal, from)
-        ScrollTrigger.batch(reveal, {
-          start: 'top 88%',
-          once: true,
-          onEnter: (batch) =>
-            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.7, ease: 'expo.out', stagger: 0.025, overwrite: true }),
-        })
+        // order, once (hierarchy: the wall assembles under its title;
+        // lib/reveal.ts, keyboard focus reveals at once).
+        if (rootRef.current) return scrollReveal(rootRef.current, reveal, { y: 16, start: 'top 88%', duration: 0.7, stagger: 0.025 })
       })
 
       return () => mm.revert()

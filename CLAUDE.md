@@ -70,7 +70,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ### Motion contract (the gotchas that cost time)
 - Every `gsap.matchMedia` conditions object includes `always: ALWAYS_QUERY` (`lib/motion-preferences.ts`) or its callback never runs on a normal desktop; every section ships a static reduced-motion state.
-- Reveals: `[data-reveal]` + `gsap.set` first, then `fromTo` with explicit end values (a plain `from()` captures the hidden CSS state). Grids use `ScrollTrigger.batch` (see About).
+- Reveals: `[data-reveal]` + `gsap.set` first, then `fromTo` with explicit end values (a plain `from()` captures the hidden CSS state). Section scroll reveals go through `scrollReveal` in `lib/reveal.ts` (`ScrollTrigger.batch`): unrevealed elements are `opacity: 0` + `pointer-events: none`, never `visibility: hidden` or `autoAlpha`, so they stay in the tab order; keyboard focus (`:focus-visible`) in a section reveals it at once. Same rule for anything focusable in an intro timeline (the hero CTAs).
 - Hover lifts use the CSS `translate`/`scale` properties so they compose with GSAP's `transform`. Never use a scaled element as its own ScrollTrigger trigger.
 - ScrollSmoother distorts element screenshots and disables `position: sticky`; the navbar sits outside its provider.
 

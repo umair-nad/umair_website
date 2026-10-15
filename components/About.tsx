@@ -2,7 +2,8 @@
 
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
-import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
+import { gsap, registerGsap } from '@/lib/gsap'
+import { scrollReveal } from '@/lib/reveal'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import RoleCard from '@/components/about/RoleCard'
 import SpecializationsCard from '@/components/about/SpecializationsCard'
@@ -55,16 +56,8 @@ export default function About() {
         if (reduceMotion) return // static final state (lib/motion-preferences.ts contract)
 
         // Cards rise in reading order as they scroll in, once: the sequence
-        // follows the grid. fromTo with explicit end values (Hero pattern);
-        // a plain from() would capture the CSS-hidden state as its end.
-        const from = { autoAlpha: 0, y: 24 }
-        gsap.set(cards, from)
-        ScrollTrigger.batch(cards, {
-          start: 'top 88%',
-          once: true,
-          onEnter: (batch) =>
-            gsap.fromTo(batch, from, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08, overwrite: true }),
-        })
+        // follows the grid (lib/reveal.ts; keyboard focus reveals at once).
+        if (rootRef.current) return scrollReveal(rootRef.current, cards, { y: 24, start: 'top 88%', duration: 0.9, stagger: 0.08 })
       })
 
       return () => mm.revert()
