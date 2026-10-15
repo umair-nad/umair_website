@@ -15,11 +15,11 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ### Layout of the repo
 
-- `app/` layout.tsx (fonts, all metadata), page.tsx (composes sections), globals.css, icon files, manifest.ts
-- `components/` one file per section (Navbar, Hero, About, Skills, Experience, Contact, Footer), shared controls (PrimaryCta, ResumeButton, ProfileLink, WaveformDivider), parts in `hero/`, `about/`, `footer/`, `nav/`, `theme/`, `brand/`, `providers/`
-- `lib/` `content.ts` is the typed source of ALL site copy (no CMS); also nav.ts (section list), scroll.ts, motion-preferences.ts, theme.ts, local-time.ts, tool-icons.ts, star-burst.ts, gsap.ts
-- `public/` includes `umair-nadeem-cutout.webp` (About portrait), `umair-nadeem-qa-engineer-resume.pdf` (public resume, path `content.resume.href`), `umair-nadeem.jpg` (original headshot, no longer displayed)
-- `assets/brand/` non-public logo sources (`un-monogram.svg` is the logo source of truth); never serve from it
+- `app/` layout.tsx (fonts, all metadata), page.tsx (composes sections, renders the JSON-LD), globals.css, icon files, manifest.ts, opengraph-image.tsx (twitter-image.tsx re-exports it), sitemap.ts, robots.ts
+- `components/` one file per section (Navbar, Hero, About, Skills, Experience, Contact, Footer), shared controls (PrimaryCta, ResumeButton, ProfileLink, WaveformDivider), PersonJsonLd, parts in `hero/`, `about/`, `footer/`, `nav/`, `theme/`, `brand/`, `providers/`
+- `lib/` `content.ts` is the typed source of ALL site copy (no CMS); also site-url.ts (`SITE_URL`), hero-headline.ts (shared by the hero and the OG image), nav.ts (section list), scroll.ts, motion-preferences.ts, theme.ts, local-time.ts, tool-icons.ts, star-burst.ts, gsap.ts
+- `public/` includes `umair-nadeem-cutout.webp` (About portrait), `umair-nadeem-qa-engineer-resume.pdf` (public resume, path `content.resume.href`), `umair-nadeem.jpg` (800px headshot, used only as the JSON-LD image, `content.seo.image`)
+- `assets/` non-public, never serve from it: `brand/` logo sources (`un-monogram.svg` is the logo source of truth), `fonts/` static TTFs for the OG image with their OFL licenses
 - `data/` Umair's LinkedIn export (private; do not confuse with the resume PDF). `refrence/` (sic, one "e" missing; "reference/" means this folder) holds screenshots of dhirajbhawsar.in for inspiration. `review/` holds local review screenshots. All three are gitignored.
 
 ## Standing rules
@@ -58,7 +58,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ### SEO
 - Unique title and description per page, Open Graph tags, semantic HTML, exactly one h1, alt text on every image.
-- Every absolute URL (metadataBase, canonical, sitemap, robots, JSON-LD, OG) comes from `SITE_URL` in `lib/site-url.ts` (reads `NEXT_PUBLIC_SITE_URL`, fallback `http://localhost:3000`; file not created yet). Never hard-code or invent a domain.
+- Every absolute URL (metadataBase, canonical, sitemap, robots, JSON-LD, OG) comes from `SITE_URL` in `lib/site-url.ts` (reads `NEXT_PUBLIC_SITE_URL`, fallback `http://localhost:3000`). Never hard-code or invent a domain.
 
 ### Deployment
 - Vercel free tier first, no domain yet. Node 20.9+ (`engines` set; use 22.x). After the first deploy set `NEXT_PUBLIC_SITE_URL` (Production) to the deployment URL and redeploy (inlined at build time); update it again if a custom domain is added.
@@ -74,31 +74,30 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - Hover lifts use the CSS `translate`/`scale` properties so they compose with GSAP's `transform`. Never use a scaled element as its own ScrollTrigger trigger.
 - ScrollSmoother distorts element screenshots and disables `position: sticky`; the navbar sits outside its provider.
 
-## Status (2026-10-12, end of session)
+## Status (2026-10-15, end of session)
 
-- Last commit before this docs commit: `08164ba`.
+- Last commit before this docs commit: `e177e63`.
 - **Every section is rebuilt on the redesign; nothing pre-redesign remains.** Single-page site, nav order Home, About, Skills, Experience, Contact, with a floating mobile nav on phones.
   - Hero: serif headline with the gradient accent word, typing subline, horizon arc and washes, "Let’s Connect", resume download, copy-email with star burst.
   - About bento: role, specializations, cut-out portrait with scrolling words, rotating time zone globe, contact, tools marquee.
   - Skills & Tools wall: 44 confirmed tools, Simple Icons logos or text tiles where no licensed logo exists.
   - Experience timeline: three roles and education, scroll-drawn spine, testing types and practices.
   - Contact panel and Footer with the logo credits and the settling waveform.
-- Reviewed and approved by the user: Experience, Skills, About cut-out. Contact and Footer are built and awaiting the user's review.
-- Not built yet: SEO pass (`lib/site-url.ts`, canonical, OG image, sitemap, robots, JSON-LD) and security hardening (`proxy.ts` CSP, headers, audit). No Vercel deploy yet.
-- Housekeeping: the README is stale (Next 14, Three.js, a contact form, an old email); rewrite in its own commit when the user wants. `npm audit` shows 5 high findings in the `eslint-config-next` dev chain only.
+- Reviewed and approved by the user: every section (Contact and Footer on 2026-10-15, with the contact glow kept and the footer role line "Software Quality Assurance Engineer | Islamabad, Pakistan" in `content.footerRole`).
+- **SEO pass built (2026-10-15), awaiting the user's review of the results:** `lib/site-url.ts`, title "Umair Nadeem | QA Engineer", canonical, Open Graph (`profile`) and Twitter tags, generated OG and Twitter image (1200x630, light theme), `sitemap.xml`, `robots.txt`, JSON-LD `Person` from content.ts, headshot re-encoded to 800px (32 KB). Audit clean: one h1, no skipped heading levels, alt on every image, descriptive link names, `lang="en"`, no duplicate head tags. Lighthouse SEO 100 on mobile and desktop (details in the log).
+- README rewritten for the current site.
+- Not built yet: security hardening (`proxy.ts` CSP, headers, audit). No Vercel deploy yet. `npm audit` shows 5 high findings in the `eslint-config-next` dev chain only.
 
 ## Open decisions (ask the user first next session)
 
-1. **Contact panel cyan glow:** approved by the user (2026-10-15); it stays.
-2. **Footer role sentence:** settled (2026-10-15): "Software Quality Assurance Engineer | Islamabad, Pakistan" (`content.footerRole`).
-3. **Updated resume:** the current PDF has the old email and the phone number; replace `public/umair-nadeem-qa-engineer-resume.pdf` when Umair sends a new one.
-4. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; whether he tested AI modules (the "AI & LLM Testing" chip rests on his LinkedIn headline alone); which automation tools he uses at Smart In Media.
-5. Smaller: re-encode the 2.1 MB `umair-nadeem.jpg` (about quality 80; it is no longer displayed, only needed for JSON-LD or OG), and what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
+1. **Updated resume:** keep the current PDF (old email, phone number) until Umair sends a new one (user decision 2026-10-15); then replace `public/umair-nadeem-qa-engineer-resume.pdf`.
+2. **Still waiting on Umair:** projects or case studies worth showcasing; certifications; whether he tested AI modules (the "AI & LLM Testing" chip rests on his LinkedIn headline alone, and it also appears in the JSON-LD `knowsAbout`); which automation tools he uses at Smart In Media.
+3. **Mobile performance:** Lighthouse mobile Performance 83 (desktop 100). LCP 3.8 s, 88% of it render delay: the LCP element is the hero h1, hidden until the SplitText line reveal runs. Look at it in the final QA step; ask before changing the approved hero motion.
+4. Smaller: what the "1 Issue" dev overlay showed if it comes back (a browser-extension hydration attribute was fixed on `<body>`).
 
 ## Next steps, in order
 
-1. The user reviews Contact and the Footer and settles open decisions 1 to 3. Stop there; ask before building.
-2. SEO pass (DESIGN.md section 9 and build step 7): metadata, canonical via `NEXT_PUBLIC_SITE_URL`, OG image, sitemap, robots, JSON-LD `Person`, one h1.
-3. Security hardening (DESIGN.md section 10 and build step 8): CSP with nonce in `proxy.ts`, static headers, dependency audit, source maps off, `rel` audit.
-4. Final full-page QA at 390, 768, 1024, 1440 in both themes; Lighthouse on mobile and desktop.
-5. First free Vercel deploy, then set `NEXT_PUBLIC_SITE_URL` and redeploy.
+1. The user reviews the SEO results. Stop there; ask before building.
+2. Security hardening (DESIGN.md section 10 and build step 8): CSP with nonce in `proxy.ts`, static headers, dependency audit, source maps off, `rel` audit. The JSON-LD block is a data script (not executed), already escaped.
+3. Final full-page QA at 390, 768, 1024, 1440 in both themes; Lighthouse on mobile and desktop (open decision 3).
+4. First free Vercel deploy, then set `NEXT_PUBLIC_SITE_URL` and redeploy; re-check canonical, `og:url`, sitemap, robots, and JSON-LD URLs on the live site.

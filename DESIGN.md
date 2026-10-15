@@ -490,7 +490,7 @@ Blog, GitHub insights/stats/graphs, Guestbook, Bucket List, Uses, Links page, Sp
 
 ## 13. Build order (Phase 4+, one step per review stop)
 
-Steps 1 to 6 are **built and reviewed section by section, 2026-10-10 to 2026-10-12** (step 6 awaits the user's review and two decisions: the contact glow and the footer role sentence). Steps 7 and 8 are **not started**.
+Steps 1 to 6 are **built and approved section by section, 2026-10-10 to 2026-10-15**. Step 7 is **built 2026-10-15, awaiting review**. Step 8 is **not started**.
 
 1. **Theme foundation and navbar shell (done 2026-10-10):**
    - The framework upgrade (section 10.6).
@@ -503,8 +503,8 @@ Steps 1 to 6 are **built and reviewed section by section, 2026-10-10 to 2026-10-
 3. **About bento (done 2026-10-12, with later rounds: globe, cut-out portrait, floating mobile nav):** `components/About.tsx` plus the cards in `components/about/`, with all copy from `lib/content.ts`.
 4. **Experience timeline (done 2026-10-12, approved):** `components/Experience.tsx` (11.3), replacing the pre-redesign horizontal-pin component.
 5. **Skills (done 2026-10-12, approved):** the Skills & Tools icon wall, `components/Skills.tsx` (11.4).
-6. **Contact CTA + Footer (built 2026-10-12, awaiting review; two open decisions):** `components/Contact.tsx` (11.5) and `components/Footer.tsx` (11.6), replacing the pre-redesign components; `LogoCredits` folded into the footer.
-7. **SEO pass (not started; today only the static metadata in `app/layout.tsx` and the icon files exist):** `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, OG image, `sitemap.xml`, `robots.txt`, JSON-LD
+6. **Contact CTA + Footer (built 2026-10-12, approved 2026-10-15 with the glow kept and the short footer role line):** `components/Contact.tsx` (11.5) and `components/Footer.tsx` (11.6), replacing the pre-redesign components; `LogoCredits` folded into the footer.
+7. **SEO pass (built 2026-10-15, awaiting review; section 9):** `lib/site-url.ts` (`NEXT_PUBLIC_SITE_URL` with the localhost fallback), `metadataBase`, canonical, Open Graph and Twitter tags, OG image, `sitemap.xml`, `robots.txt`, JSON-LD, the 800px headshot. Lighthouse SEO 100 on mobile and desktop.
 8. **Security hardening (section 10; not started: no `proxy.ts` and no headers in `next.config.js` yet):** CSP nonce `proxy.ts` wired to the theme script; static headers and `poweredByHeader: false` in `next.config.js`; JSON-LD escaping check; `rel` audit of every external link; confirm no source maps and no `Access-Control-Allow-Origin`; re-run the history and secrets scan and `npm audit`; re-verify the not-applicable table; check that no CSP violations appear in the console in either theme. After the first Vercel deploy: set `NEXT_PUBLIC_SITE_URL`, redeploy, and check the live response headers (including HSTS) with `curl -I`.
 
 Each step ends with `npm run lint`, `tsc --noEmit`, and playwright-cli checks at 390px and 1440px in both themes, then stops for review.
