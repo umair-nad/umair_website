@@ -238,7 +238,7 @@ Every animation must answer "what does this communicate" in one sentence:
 
 | Moment | Animation | Why |
 |---|---|---|
-| Hero headline | SplitText line reveal, once | Hierarchy: the claim lands first |
+| Hero headline | SplitText line rise, once: painted at first paint 0.3em low (CSS, motion allowed only), lines rise to rest with a 0.12s stagger (1.1s, `expo.out`); never hidden or faded, since it is the LCP element (changed 2026-10-15 from a masked reveal from 105%) | Hierarchy: the claim lands first |
 | Hero horizon | The arc rises into place under the CTA row, once | Hierarchy: the light comes up after the claim lands |
 | Section entries | `whileInView`-style fade/translate reveals, staggered, once | Sequence matches reading order |
 | Tools marquee | Two counter-scrolling chip rows inside one bento card | Breadth without a data dump. One of exactly two marquees on the page. |

@@ -34,6 +34,10 @@ const typeChars = (text: string) =>
 // (user decision 2026-10-12).
 const TYPE = { start: 0, fade: 0.26, stagger: 0.02 }
 
+// How far below its resting place the headline is painted before it rises
+// (matches the [data-hero-headline] rule in globals.css).
+const HEADLINE_RISE_EM = 0.3
+
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
@@ -61,16 +65,21 @@ export default function Hero() {
         const fadeUp = { from: { y: 12, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.8 } }
 
         // The claim lands line by line first (hierarchy), then the rest.
+        // The h1 is the LCP element, so it is already painted (never hidden):
+        // CSS holds it HEADLINE_RISE_EM low, the split lines take over that
+        // offset in the same frame, and only their movement animates.
         let split: SplitText | undefined
-        if (headlineRef.current) {
-          split = SplitText.create(headlineRef.current, {
+        const headline = headlineRef.current
+        if (headline) {
+          const rise = () => parseFloat(getComputedStyle(headline).fontSize) * HEADLINE_RISE_EM
+          split = SplitText.create(headline, {
             type: 'lines',
-            mask: 'lines',
             autoSplit: true,
             // Return the tween itself (not the timeline) so SplitText can keep
             // its progress if fonts load or a resize forces a re-split.
             onSplit: (self) => {
-              const lines = gsap.fromTo(self.lines, { yPercent: 105 }, { yPercent: 0, duration: 1.1, stagger: 0.12, ease: 'expo.out' })
+              gsap.set(headline, { y: 0 })
+              const lines = gsap.fromTo(self.lines, { y: rise() }, { y: 0, duration: 1.1, stagger: 0.12, ease: 'expo.out' })
               tl.add(lines, 0)
               return lines
             },
@@ -108,7 +117,7 @@ export default function Hero() {
       <div className="flex w-full max-w-4xl flex-col items-center text-center">
         <h1
           ref={headlineRef}
-          data-reveal
+          data-hero-headline
           className="max-w-3xl font-display text-4xl leading-[1.15] font-normal text-balance text-fg md:mt-8 md:text-5xl lg:text-[60px] lg:leading-snug"
         >
           {BEFORE}

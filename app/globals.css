@@ -230,6 +230,21 @@ html[data-motion='ok'] [data-reveal] {
   }
 }
 
+/* Hero headline, the page's LCP element: never hidden, so it paints at
+   first paint and LCP doesn't wait for JS. When motion is allowed it is
+   painted 0.3em low (HEADLINE_RISE_EM in Hero.tsx) and GSAP raises it line
+   by line. Failsafe: it settles after 2.5s if JS never hydrates. */
+html[data-motion='ok'] [data-hero-headline] {
+  transform: translateY(0.3em);
+  animation: hero-headline-failsafe 0s linear 2.5s forwards;
+}
+
+@keyframes hero-headline-failsafe {
+  to {
+    transform: none;
+  }
+}
+
 /* Tools marquee (About bento; DESIGN.md section 7), the only marquee on the
    page. Each track holds two identical copies of its chips, so moving it by
    -50% lands exactly on the second copy and the loop is seamless. Under
