@@ -68,7 +68,8 @@ const Navbar = () => {
       // The last section (Contact) stays active to the end of the page, the
       // footer included: its trigger ends 1px past the maximum scroll, a
       // point never reached ('max' itself counts the very end of the page
-      // as already left).
+      // as already left). An item with `through` (lib/nav.ts) stays active
+      // until that later section leaves the center instead.
       const triggers = navItems.flatMap((item, i) => {
         const section = document.querySelector<HTMLElement>(item.href)
         if (!section) return []
@@ -76,6 +77,7 @@ const Navbar = () => {
         return [
           ScrollTrigger.create({
             trigger: section,
+            endTrigger: (item.through && document.querySelector<HTMLElement>(item.through)) || section,
             start: 'top center',
             end: i === navItems.length - 1 ? () => ScrollTrigger.maxScroll(window) + 1 : 'bottom center',
             onToggle: (self) =>
