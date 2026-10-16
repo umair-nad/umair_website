@@ -90,6 +90,15 @@ export interface SiteContent {
   heroSubline: [string, string];
   /** The footer's one role line, under the logo. */
   footerRole: string;
+  /** "More about me" intro after the About bento (DESIGN.md 11.2.1). headline: the plain line, then
+   *  the accent phrase on its own line. paragraphs: rendered in order; add one entry per paragraph.
+   *  photo: a path under public/, its intrinsic size, and its alt text. */
+  moreAbout: {
+    eyebrow: string;
+    headline: [string, string];
+    paragraphs: string[];
+    photo: { src: string; width: number; height: number; alt: string };
+  };
   /** email: the only direct contact method. cta: the one contact-intent label, used by every contact CTA.
    *  headline: the contact panel's h2 (before, accent word, after). line: its static terminal line. */
   contact: { email: string; cta: string; headline: [string, string, string]; line: string };
@@ -111,6 +120,30 @@ export const content = {
   // Wording set by the user (2026-10-15), replacing content.seo.description
   // in the footer.
   footerRole: "Software Quality Assurance Engineer | Islamabad, Pakistan",
+
+  // Eyebrow and headline wording set by the user (2026-10-16). Paragraph 1
+  // is built only from facts already in this file: "5+ years in QA" (bio),
+  // manual, API, and automated testing across web and mobile (seo
+  // description), Smart In Media's digital pathology software and the
+  // PathoZoom Digital Lab automation (experience[0]), AI and LLM testing
+  // (skills, confirmed 2026-10-15), and the closing line echoes
+  // experienceHeadline. Paragraphs 2 (interests) and 3 (QA philosophy)
+  // follow when Umair sends them: append them to `paragraphs` as written.
+  moreAbout: {
+    eyebrow: "MORE ABOUT ME",
+    headline: ["I’m Umair, a", "Software Quality Assurance Engineer"],
+    paragraphs: [
+      "I’ve spent 5+ years in QA, covering manual, API, and automated testing across web and mobile applications. Right now I’m at Smart In Media, testing digital pathology software and working on full test automation for PathoZoom Digital Lab. I’ve also done AI and LLM testing. Whatever the product, the job stays the same: find the bugs before your users do.",
+    ],
+    // The original framed headshot (content.seo.image), shown here because
+    // no separate About photo was provided (2026-10-16).
+    photo: {
+      src: "/umair-nadeem.jpg",
+      width: 800,
+      height: 800,
+      alt: "Black-and-white studio portrait of Umair Nadeem in a dark hoodie, arms crossed",
+    },
+  },
   // Derived from the location, not a claim about Umair's working hours
   // (DESIGN.md 11.2). Pakistan observes no daylight saving time.
   timeZone: { iana: "Asia/Karachi", abbr: "PKT", label: "PKT (UTC+5)" },
@@ -342,8 +375,9 @@ export const content = {
     title: "Umair Nadeem | QA Engineer",
     description:
       "Software Quality Assurance Engineer with 5+ years of experience in manual, API, and automated testing across web and mobile applications.",
-    // Umair's original headshot, re-encoded to 800x800 (2026-10-15). Not
-    // displayed on the page (the About card uses the cut-out).
+    // Umair's original headshot, re-encoded to 800x800 (2026-10-15). Also
+    // the "More about me" photo (moreAbout.photo); the About card uses the
+    // cut-out.
     image: "/umair-nadeem.jpg",
   },
 } satisfies SiteContent;
