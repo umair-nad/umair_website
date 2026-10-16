@@ -22,8 +22,6 @@
   --color-accent: var(--accent);
   --color-inverse: var(--inverse);
   --color-inverse-fg: var(--inverse-fg);
-  --color-live: var(--live);
-  --color-live-fg: var(--live-fg);
   --color-tile: var(--tile);
   --color-tile-border: var(--tile-border);
   --color-tile-icon: var(--tile-icon);
@@ -59,8 +57,6 @@
   --accent: #7928ca;
   --inverse: #171717;
   --inverse-fg: #ffffff;
-  --live: #00c950;
-  --live-fg: #000000;
   /* The one accent word per headline, and the hero trace. Light uses three
      reference stops (lowest sampled contrast 3.77:1 on white). */
   --accent-gradient: linear-gradient(135deg, #ff0080, #7928ca, #0070f3);
@@ -134,8 +130,6 @@
   --accent: #c27aff;
   --inverse: #ffffff;
   --inverse-fg: #000000;
-  --live: #00c950;
-  --live-fg: #000000;
   /* Dark drops #7928ca (2.80:1 on #0a0a0a): pink to sky, lowest 4.17:1.
      stop-2 is the sRGB midpoint, so SVG gradients match the CSS one. */
   --accent-gradient: linear-gradient(135deg, #ff0080, #38bdf8);
