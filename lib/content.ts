@@ -104,6 +104,14 @@ export interface SiteContent {
   contact: { email: string; cta: string; headline: [string, string, string]; line: string };
   /** Public resume PDF, served from public/. */
   resume: { href: string };
+  /** /credits (DESIGN.md 11.7): the notices the Skills & Tools logos' licenses require.
+   *  Each entry: the mark, its notice, and links (source, license). */
+  credits: {
+    title: string;
+    description: string;
+    intro: string;
+    entries: { mark: string; notice: string; links: SiteLink[] }[];
+  };
   /** image: the headshot for the JSON-LD Person (a path under public/). */
   seo: { title: string; description: string; image: string };
 }
@@ -381,6 +389,66 @@ export const content = {
   // (user decision 2026-10-10). Site text still never shows the phone.
   resume: {
     href: "/umair-nadeem-qa-engineer-resume.pdf",
+  },
+
+  // Moved from the footer line to its own page (user decision 2026-10-16).
+  // Each notice follows its owner's requested wording, checked 2026-10-16:
+  // Git (git-scm.com/community/logos, verbatim), Jenkins (jenkins.io/artwork:
+  // credit the Jenkins project with a link), Apache (trademark sentence from
+  // apache.org/foundation/marks), Robot Framework (Visual Identity License
+  // 2.0, section 3.2, verbatim). "In one color": the wall draws these marks
+  // monochrome; Robot Framework's is the Foundation's own white file.
+  credits: {
+    title: "Credits",
+    description: "Credits and license notices for the tool logos on Umair Nadeem’s portfolio.",
+    intro: "The logos on the Skills & Tools wall, and the notices their licenses ask for.",
+    entries: [
+      {
+        mark: "Tool logos",
+        notice:
+          "From Simple Icons, released under CC0 1.0. Every mark belongs to its owner and appears only to name a tool I work with; no endorsement is implied.",
+        links: [
+          { label: "Simple Icons", href: "https://simpleicons.org/" },
+          { label: "CC0 1.0", href: "https://creativecommons.org/publicdomain/zero/1.0/" },
+        ],
+      },
+      {
+        mark: "Git",
+        notice:
+          "Git Logo by Jason Long is licensed under the Creative Commons Attribution 3.0 Unported License. Shown here in one color.",
+        links: [
+          { label: "Git logos", href: "https://git-scm.com/community/logos" },
+          { label: "CC BY 3.0", href: "https://creativecommons.org/licenses/by/3.0/" },
+        ],
+      },
+      {
+        mark: "Jenkins",
+        notice:
+          "Jenkins logo by the Jenkins project, licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. Shown here in one color, under the same license.",
+        links: [
+          { label: "jenkins.io", href: "https://jenkins.io/" },
+          { label: "CC BY-SA 3.0", href: "https://creativecommons.org/licenses/by-sa/3.0/" },
+        ],
+      },
+      {
+        mark: "Apache JMeter",
+        notice:
+          "Apache JMeter logo, licensed under the Apache License 2.0. Shown here in one color. Apache, Apache JMeter, and JMeter are trademarks of the Apache Software Foundation.",
+        links: [
+          { label: "jmeter.apache.org", href: "https://jmeter.apache.org/" },
+          { label: "Apache License 2.0", href: "https://www.apache.org/licenses/LICENSE-2.0" },
+        ],
+      },
+      {
+        mark: "Robot Framework",
+        notice:
+          "Robot Framework® and its visual identity are registered trademarks of the Robot Framework ry (Robot Framework Foundation), used with permission.",
+        links: [
+          { label: "robotframework.org", href: "https://robotframework.org/" },
+          { label: "Visual Identity License", href: "https://github.com/robotframework/visual-identity/blob/main/LICENSE" },
+        ],
+      },
+    ],
   },
 
   seo: {

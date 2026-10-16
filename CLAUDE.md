@@ -4,7 +4,7 @@ Guidance for Claude Code in this repository. Design source of truth: `DESIGN.md`
 
 ## Project
 
-Personal portfolio of Umair Nadeem, a QA engineer (Software Quality Assurance). Single-page site, all sections on one route with hash-anchor navigation, on `main`. Live on Vercel (free tier): https://umair-nadeem.vercel.app.
+Personal portfolio of Umair Nadeem, a QA engineer (Software Quality Assurance). Single-page site, all sections on one route with hash-anchor navigation, plus a minimal noindex `/credits` page for the logo credits, on `main`. Live on Vercel (free tier): https://umair-nadeem.vercel.app.
 
 - Stack: Next.js 16.4 (App Router, Turbopack), React 19.3, TypeScript 5.9, Tailwind CSS 4 (CSS-first: tokens in `@theme` in `app/globals.css`, no `tailwind.config.js`), npm
 - Motion: GSAP 3 + @gsap/react (ScrollTrigger, ScrollSmoother, SplitText via `lib/gsap.ts`); cobe 2 for the About globe only; canvas-confetti for the copy-email star burst only (dynamic imports)
@@ -15,7 +15,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ### Layout of the repo
 
-- `app/` layout.tsx (fonts, all metadata), page.tsx (composes sections, renders the JSON-LD), globals.css, icon files, manifest.ts, opengraph-image.tsx (twitter-image.tsx re-exports it), sitemap.ts, robots.ts
+- `app/` layout.tsx (fonts, all metadata), page.tsx (composes sections, renders the JSON-LD), globals.css, icon files, manifest.ts, opengraph-image.tsx (twitter-image.tsx re-exports it), sitemap.ts, robots.ts, `credits/` (the noindex credits page, its own metadata, OG and Twitter image re-exports)
 - `components/` one file per section (Navbar, Hero, About, MoreAbout, Skills, Experience, Contact, Footer), shared controls (PrimaryCta, ResumeButton, ProfileLink, WaveformDivider), PersonJsonLd, parts in `hero/`, `about/`, `footer/`, `nav/`, `theme/`, `brand/`, `providers/`
 - `lib/` `content.ts` is the typed source of ALL site copy (no CMS); also site-url.ts (`SITE_URL`), hero-headline.ts (shared by the hero and the OG image), nav.ts (section list), scroll.ts, motion-preferences.ts, theme.ts, local-time.ts, tool-icons.ts, star-burst.ts, gsap.ts
 - `public/` includes `umair-nadeem-cutout.webp` (About portrait), `umair-nadeem-qa-engineer-resume.pdf` (public resume, path `content.resume.href`), `umair-nadeem.jpg` (800px headshot: the JSON-LD image, `content.seo.image`, and the "More about me" photo)
@@ -37,7 +37,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 - Smart In Media: only what the user stated or smartinmedia.com shows publicly. Product names "PathoZoom Digital Lab" and "PathoZoom Scan & LiveView", no ® in body text, never internal details or clients.
 - No phone number in site text (email is the only direct contact method). The one exception: the downloadable resume PDF may contain it as is.
 - The reference site belongs to another developer: match its theme (colors, light/dark, typography); never reuse its logo, text, images, video, or developer-only sections. No blog. No GitHub insights, stats, or contribution widgets. Before adding anything resembling its developer or novelty sections (code case studies with dev-stack chips, "From Concept to Code" CTA, Uses, Guest Book, Bucket List, Links, Spotify), list it and ask first.
-- Skills & Tools wall: logo tiles only (user decision 2026-10-16); a tool without a usable logo is a text chip in the About tools marquee (`content.featuredTools`), so all 44 tools stay on the page. Never draw or invent a logo, and no generic or parent-company stand-ins; add one only if its license and the brand's guidelines allow it in our monochrome style. Robot Framework uses the Foundation's own white mark, unaltered (Visual Identity License 2.0, re-checked 2026-10-16; its guidelines allow only black or white). License-required credits (Git, Jenkins, Apache JMeter, Robot Framework's notice, any future one) stay in the footer's one low-key line.
+- Skills & Tools wall: logo tiles only (user decision 2026-10-16); a tool without a usable logo is a text chip in the About tools marquee (`content.featuredTools`), so all 44 tools stay on the page. Never draw or invent a logo, and no generic or parent-company stand-ins; add one only if its license and the brand's guidelines allow it in our monochrome style. Robot Framework uses the Foundation's own white mark, unaltered (Visual Identity License 2.0, re-checked 2026-10-16; its guidelines allow only black or white). License-required credits (Git, Jenkins, Apache JMeter, Robot Framework's notice, any future one) live on the `/credits` page (copy in `content.credits`, wording as each owner asks), linked by the small "Credits" link in the footer's bottom line (user decision 2026-10-16); never on the home page itself.
 
 ### Design
 - Follow `DESIGN.md` and the taste skill (design-taste-frontend). Avoid generic AI layouts (centered hero with three feature cards, gradient blobs).

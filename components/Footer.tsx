@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { content } from '@/lib/content'
 import Logo from '@/components/brand/Logo'
 import ProfileLink from '@/components/ProfileLink'
@@ -9,8 +10,8 @@ import FooterWaveform from '@/components/footer/FooterWaveform'
 // Footer (DESIGN.md 11.6), after the reference's footer, measured
 // 2026-10-12: same width as the contact panel; the logo, one role sentence,
 // and the resume button on the left; link columns under Alata uppercase
-// micro-labels on the right; a hairline, then the copyright line and the
-// logo credits, centered. Below md the extra bottom padding keeps the last
+// micro-labels on the right; a hairline, then the copyright line with the
+// Credits link, centered. Below md the extra bottom padding keeps the last
 // line clear of the floating mobile nav's toggle at the end of the page.
 
 // Footer link (measured: Source Code Pro 14px semibold, underlined, 60%
@@ -19,18 +20,8 @@ const link =
   'inline-flex min-h-6 touch-manipulation items-center font-mono text-sm font-semibold text-muted underline decoration-fg/30 underline-offset-4 transition-[color,text-decoration-color] hover:text-fg hover:decoration-fg'
 const label = 'mb-5 font-sans text-[0.65rem] tracking-[0.2em] text-muted uppercase'
 
-// License-required credits for the Skills & Tools logos (Simple Icons marks
-// whose licenses require attribution; CLAUDE.md). Multi-word names and
-// license identifiers never split across lines (hyphen included).
+// A phrase that never splits across lines.
 const keep = (s: string) => <span className="whitespace-nowrap">{s}</span>
-const CREDITS = (
-  <>
-    Tool logos via {keep('Simple Icons')}; all marks belong to their owners. Git logo by {keep('Jason Long')},{' '}
-    {keep('CC BY 3.0')}. Jenkins logo, {keep('CC BY-SA 3.0')}. {keep('Apache JMeter')} logo,{' '}
-    {keep('Apache License 2.0')}. {keep('Robot Framework®')} and its visual identity are registered trademarks of the{' '}
-    {keep('Robot Framework ry')} ({keep('Robot Framework Foundation')}), used with permission.
-  </>
-)
 
 const [ROLE_A, ROLE_B] = content.footerRole.split(' | ')
 
@@ -73,12 +64,25 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="mt-8 flex flex-col items-center gap-3 text-center">
+      {/* The logo credits live on /credits (user decision 2026-10-16); this
+          line only links there, small and in muted ink. */}
+      <div className="mt-8 flex flex-col items-center text-center">
         <p className="font-mono text-xs tracking-wide text-text">
           © <CurrentYear initial={new Date().getFullYear()} /> <span translate="no">{content.name}</span>. All rights
           reserved.
+          {/* The line doesn't fit one row below sm: there Credits starts its
+              own line, without the separator dot. */}
+          <br className="sm:hidden" />
+          <span aria-hidden="true" className="hidden text-muted sm:inline">
+            {' · '}
+          </span>
+          <Link
+            href="/credits"
+            className="text-muted underline decoration-fg/30 underline-offset-4 transition-[color,text-decoration-color] hover:text-fg hover:decoration-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            Credits
+          </Link>
         </p>
-        <p className="max-w-3xl font-mono text-[11px] leading-relaxed text-muted">{CREDITS}</p>
       </div>
     </footer>
   )

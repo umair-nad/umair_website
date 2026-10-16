@@ -46,8 +46,9 @@ import type { ToolLogoName } from '@/lib/tool-logo-names'
 // (content.featuredTools; never drawn or invented): Playwright, Zephyr,
 // Xray, qTest, Azure DevOps, Fiddler, Chrome DevTools, BrowserStack,
 // LambdaTest, Slack, Microsoft Teams, SQL. Marks with attribution licenses
-// are credited in the footer (Git CC BY 3.0, Jenkins CC BY-SA 3.0, Apache
-// JMeter Apache-2.0, plus Robot Framework's trademark notice).
+// are credited on /credits, linked from the footer (Git CC BY 3.0, Jenkins
+// CC BY-SA 3.0, Apache JMeter Apache-2.0, plus Robot Framework's trademark
+// notice; app/credits/page.tsx, copy in content.credits).
 export const TOOL_ICONS: Record<ToolLogoName, SimpleIcon> = {
   'Apache JMeter': siApachejmeter,
   Appium: siAppium,
