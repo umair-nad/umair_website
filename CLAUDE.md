@@ -78,9 +78,8 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Status (2026-10-16)
 
-- **Unpushed local commits, awaiting the user's review:** the new "More about me" section between the About bento and Skills (DESIGN.md 11.2.1): `1e13e53`, `8052eaa`, `4d020fa`, `f6717e5`, plus this docs commit. **Do not push until the user approves** (pushing deploys). Screenshots: `review/more-about/`. Paragraph 1 is new wording from existing facts and needs the user's OK; paragraphs 2 and 3 (interests, QA philosophy) wait on Umair. It shows the existing headshot because `data/about-photo.jpg` was not provided.
+- **"More about me" is live** (DESIGN.md 11.2.1), between the About bento and Skills. The user approved the paragraph 1 wording and the dark-mode photo fade (2026-10-16), and it was pushed as `1e13e53`..`3782e35`. Live check: section served, zero console or CSP errors, About highlighted, photo loads (390 and 1440, both themes). Paragraphs 2 and 3 (interests, QA philosophy) wait on Umair. It shows the existing headshot because `data/about-photo.jpg` was not provided.
 - Live SEO recheck (2026-10-16): canonical, OG, Twitter, JSON-LD, sitemap, and robots all use `https://umair-nadeem.vercel.app`, no `localhost`.
-- Last pushed commit: `b17f96c`.
 - **The site is live on Vercel.** Official address: https://umair-nadeem.vercel.app. The old auto address `umair-website-pink.vercel.app` still serves the same deployment (the redirect is not working yet). Every push to `main` deploys to production automatically, so push only reviewed work.
 - Built and approved by the user: every section (Home, About, Skills, Experience, Contact, Footer, floating mobile nav), the SEO pass, security hardening with the static CSP, final QA, keyboard-reachable reveals, the Node 22.x pin. Commits, measurements, and reasoning: `docs/PROGRESS-LOG.md`.
 - Live results: Lighthouse mobile 92 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100 (Performance, Accessibility, Best Practices, SEO). Headers, HSTS (from Vercel), and the CSP verified live; zero console and CSP errors at 390, 768, 1024, and 1440 in both themes.
@@ -100,7 +99,7 @@ Later, no rush: major upgrades TypeScript 7 and ESLint 10 (blocked by `eslint-co
 
 ## Next steps, in order
 
-1. The user's review of "More about me" (local commits): apply feedback, then push only on approval. When Umair sends them, add paragraphs 2 and 3 to `content.moreAbout.paragraphs`; if an About photo arrives, put it in `public/` (SEO-friendly name, sized for the 330x400 frame) and point `content.moreAbout.photo` at it.
+1. "More about me" follow-ups: when Umair sends them, add paragraphs 2 and 3 to `content.moreAbout.paragraphs`; if an About photo arrives, put it in `public/` (SEO-friendly name, sized for the 330x400 frame) and point `content.moreAbout.photo` at it.
 2. The user's other new portfolio changes: discuss before building.
 3. The open decisions above.
 4. Google Search Console, then linking the site from LinkedIn, GitHub, and Upwork.
