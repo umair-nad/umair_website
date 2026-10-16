@@ -216,6 +216,19 @@
   padding-bottom: 0.08em;
 }
 
+/* "More about me" photo in dark mode (DESIGN.md 11.2.1): the reference's
+   dark photo melts into its black page with no visible frame. Ours has a
+   light studio backdrop, so it is dimmed a little and every edge fades out
+   (deepest at the bottom), so the frame dissolves into the page instead of
+   reading as a bright card. */
+@utility photo-fade {
+  filter: brightness(0.78);
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 14%, #000 62%, transparent),
+    linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  mask-composite: intersect;
+}
+
 /* Entrance reveals (Hero): elements marked data-reveal start hidden only
    when the pre-paint script saw motion allowed; GSAP then reveals them.
    Failsafe: if JS never hydrates, they show anyway after 2.5s. */
