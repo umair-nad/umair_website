@@ -313,23 +313,35 @@ export const content = {
   // bio's "5+ years". The middle part is the italic gradient accent word.
   experienceHeadline: ["Over five years of", "finding", "bugs before users do."],
 
-  // The About bento's tools marquee shows the original 13 tools (frameworks
-  // first, then tools), so it still fits its single tile; the Skills & Tools
-  // wall shows all 44.
+  // The About bento's tools marquee: the original 13 tools, plus (since
+  // 2026-10-16, user decision) every confirmed tool that has no logo we may
+  // use, because the Skills & Tools wall shows logo tiles only. Together
+  // the wall and this marquee show all 44. Frameworks first, then tools in
+  // the wall's group order.
   featuredTools: [
     "Cypress",
     "Cucumber",
     "Robot Framework",
+    "Playwright",
     "Jira",
     "Linear",
     "Trello",
     "TestRail",
     "Zephyr",
+    "Xray",
+    "qTest",
+    "Azure DevOps",
     "Postman",
     "Swagger",
     "Apache JMeter",
     "Chrome DevTools",
+    "Fiddler",
+    "BrowserStack",
+    "LambdaTest",
     "Confluence",
+    "Slack",
+    "Microsoft Teams",
+    "SQL",
   ],
 
   // Four headline items, approved in DESIGN.md 11.2 (2026-10-10). Each one

@@ -39,14 +39,15 @@ import type { ToolLogoName } from '@/lib/tool-logo-names'
 // the build keeps just these 31 paths. Loaded on demand by components/
 // Skills.tsx (about 20 KB gzip), keyed by lib/tool-logo-names.ts.
 //
-// No logo here, shown as text tiles instead (never drawn or invented):
-// Playwright, Zephyr, Xray, qTest, Azure DevOps, Fiddler, Chrome DevTools,
-// BrowserStack, LambdaTest, Slack, Microsoft Teams, SQL (not in Simple
-// Icons), and Robot Framework (in Simple Icons, but its logo is licensed
-// CC BY-NC-SA 4.0, non-commercial only; a text tile until the user decides).
-// Marks with attribution licenses are credited at the page bottom, in
-// components/LogoCredits.tsx (Git CC BY
-// 3.0, Jenkins CC BY-SA 3.0, Apache JMeter Apache-2.0).
+// Robot Framework's mark is the Foundation's own file, not Simple Icons'
+// path (lib/tool-logo-names.ts, TOOL_LOGO_FILES). The wall shows logo
+// tiles only (user decision 2026-10-16); these tools have no logo we may
+// use and are shown as text chips in the About tools marquee instead
+// (content.featuredTools; never drawn or invented): Playwright, Zephyr,
+// Xray, qTest, Azure DevOps, Fiddler, Chrome DevTools, BrowserStack,
+// LambdaTest, Slack, Microsoft Teams, SQL. Marks with attribution licenses
+// are credited in the footer (Git CC BY 3.0, Jenkins CC BY-SA 3.0, Apache
+// JMeter Apache-2.0, plus Robot Framework's trademark notice).
 export const TOOL_ICONS: Record<ToolLogoName, SimpleIcon> = {
   'Apache JMeter': siApachejmeter,
   Appium: siAppium,

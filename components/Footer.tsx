@@ -27,7 +27,8 @@ const CREDITS = (
   <>
     Tool logos via {keep('Simple Icons')}; all marks belong to their owners. Git logo by {keep('Jason Long')},{' '}
     {keep('CC BY 3.0')}. Jenkins logo, {keep('CC BY-SA 3.0')}. {keep('Apache JMeter')} logo,{' '}
-    {keep('Apache License 2.0')}.
+    {keep('Apache License 2.0')}. {keep('Robot Framework®')} and its visual identity are registered trademarks of the{' '}
+    {keep('Robot Framework ry')} ({keep('Robot Framework Foundation')}), used with permission.
   </>
 )
 

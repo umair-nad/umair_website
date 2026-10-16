@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import Image from 'next/image'
 import type { SimpleIcon } from 'simple-icons'
 import { useGSAP } from '@gsap/react'
 import { gsap, registerGsap } from '@/lib/gsap'
 import { scrollReveal } from '@/lib/reveal'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { content, type SkillGroupId } from '@/lib/content'
-import { TOOL_LOGO_NAMES } from '@/lib/tool-logo-names'
+import { TOOL_LOGO_FILES, TOOL_LOGO_NAMES } from '@/lib/tool-logo-names'
 
 registerGsap()
 
@@ -29,23 +30,15 @@ const TOOL_GROUPS: SkillGroupId[] = [
   'languages',
   'collaboration',
 ]
+// Logo tiles only (user decision 2026-10-16): a tool without a logo we may
+// use is left off the wall and shown in the About tools marquee instead
+// (content.featuredTools), so all 44 stay on the page.
+const HAS_LOGO = new Set<string>([...TOOL_LOGO_NAMES, ...Object.keys(TOOL_LOGO_FILES)])
+
 // Core QA tools lead the wall; the rest follow in group order.
-const CORE = ['Jira', 'Postman', 'Playwright', 'Cypress', 'Selenium', 'TestRail', 'Apache JMeter']
-const ALL = TOOL_GROUPS.flatMap((id) => content.skills.find((g) => g.id === id)?.items ?? [])
+const CORE = ['Jira', 'Postman', 'Cypress', 'Selenium', 'TestRail', 'Apache JMeter']
+const ALL = TOOL_GROUPS.flatMap((id) => content.skills.find((g) => g.id === id)?.items ?? []).filter((t) => HAS_LOGO.has(t))
 const TOOLS = [...CORE.filter((t) => ALL.includes(t)), ...ALL.filter((t) => !CORE.includes(t))]
-
-// Line breaks for the text tiles whose names don't fit one line of a
-// 48-64px square (split at the brand's own word boundary).
-const TEXT_LINES: Record<string, string[]> = {
-  'Azure DevOps': ['Azure', 'DevOps'],
-  BrowserStack: ['Browser', 'Stack'],
-  'Chrome DevTools': ['Chrome', 'DevTools'],
-  LambdaTest: ['Lambda', 'Test'],
-  'Microsoft Teams': ['Microsoft', 'Teams'],
-  'Robot Framework': ['Robot', 'Framework'],
-}
-
-const HAS_LOGO = new Set<string>(TOOL_LOGO_NAMES)
 
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
@@ -189,17 +182,16 @@ export default function Skills() {
         aria-label="Tools"
         onKeyDown={onKeyDown}
         // Every tile is the same square, so each max width is an exact
-        // number of tiles per row and the 44 tiles always wrap into full
-        // rows with no lone tile last: below sm, 56px tiles with 12px gaps,
-        // 5 per row (8 rows of 5, then 4; 328px), or 4 per row (11 x 4) on
-        // screens under 352px; from sm, 64px tiles with 14px gaps, 5 per row
-        // below md, 9 at md (9/9/9/9/8), 11 at lg (4 x 11), 15 at xl
-        // (15/15/14).
-        className="mx-auto mt-14 flex max-w-82 flex-wrap justify-center gap-3 sm:max-w-94 sm:gap-3.5 md:mt-16 md:max-w-172 lg:max-w-211 xl:max-w-289"
+        // number of tiles per row, and the 32 tiles always wrap into equal
+        // full rows: below md, 4 per row (8 x 4; 56px tiles with 12px gaps,
+        // 260px, below sm; 64px tiles with 14px gaps, 298px, from sm); from
+        // md, 8 per row (4 x 8, 610px); from 1300px wide, where 16 fit,
+        // 16 per row (2 x 16, 1234px).
+        className="mx-auto mt-14 flex max-w-65 flex-wrap justify-center gap-3 sm:max-w-74.5 sm:gap-3.5 md:mt-16 md:max-w-152.5 min-[81.25rem]:max-w-308.5"
       >
         {TOOLS.map((name, i) => {
-          const hasLogo = HAS_LOGO.has(name)
-          const icon = hasLogo ? icons?.[name] : undefined
+          const file = TOOL_LOGO_FILES[name]
+          const icon = icons?.[name]
           return (
             <li
               key={name}
@@ -217,22 +209,26 @@ export default function Skills() {
                 onFocus={() => setActive(i)}
                 className={`peer flex size-14 items-center justify-center rounded-2xl border border-tile-border bg-tile text-tile-icon shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:scale-110 sm:size-16 ${focusRing}`}
               >
-                {hasLogo ? (
+                {file ? (
+                  // The owner's file as is (no recolor, no optimizer). Its
+                  // canvas holds the clear space, so it is drawn at 5/3 of
+                  // the logo size and the mark itself matches the others.
+                  <Image
+                    src={file}
+                    alt=""
+                    aria-hidden="true"
+                    width={54}
+                    height={54}
+                    unoptimized
+                    draggable={false}
+                    className="size-[calc(1.75rem*5/3)] max-w-none sm:size-[calc(2rem*5/3)]"
+                  />
+                ) : (
                   icon && (
                     <svg viewBox="0 0 24 24" aria-hidden="true" className="size-7 fill-current sm:size-8">
                       <path d={icon.path} />
                     </svg>
                   )
-                ) : (
-                  // No usable logo (lib/tool-icons.ts): the name itself, in
-                  // small type inside the same square, two lines if needed.
-                  <span aria-hidden="true" className="font-sans text-[11px] leading-[1.15] tracking-tight">
-                    {(TEXT_LINES[name] ?? [name]).map((line) => (
-                      <span key={line} className="block">
-                        {line}
-                      </span>
-                    ))}
-                  </span>
                 )}
               </span>
               {/* Visible name on hover, keyboard focus, and tap (a tap
