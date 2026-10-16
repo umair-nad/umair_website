@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { PanelBottomOpen, X } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
@@ -31,7 +32,11 @@ const SCROLL_GAP = 16
 // toggle, plus a floating round button at the bottom right that opens a
 // vertical stack of round icon links (measured on the reference's phone
 // nav). Both share the active-section highlighting below.
+// On other pages (/book-a-call) the same links point at the home page's
+// sections ("/#about"): plain links, so the home page loads at that section.
 const Navbar = () => {
+  const onHome = usePathname() === '/'
+  const sectionHref = (hash: string) => (onHome ? hash : hash === '#home' ? '/' : `/${hash}`)
   const [dockOpen, setDockOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
@@ -112,15 +117,18 @@ const Navbar = () => {
   // the logo: smooth through ScrollSmoother, instant under reduced motion.
   const goTo = (href: string) => (href === '#home' ? scrollToTop() : scrollToSection(href))
 
+  // Off the home page the links navigate normally.
   const onAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (!onHome) return
     e.preventDefault()
     goTo(href)
   }
 
   // Mobile nav: a tapped link closes the stack, then scrolls.
   const onDockLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault()
     setDockOpen(false)
+    if (!onHome) return
+    e.preventDefault()
     goTo(href)
   }
 
@@ -150,12 +158,13 @@ const Navbar = () => {
         <div ref={barRef} className="relative flex h-10 items-center justify-between">
           {/* Left: Logo, home link */}
           <a
-            href="#home"
+            href={sectionHref('#home')}
             onClick={(e) => {
+              if (!onHome) return
               e.preventDefault()
               scrollToTop()
             }}
-            aria-label="Umair Nadeem, back to top"
+            aria-label={onHome ? 'Umair Nadeem, back to top' : 'Umair Nadeem, home'}
             data-magnetic
             className={`inline-flex items-center rounded-control text-fg ${focusRing}`}
           >
@@ -169,7 +178,7 @@ const Navbar = () => {
             {navItems.map((item) => (
               <li key={item.name}>
                 <a
-                  href={item.href}
+                  href={sectionHref(item.href)}
                   data-section={item.href}
                   data-magnetic
                   onClick={(e) => onAnchorClick(e, item.href)}
@@ -181,7 +190,7 @@ const Navbar = () => {
             ))}
             <li className="ml-0.5">
               <a
-                href="#contact"
+                href={sectionHref('#contact')}
                 data-magnetic
                 onClick={(e) => onAnchorClick(e, '#contact')}
                 className={`inline-flex h-7.5 items-center rounded-card border border-line-strong bg-white/10 px-3 text-[13px] text-fg transition-[color,background-color,border-color] hover:bg-white/20 ${focusRing}`}
@@ -238,7 +247,7 @@ const Navbar = () => {
             return (
               <li key={item.name}>
                 <a
-                  href={item.href}
+                  href={sectionHref(item.href)}
                   aria-label={item.name}
                   data-section={item.href}
                   onClick={(e) => onDockLinkClick(e, item.href)}
