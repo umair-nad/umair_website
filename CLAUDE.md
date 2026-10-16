@@ -78,6 +78,7 @@ Commands: `npm run dev` (localhost:3000), `npm run build`, `npm start`, `npm run
 
 ## Status (2026-10-16)
 
+- **Unpushed local commits, awaiting the user's check on localhost (2026-10-16): Book a Call.** `040d367` navbar and footer links work from other pages, `b491c58` the `/book-a-call` page (Cal.com's official embed, route-only CSP for `app.cal.com`, our moon atmosphere with a generated texture, the drifting "In Touch" accent), `4f4cad1` the Get in Touch sheet (Book a Call pill and mobile nav item; the hero and contact "Let’s Connect" buttons open it too), plus this docs commit. **Do not push before the user approves.** Verified locally: calendar loads in both themes with zero CSP errors, sheet keyboard-only, phone layout equal to the reference, no phone number anywhere. Lighthouse mobile (local, median of 3): home 87 / 100 / 100 / 100 (within noise), /book-a-call 91 / 100 / 79 / 100 (Best Practices: Cal.com's Cloudflare cookie, accepted with the immediate load). Screenshots: `review/sheet/`, `review/book-a-call/`, `review/book-a-call-plan/`.
 - **Live since 2026-10-16, approved by the user (Robot Framework logo included):** `fc946bc` clock status dot removed, `3c868bd` logo-only Skills wall (Robot Framework's licensed white mark; the other 12 logo-less tools in the About tools marquee; reduced-motion marquee is a compact static list), `c0e220d` logo credits on `/credits` (noindex; "Credits" link in the footer), pushed as `a291fb2..7e7a7e9`. Verified live: `/credits` canonical, `og:url`, OG and Twitter images on `https://umair-nadeem.vercel.app`, noindex, not in the sitemap, CSP and security headers; the Robot Framework file served byte-identical; at 390 and 1440 in both themes, with and without reduced motion: no capsule dot, 32 logo tiles in equal rows (also 768, 1024), marquee 23 tools at 22 px/s, footer Credits link, `/credits` themed, home to `/credits` and back; zero console and CSP errors. Lighthouse mobile live, median of 3: 92 / 100 / 100 / 100 (LCP 3.0 s, TBT 190 ms), unchanged. Screenshots: `review/live/`.
 - **"More about me" is live** (DESIGN.md 11.2.1), between the About bento and Skills. The user approved the paragraph 1 wording and the dark-mode photo fade (2026-10-16), and it was pushed as `1e13e53`..`3782e35`. Live check: section served, zero console or CSP errors, About highlighted, photo loads (390 and 1440, both themes). Paragraphs 2 and 3 (interests, QA philosophy) wait on Umair. It shows the existing headshot because `data/about-photo.jpg` was not provided.
 - Live SEO recheck (2026-10-16): canonical, OG, Twitter, JSON-LD, sitemap, and robots all use `https://umair-nadeem.vercel.app`, no `localhost`.
@@ -100,7 +101,8 @@ Later, no rush: major upgrades TypeScript 7 and ESLint 10 (blocked by `eslint-co
 
 ## Next steps, in order
 
-1. "More about me" follow-ups: when Umair sends them, add paragraphs 2 and 3 to `content.moreAbout.paragraphs`; if an About photo arrives, put it in `public/` (SEO-friendly name, sized for the 330x400 frame) and point `content.moreAbout.photo` at it.
-2. The user’s other new portfolio changes: discuss before building.
-3. The open decisions above.
-4. Google Search Console, then linking the site from LinkedIn, GitHub, and Upwork.
+1. The user's check of the Book a Call commits on localhost; push all together only when they approve, then verify live: the /book-a-call CSP header, the calendar with zero CSP errors in both themes, the sheet, the sitemap entry (`https://umair-nadeem.vercel.app/book-a-call`), canonical and OG on the live URL, Lighthouse. Optional, in Umair's Cal.com account: the brand color and booking settings (the embed follows the site's theme).
+2. "More about me" follow-ups: when Umair sends them, add paragraphs 2 and 3 to `content.moreAbout.paragraphs`; if an About photo arrives, put it in `public/` (SEO-friendly name, sized for the 330x400 frame) and point `content.moreAbout.photo` at it.
+3. The user’s other new portfolio changes: discuss before building.
+4. The open decisions above.
+5. Google Search Console, then linking the site from LinkedIn, GitHub, and Upwork.
