@@ -6,6 +6,7 @@ import { gsap, registerGsap } from '@/lib/gsap'
 import { scrollReveal } from '@/lib/reveal'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
 import { content } from '@/lib/content'
+import { openContactSheet } from '@/lib/contact-sheet'
 import PrimaryCta from '@/components/PrimaryCta'
 import CopyEmail from '@/components/hero/CopyEmail'
 import ProfileLink from '@/components/ProfileLink'
@@ -104,9 +105,10 @@ export default function Contact() {
           </p>
 
           <div data-reveal className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-5 md:mt-12">
-            <PrimaryCta href={`mailto:${content.contact.email}`}>
+            {/* Opens the Get in Touch sheet, like the hero's button (user
+                decision 2026-10-16); a mailto: link without JavaScript. */}
+            <PrimaryCta href={`mailto:${content.contact.email}`} onClick={(e) => openContactSheet(e)} opensDialog>
               {content.contact.cta}
-              <span className="sr-only"> by email</span>
             </PrimaryCta>
             <CopyEmail email={content.contact.email} />
           </div>

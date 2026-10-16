@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { PanelBottomOpen, X } from 'lucide-react'
+import { CalendarDays, PanelBottomOpen, X } from 'lucide-react'
 import { useGSAP } from '@gsap/react'
 import { gsap, ScrollTrigger, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY, COARSE_POINTER_QUERY } from '@/lib/motion-preferences'
 import { applyMagneticHover } from '@/lib/magnetic'
 import { scrollToElement, scrollToTop } from '@/lib/scroll'
+import { openContactSheet } from '@/lib/contact-sheet'
 import { NAV_ITEMS as navItems } from '@/lib/nav'
 import { content } from '@/lib/content'
 import Logo from '@/components/brand/Logo'
@@ -26,8 +27,8 @@ const SCROLL_GAP = 16
 // Navigation (DESIGN.md section 6).
 // md and up: the floating pill bar. Three zones on one row: the Logo (home
 // link) on the left, the centered pill with Home and the 4 anchors plus the
-// embedded contact CTA (content.contact.cta), and on the right the status
-// capsule (lg and up) then the theme toggle.
+// embedded Book a Call pill (opens the Get in Touch sheet), and on the
+// right the status capsule (lg and up) then the theme toggle.
 // Below md: a top bar with the Logo, the status capsule, and the theme
 // toggle, plus a floating round button at the bottom right that opens a
 // vertical stack of round icon links (measured on the reference's phone
@@ -188,14 +189,17 @@ const Navbar = () => {
                 </a>
               </li>
             ))}
+            {/* Book a Call (user decision 2026-10-16): opens the Get in Touch
+                sheet; a mailto: link without JavaScript. */}
             <li className="ml-0.5">
               <a
-                href={sectionHref('#contact')}
+                href={`mailto:${content.contact.email}`}
+                aria-haspopup="dialog"
                 data-magnetic
-                onClick={(e) => onAnchorClick(e, '#contact')}
+                onClick={(e) => openContactSheet(e)}
                 className={`inline-flex h-7.5 items-center rounded-card border border-line-strong bg-white/10 px-3 text-[13px] text-fg transition-[color,background-color,border-color] hover:bg-white/20 ${focusRing}`}
               >
-                {content.contact.cta}
+                {content.contactSheet.trigger}
               </a>
             </li>
           </ul>
@@ -251,7 +255,7 @@ const Navbar = () => {
                   aria-label={item.name}
                   data-section={item.href}
                   onClick={(e) => onDockLinkClick(e, item.href)}
-                  style={{ '--i': navItems.length - 1 - i } as React.CSSProperties}
+                  style={{ '--i': navItems.length - i } as React.CSSProperties}
                   className={`flex size-12 touch-manipulation items-center justify-center rounded-full bg-dock text-dock-icon shadow-lg transition-[opacity,translate,scale] duration-300 ease-out aria-current:text-dock-active ${
                     dockOpen
                       ? 'pointer-events-auto translate-y-0 scale-100 opacity-100 delay-[calc(var(--i)*40ms)] motion-reduce:delay-0'
@@ -263,6 +267,28 @@ const Navbar = () => {
               </li>
             )
           })}
+          {/* Book a Call, nearest the toggle (as on the reference's phone
+              nav): closes the stack and opens the Get in Touch sheet, whose
+              close returns focus to the toggle; a mailto: link without
+              JavaScript. */}
+          <li>
+            <a
+              href={`mailto:${content.contact.email}`}
+              aria-label={content.contactSheet.trigger}
+              aria-haspopup="dialog"
+              onClick={(e) => {
+                if (openContactSheet(e, dockButtonRef.current)) setDockOpen(false)
+              }}
+              style={{ '--i': 0 } as React.CSSProperties}
+              className={`flex size-12 touch-manipulation items-center justify-center rounded-full bg-dock text-dock-icon shadow-lg transition-[opacity,translate,scale] duration-300 ease-out ${
+                dockOpen
+                  ? 'pointer-events-auto translate-y-0 scale-100 opacity-100 delay-[calc(var(--i)*40ms)] motion-reduce:delay-0'
+                  : 'translate-y-2 scale-90 opacity-0'
+              } ${focusRing}`}
+            >
+              <CalendarDays size={20} strokeWidth={1.75} aria-hidden="true" />
+            </a>
+          </li>
         </ul>
       </div>
     </nav>

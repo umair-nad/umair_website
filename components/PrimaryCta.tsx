@@ -11,19 +11,23 @@ const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-
 // swaps with a twin sliding in. 300ms, cubic-bezier(0.4, 0, 0.2, 1).
 // Hover-only (Tailwind's hover variant needs a hovering pointer); keyboard
 // focus keeps the ring.
+// `opensDialog`: the link opens the Get in Touch sheet (aria-haspopup).
 export default function PrimaryCta({
   href,
   onClick,
+  opensDialog = false,
   children,
 }: {
   href: string
   onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
+  opensDialog?: boolean
   children: ReactNode
 }) {
   return (
     <a
       href={href}
       onClick={onClick}
+      aria-haspopup={opensDialog ? 'dialog' : undefined}
       className={`group relative isolate inline-flex h-12 touch-manipulation items-center gap-4 overflow-hidden rounded-full border border-black/10 bg-black/20 py-1 pr-1 pl-6 text-base text-fg backdrop-blur-xs dark:border-white/10 dark:bg-white/10 ${focusRing}`}
     >
       <span

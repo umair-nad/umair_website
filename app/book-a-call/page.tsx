@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { content } from '@/lib/content'
 import Navbar from '@/components/Navbar'
+import ContactSheet from '@/components/contact/ContactSheet'
 import Footer from '@/components/Footer'
 import SkipLink from '@/components/SkipLink'
 import CopyEmail from '@/components/hero/CopyEmail'
@@ -33,6 +34,7 @@ export default function BookACallPage() {
     <>
       <SkipLink />
       <Navbar />
+      <ContactSheet />
       <main id="main-content" className="relative isolate">
         <MoonAtmosphere />
 

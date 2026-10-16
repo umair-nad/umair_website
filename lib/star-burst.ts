@@ -6,24 +6,39 @@ import { prefersReducedMotion } from '@/lib/motion-preferences'
 // (4.3 KB gzip, no dependencies) is imported on demand, so it never ships in
 // the page bundle. Its default export runs in a blob-URL Web Worker, which
 // the CSP would then have to allow (worker-src blob:), so we create our own
-// instance on the main thread instead: one fixed, pointer-events-none
-// canvas, sized to the viewport. Under reduced motion nothing loads.
+// instances on the main thread instead: one fixed, pointer-events-none
+// canvas sized to the viewport. Under reduced motion nothing loads.
+// A modal <dialog> (the Get in Touch sheet) sits in the top layer, above any
+// canvas on <body>, so a burst fired inside one draws on a canvas of its own
+// inside that dialog.
 
 const COLORS = ['#8b5cf6', '#3b82f6', '#06b6d4', '#e2e8f0']
 
-let instance: Promise<CreateTypes> | undefined
+const instances = new WeakMap<Element, Promise<CreateTypes>>()
 
-function getConfetti() {
-  instance ??= import('canvas-confetti').then(({ default: confetti }) =>
-    confetti.create(undefined, { resize: true, useWorker: false, disableForReducedMotion: true })
-  )
+function getConfetti(dialog: HTMLDialogElement | null) {
+  const key = dialog ?? document.body
+  let instance = instances.get(key)
+  if (!instance) {
+    instance = import('canvas-confetti').then(({ default: confetti }) => {
+      let canvas: HTMLCanvasElement | undefined
+      if (dialog) {
+        canvas = document.createElement('canvas')
+        canvas.setAttribute('aria-hidden', 'true')
+        Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: '1' })
+        dialog.append(canvas)
+      }
+      return confetti.create(canvas, { resize: true, useWorker: false, disableForReducedMotion: true })
+    })
+    instances.set(key, instance)
+  }
   return instance
 }
 
 export async function starBurst(from: HTMLElement) {
   if (prefersReducedMotion()) return
 
-  const confetti = await getConfetti()
+  const confetti = await getConfetti(from.closest('dialog'))
   const r = from.getBoundingClientRect()
   const origin = {
     x: (r.left + r.width / 2) / window.innerWidth,

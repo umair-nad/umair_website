@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap, SplitText, registerGsap } from '@/lib/gsap'
 import { ALWAYS_QUERY, REDUCED_MOTION_QUERY } from '@/lib/motion-preferences'
-import { scrollToHash } from '@/lib/scroll'
+import { openContactSheet } from '@/lib/contact-sheet'
 import { content } from '@/lib/content'
 import { ACCENT_WORD, AFTER, BEFORE, HAS_ACCENT } from '@/lib/hero-headline'
 import CopyEmail from '@/components/hero/CopyEmail'
@@ -166,14 +166,9 @@ export default function Hero() {
           data-hero-cta
           className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:gap-5 md:mt-12"
         >
-          {/* Primary CTA (shared with the contact panel): scrolls to the
-              contact section. */}
-          <PrimaryCta
-            href="#contact"
-            onClick={(e) => {
-              if (scrollToHash('#contact')) e.preventDefault()
-            }}
-          >
+          {/* Primary CTA (shared with the contact panel): opens the Get in
+              Touch sheet; a mailto: link without JavaScript. */}
+          <PrimaryCta href={`mailto:${content.contact.email}`} onClick={(e) => openContactSheet(e)} opensDialog>
             {content.contact.cta}
           </PrimaryCta>
 

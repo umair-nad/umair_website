@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar'
+import ContactSheet from '@/components/contact/ContactSheet'
 import Hero from '@/components/Hero'
 import About from '@/components/About'
 import MoreAbout from '@/components/MoreAbout'
@@ -19,6 +20,7 @@ export default function Home() {
           ScrollSmoother applies position:fixed to #smooth-wrapper
           internally, which breaks position:fixed on anything inside it. */}
       <Navbar />
+      <ContactSheet />
       <SmoothScrollProvider>
         <main id="main-content" className="min-h-screen">
           <Hero />

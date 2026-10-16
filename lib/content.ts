@@ -104,6 +104,15 @@ export interface SiteContent {
   contact: { email: string; cta: string; headline: [string, string, string]; line: string };
   /** Public resume PDF, served from public/. */
   resume: { href: string };
+  /** The Get in Touch sheet (DESIGN.md 11.9). trigger: the navbar pill's and mobile nav's label. */
+  contactSheet: {
+    trigger: string;
+    title: string;
+    subtitle: string;
+    call: { title: string; subtitle: string };
+    email: { title: string };
+    also: string;
+  };
   /** /book-a-call (DESIGN.md 11.8): the header copy and Umair's Cal.com booking link.
    *  calLink: the path part of bookingUrl, as Cal.com's embed expects it. */
   bookACall: {
@@ -399,6 +408,18 @@ export const content = {
   // (user decision 2026-10-10). Site text still never shows the phone.
   resume: {
     href: "/umair-nadeem-qa-engineer-resume.pdf",
+  },
+
+  // Labels set by the user (2026-10-16); they follow the reference's own
+  // sheet by the user's explicit choice (CLAUDE.md, Content). "30-min video
+  // chat" matches Umair's 30-minute Google Meet event on Cal.com.
+  contactSheet: {
+    trigger: "Book a Call",
+    title: "Get in Touch",
+    subtitle: "Pick a way to connect",
+    call: { title: "Book a Call", subtitle: "30-min video chat" },
+    email: { title: "Email Me" },
+    also: "Also find me on",
   },
 
   // Wording chosen by the user (2026-10-16): the eyebrow and headline follow

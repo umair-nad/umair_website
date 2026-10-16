@@ -231,6 +231,73 @@
   padding-bottom: 0.08em;
 }
 
+/* Get in Touch sheet (DESIGN.md 11.9; components/contact/ContactSheet.tsx).
+   The <dialog> covers the viewport and lays the sheet at the bottom; a
+   press on its empty area is a press on the backdrop. Timing measured on
+   the reference: the whole sheet fades in over 300ms while the panel slides
+   up over 500ms (cubic-bezier(0.32, 0.72, 0, 1)); closing slides it back
+   down over 450ms (the component waits, then closes). The component opens
+   the dialog with data-entering (the start state) and removes it two
+   frames later, so the transitions run in every browser. Opening focuses
+   the close button while the panel is still below the fold, and the
+   browser scrolls to reveal it: overflow: hidden keeps that scroll inside
+   the dialog (with clip it would smooth-scroll the page behind instead),
+   and the component resets the dialog's scrollTop at once, so the panel
+   still starts below (found 2026-10-16). The global reduced-motion rule
+   makes all of it instant. */
+.contact-sheet {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  touch-action: none;
+  opacity: 1;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-sheet[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.contact-sheet::backdrop {
+  background-color: rgb(0 0 0 / 0.7);
+  backdrop-filter: blur(12px);
+  opacity: 1;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-sheet [data-sheet-panel] {
+  translate: 0 0;
+  transition: translate 500ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.contact-sheet[data-entering],
+.contact-sheet[data-entering]::backdrop,
+.contact-sheet[data-closing],
+.contact-sheet[data-closing]::backdrop {
+  opacity: 0;
+}
+
+.contact-sheet[data-entering] [data-sheet-panel],
+.contact-sheet[data-closing] [data-sheet-panel] {
+  translate: 0 100%;
+}
+
+.contact-sheet[data-closing] [data-sheet-panel] {
+  transition-duration: 450ms;
+}
+
 /* The animated accent phrase on /book-a-call (DESIGN.md 11.8; user
    decision 2026-10-16): the gradient drifts slowly through its mirrored
    stops, as on the reference (10s, ease-in-out, alternating, 200% wide).

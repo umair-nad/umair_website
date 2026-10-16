@@ -1,12 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { Check, Copy } from 'lucide-react'
-import { starBurst } from '@/lib/star-burst'
-
-type Status = 'idle' | 'copied' | 'failed'
-
-const RESET_MS = 2000
+import { useCopyEmail } from '@/lib/use-copy-email'
 
 // Copy-email row (DESIGN.md section 6): lucide Copy icon + the address in
 // Source Code Pro. Email is the only direct contact method (CLAUDE.md).
@@ -22,27 +17,7 @@ export default function CopyEmail({
   compact?: boolean
   className?: string
 }) {
-  const [status, setStatus] = useState<Status>('idle')
-  const timer = useRef<number | undefined>(undefined)
-
-  useEffect(() => () => window.clearTimeout(timer.current), [])
-
-  const copy = async (event: MouseEvent<HTMLButtonElement>) => {
-    const button = event.currentTarget
-    window.clearTimeout(timer.current)
-    try {
-      await navigator.clipboard.writeText(email)
-      setStatus('copied')
-      // Celebration only; the "Copied" label and the live region stay the
-      // real feedback. A failed library load must never break the copy.
-      starBurst(button).catch(() => {})
-    } catch {
-      // Clipboard API blocked (insecure context, permissions): the address
-      // stays visible and selectable, so the visitor can copy it by hand.
-      setStatus('failed')
-    }
-    timer.current = window.setTimeout(() => setStatus('idle'), RESET_MS)
-  }
+  const { status, copy } = useCopyEmail(email)
 
   const Icon = status === 'copied' ? Check : Copy
 
@@ -50,7 +25,7 @@ export default function CopyEmail({
     <div className={`inline-flex items-center ${className}`}>
       <button
         type="button"
-        onClick={copy}
+        onClick={(e) => copy(e.currentTarget)}
         aria-label={`Copy email address ${email}`}
         className={`group inline-flex ${compact ? 'min-h-8' : 'min-h-12'} touch-manipulation flex-wrap items-center justify-center gap-x-2.5 rounded-full px-3 py-1 font-mono text-sm text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.98]`}
       >

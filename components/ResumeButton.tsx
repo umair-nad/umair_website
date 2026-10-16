@@ -4,10 +4,26 @@ import { content } from '@/lib/content'
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
 
 // Download resume (DESIGN.md section 6): the secondary pill, shared by the
-// hero and the footer. Same height, shape, and Alata label as the primary
-// CTA, but outlined instead of filled, so the primary still leads. The PDF
-// is content.resume.href in public/.
-export default function ResumeButton() {
+// hero, "More about me", and the footer. Same height, shape, and Alata
+// label as the primary CTA, but outlined instead of filled, so the primary
+// still leads. The PDF is content.resume.href in public/.
+// `compact`: the Get in Touch sheet's small chip (DESIGN.md 11.9), sized as
+// the reference's "Download CV" chip: 28px tall, 8px radius, mono 12px bold,
+// in the inverse colors.
+export default function ResumeButton({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <a
+        href={content.resume.href}
+        download
+        className={`inline-flex h-7 touch-manipulation items-center gap-2 rounded-control bg-inverse px-3 font-mono text-xs font-bold text-inverse-fg transition-opacity hover:opacity-90 ${focusRing}`}
+      >
+        <Download size={14} strokeWidth={2} aria-hidden="true" />
+        Download resume
+      </a>
+    )
+  }
+
   return (
     <a
       href={content.resume.href}
