@@ -13,21 +13,34 @@
 // - style-src 'unsafe-inline': React style attributes and GSAP inline styles.
 // - no blob:: the star burst uses its own main-thread confetti instance.
 // Adding a form, login, or anything sensitive means switching to the nonce
-// CSP in proxy.ts first (CLAUDE.md, Security).
+// CSP in proxy.ts first (CLAUDE.md, Security). The Cal.com booking form on
+// /book-a-call is not one: it is Cal.com's own page inside a frame, and
+// this site never receives or handles its data (DESIGN.md 10.1).
 const isDev = process.env.NODE_ENV === 'development'
-const contentSecurityPolicy = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-  "font-src 'self'",
-  "connect-src 'self'",
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  'upgrade-insecure-requests',
-].join('; ')
+const csp = ({ scriptSrc = [], frameSrc = [] } = {}) =>
+  [
+    "default-src 'self'",
+    ["script-src 'self' 'unsafe-inline'", ...(isDev ? ["'unsafe-eval'"] : []), ...scriptSrc].join(' '),
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    "connect-src 'self'",
+    ...(frameSrc.length ? [`frame-src ${frameSrc.join(' ')}`] : []),
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    'upgrade-insecure-requests',
+  ].join('; ')
+
+const contentSecurityPolicy = csp()
+
+// /book-a-call only (user decision 2026-10-16): Cal.com's official embed
+// script and the booking frame it creates, both from app.cal.com (tested:
+// zero violations with exactly this). A CSP belongs to the document it was
+// loaded with, so links into /book-a-call must be full page loads (a plain
+// <a>, never next/link), or the frame would meet the previous page's CSP.
+const bookACallPolicy = csp({ scriptSrc: ['https://app.cal.com'], frameSrc: ['https://app.cal.com'] })
 
 const securityHeaders = [
   { key: 'Content-Security-Policy', value: contentSecurityPolicy },
@@ -67,8 +80,13 @@ const nextConfig = {
   // 0.85 x the smallest device size; without 384 its 312px desktop slot
   // downloaded the 640px file.
   images: { deviceSizes: [384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840] },
+  // When two entries set the same header for a path, the later one wins,
+  // so /book-a-call gets its own CSP and keeps every other header.
   async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }]
+    return [
+      { source: '/(.*)', headers: securityHeaders },
+      { source: '/book-a-call', headers: [{ key: 'Content-Security-Policy', value: bookACallPolicy }] },
+    ]
   },
 }
 

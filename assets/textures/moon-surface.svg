@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+  <!-- Our own moon-surface texture for the /book-a-call header atmosphere
+       (DESIGN.md 11.8): three fractal-noise bands (broad maria, terrain,
+       fine grain), made greyscale and centered on mid-grey, so an overlay
+       blend leaves the disc's average tone unchanged and only adds surface
+       variation. Not served; scripts/moon-texture.mjs renders it to
+       public/textures/moon-surface.webp. -->
+  <filter id="surface" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0055" numOctaves="3" seed="4" result="maria" />
+    <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="9" result="terrain" />
+    <feTurbulence type="fractalNoise" baseFrequency="0.42" numOctaves="1" seed="2" result="grain" />
+    <feComposite in="maria" in2="terrain" operator="arithmetic" k2="0.6" k3="0.4" result="relief" />
+    <feComposite in="relief" in2="grain" operator="arithmetic" k2="0.85" k3="0.15" result="mix" />
+    <feColorMatrix in="mix" type="matrix" values="0.333 0.333 0.333 0 0  0.333 0.333 0.333 0 0  0.333 0.333 0.333 0 0  0 0 0 0 1" />
+    <feComponentTransfer>
+      <feFuncR type="linear" slope="2.6" intercept="-0.8" />
+      <feFuncG type="linear" slope="2.6" intercept="-0.8" />
+      <feFuncB type="linear" slope="2.6" intercept="-0.8" />
+    </feComponentTransfer>
+  </filter>
+  <rect width="640" height="640" filter="url(#surface)" />
+</svg>

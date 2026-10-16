@@ -63,6 +63,19 @@
   --accent-stop-1: #ff0080;
   --accent-stop-2: #7928ca;
   --accent-stop-3: #0070f3;
+  /* The animated accent (text-gradient-aurora): the same stops mirrored, so
+     the gradient loops seamlessly as it drifts; every stop keeps 3:1. */
+  --accent-gradient-loop: linear-gradient(135deg, #ff0080, #7928ca, #0070f3, #7928ca, #ff0080);
+
+  /* Book a Call header atmosphere (DESIGN.md 11.8), from our own pixel
+     samples of the reference with its fades taken out: grey space (luma
+     143), a pale disc (185) brightening toward its rim (225 on the sides),
+     a brighter bottom rim (about 244, --moon-glow), and a wide halo. */
+  --moon-space: #8f8f8f;
+  --moon-disc: radial-gradient(circle closest-side, #b9b9b9 70%, #bbbbbb 80%, #c0c0c0 83.5%, #c7c7c7 87%, #cccccc 89.5%, #d2d2d2 93%, #dadada 97%, #e1e1e1 100%);
+  --moon-glow: radial-gradient(ellipse 40% 10% at 50% 100%, rgb(255 255 255 / 0.5), transparent);
+  --moon-halo: rgb(255 255 255 / 0.85);
+  --moon-texture: 0.35;
 
   /* Hero atmosphere (DESIGN.md section 2), measured on the reference's
      light theme: warm corner washes, a pink + sky glow over the horizon
@@ -136,6 +149,14 @@
   --accent-stop-1: #ff0080;
   --accent-stop-2: color-mix(in srgb, #ff0080 50%, #38bdf8);
   --accent-stop-3: #38bdf8;
+  --accent-gradient-loop: linear-gradient(135deg, #ff0080, #38bdf8, #ff0080);
+  /* Dark: black space, a dark grey disc (luma 14) brightening toward its
+     rim (41 on the sides, about 57 at the bottom), a faint halo. */
+  --moon-space: #000000;
+  --moon-disc: radial-gradient(circle closest-side, #0e0e0e 70%, #131313 80%, #191919 83.5%, #1e1e1e 87%, #222222 89.5%, #262626 93%, #282828 97%, #292929 100%);
+  --moon-glow: radial-gradient(ellipse 40% 10% at 50% 100%, rgb(255 255 255 / 0.07), transparent);
+  --moon-halo: rgb(255 255 255 / 0.25);
+  --moon-texture: 0.5;
   /* Hero atmosphere, measured on the reference's dark theme: cool violet
      corner washes, a violet + royal-blue glow; the arc rim is shared. */
   --wash-1: rgb(61 122 245 / 0.08);
@@ -208,6 +229,38 @@
   background-clip: text;
   color: transparent;
   padding-bottom: 0.08em;
+}
+
+/* The animated accent phrase on /book-a-call (DESIGN.md 11.8; user
+   decision 2026-10-16): the gradient drifts slowly through its mirrored
+   stops, as on the reference (10s, ease-in-out, alternating, 200% wide).
+   Static under reduced motion (the global rule below stops it). */
+@utility text-gradient-aurora {
+  background-image: var(--accent-gradient-loop);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+  animation: aurora 10s ease-in-out infinite alternate;
+}
+
+@keyframes aurora {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 50% 100%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* "More about me" photo in dark mode (DESIGN.md 11.2.1): the reference's

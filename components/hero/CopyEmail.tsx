@@ -10,7 +10,18 @@ const RESET_MS = 2000
 
 // Copy-email row (DESIGN.md section 6): lucide Copy icon + the address in
 // Source Code Pro. Email is the only direct contact method (CLAUDE.md).
-export default function CopyEmail({ email, className = '' }: { email: string; className?: string }) {
+// `compact`: a 32px-tall row instead of 48px, for the /book-a-call header,
+// where the reference's row is a single text line (still above the 24px
+// target minimum).
+export default function CopyEmail({
+  email,
+  compact = false,
+  className = '',
+}: {
+  email: string
+  compact?: boolean
+  className?: string
+}) {
   const [status, setStatus] = useState<Status>('idle')
   const timer = useRef<number | undefined>(undefined)
 
@@ -41,7 +52,7 @@ export default function CopyEmail({ email, className = '' }: { email: string; cl
         type="button"
         onClick={copy}
         aria-label={`Copy email address ${email}`}
-        className="group inline-flex min-h-12 touch-manipulation flex-wrap items-center justify-center gap-x-2.5 rounded-full px-3 py-1 font-mono text-sm text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.98]"
+        className={`group inline-flex ${compact ? 'min-h-8' : 'min-h-12'} touch-manipulation flex-wrap items-center justify-center gap-x-2.5 rounded-full px-3 py-1 font-mono text-sm text-fg transition-[color,background-color,border-color] hover:bg-fg/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.98]`}
       >
         <Icon
           size={18}

@@ -104,6 +104,16 @@ export interface SiteContent {
   contact: { email: string; cta: string; headline: [string, string, string]; line: string };
   /** Public resume PDF, served from public/. */
   resume: { href: string };
+  /** /book-a-call (DESIGN.md 11.8): the header copy and Umair's Cal.com booking link.
+   *  calLink: the path part of bookingUrl, as Cal.com's embed expects it. */
+  bookACall: {
+    path: string;
+    eyebrow: string;
+    headline: [string, string];
+    bookingUrl: string;
+    calLink: string;
+    seo: { title: string; description: string };
+  };
   /** /credits (DESIGN.md 11.7): the notices the Skills & Tools logos' licenses require.
    *  Each entry: the mark, its notice, and links (source, license). */
   credits: {
@@ -389,6 +399,25 @@ export const content = {
   // (user decision 2026-10-10). Site text still never shows the phone.
   resume: {
     href: "/umair-nadeem-qa-engineer-resume.pdf",
+  },
+
+  // Wording chosen by the user (2026-10-16): the eyebrow and headline follow
+  // the reference's Book a Call page by the user's explicit choice (CLAUDE.md,
+  // Content). The booking link is Umair's own Cal.com event (given by the
+  // user 2026-10-16). The description quotes that event's own wording on
+  // Cal.com ("A quick 30-minute call to discuss your project, QA needs, or
+  // collaboration.", Google Meet).
+  bookACall: {
+    path: "/book-a-call",
+    eyebrow: "CONTACT",
+    headline: ["Let’s Get", "In Touch"],
+    bookingUrl: "https://cal.com/umair-nadeem/30min",
+    calLink: "umair-nadeem/30min",
+    seo: {
+      title: "Book a Call | Umair Nadeem",
+      description:
+        "Book a 30-minute video call with Umair Nadeem, Software Quality Assurance Engineer, to discuss your project, QA needs, or collaboration.",
+    },
   },
 
   // Moved from the footer line to its own page (user decision 2026-10-16).
